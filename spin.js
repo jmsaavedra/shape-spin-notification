@@ -45,11 +45,11 @@ async function spin() {
 
     // Call the spin function.
     const tx = await contract.spin(hash);
-    console.log(`Spin transaction sent: ${tx.hash}`);
+    console.log(`Spin transaction sent! View on ShapeScan: https://shapescan.xyz/tx/${tx.hash}`);
 
     // Wait for the transaction to be mined.
-    await tx.wait();
-    console.log("Spin transaction mined.");
+    const receipt = await tx.wait();
+    console.log(`Spin transaction mined! Block number: ${receipt.blockNumber}`);
   } catch (error) {
     console.error("Error spinning:", error);
   }
