@@ -39,7 +39,7 @@ module.exports = async (req, res) => {
       const lastSpinTimestamp = spins[spins.length - 1].timestamp;
       const fiveMinutes = BigInt(5 * 60);
       const twentyFourHours = BigInt(24 * 60 * 60);
-      const timeSinceLastSpin = Math.floor(Date.now() / 1000) - lastSpinTimestamp;
+      const timeSinceLastSpin = BigInt(Math.floor(Date.now() / 1000)) - lastSpinTimestamp;
 
       if (timeSinceLastSpin < twentyFourHours + fiveMinutes) {
         console.log("Not time to spin yet.");
