@@ -1,7 +1,7 @@
 {
   "crons": [
     {
-      "path": "/spin?secret=${SPIN_SECRET}",
+      "path": "/api/spin?secret=${SPIN_SECRET}",
       "schedule": "*/10 * * * *"
     }
   ]
