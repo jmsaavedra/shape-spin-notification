@@ -18,11 +18,7 @@ const provider = new JsonRpcProvider("https://shape-mainnet.g.alchemy.com/public
 module.exports = async (req, res) => {
   // We will add a simple security measure to prevent unauthorized access.
   // In a production environment, you should use a more robust authentication mechanism.
-  const secret = req.query.secret;
-  if (secret !== process.env.SPIN_SECRET) {
-    console.log(`Unauthorized access attempt. Provided secret: '${secret}', Expected secret: '${process.env.SPIN_SECRET}'`);
-    return res.status(401).send("Unauthorized");
-  }
+  
 
   // The spin logic is now directly in the handler.
   try {
