@@ -20,6 +20,7 @@ module.exports = async (req, res) => {
   // In a production environment, you should use a more robust authentication mechanism.
   const secret = req.query.secret;
   if (secret !== process.env.SPIN_SECRET) {
+    console.log("Unauthorized access attempt.");
     return res.status(401).send("Unauthorized");
   }
 
