@@ -37,8 +37,8 @@ module.exports = async (req, res) => {
 
     if (spins.length > 0) {
       const lastSpinTimestamp = spins[spins.length - 1].timestamp;
-      const fiveMinutes = 5 * 60;
-      const twentyFourHours = 24 * 60 * 60;
+      const fiveMinutes = BigInt(5 * 60);
+      const twentyFourHours = BigInt(24 * 60 * 60);
       const timeSinceLastSpin = Math.floor(Date.now() / 1000) - lastSpinTimestamp;
 
       if (timeSinceLastSpin < twentyFourHours + fiveMinutes) {
