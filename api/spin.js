@@ -15,8 +15,15 @@ const provider = new JsonRpcProvider("https://shape-mainnet.g.alchemy.com/public
     chainId: 360
 });
 
-// This is the function that will be called by the cron job. // Added a small change to force a new deployment.
-async function spin() {
+module.exports = async (req, res) => {
+  // We will add a simple security measure to prevent unauthorized access.
+  // In a production environment, you should use a more robust authentication mechanism.
+  const secret = req.query.secret;
+  if (secret !== process.env.SPIN_SECRET) {
+    return res.status(401).send("Unauthorized");
+  }
+
+  // The spin logic is now directly in the handler.
   try {
     // We are using a placeholder for the private key. In a real application,
     // this should be stored securely as an environment variable.
@@ -39,14 +46,15 @@ async function spin() {
 
       if (timeSinceLastSpin < twentyFourHours + fiveMinutes) {
         console.log("Not time to spin yet.");
+        res.status(200).send("Not time to spin yet.");
         return;
       }
     }
 
+    console.log("Attempting to send spin transaction...");
     // Generate a random hash.
     const hash = ethers.utils.randomBytes(32);
 
-    console.log("Attempting to send spin transaction...");
     // Call the spin function.
     const tx = await contract.spin(hash);
     console.log(`Spin transaction sent! View on ShapeScan: https://shapescan.xyz/tx/${tx.hash}`);
@@ -54,37 +62,11 @@ async function spin() {
     // Wait for the transaction to be mined.
     const receipt = await tx.wait();
     console.log(`Spin transaction mined! Block number: ${receipt.blockNumber}`);
+    res.status(200).send("Spin process initiated and transaction mined.");
+
   } catch (error) {
     console.error("Error spinning:", error);
+    res.status(500).send(`Error spinning: ${error.message}`);
   }
-}
-
-// We will create a simple Express server to expose the spin function as an endpoint.
-// This endpoint can be triggered by a cron job on Vercel or Railway.
-const express = require("express");
-const app = express();
-const port = process.env.PORT || 3000;
-
-app.get("/spin", async (req, res) => {
-  // We will add a simple security measure to prevent unauthorized access.
-  // In a production environment, you should use a more robust authentication mechanism.
-  const secret = req.query.secret;
-  if (secret !== process.env.SPIN_SECRET) {
-    return res.status(401).send("Unauthorized");
-  }
-
-  // Add a fixed delay of 5 minutes to ensure the 24-hour cooldown is met.
-  const delay = 5 * 60 * 1000;
-  console.log(`Waiting for ${delay / 1000 / 60} minutes before spinning...`);
-
-  await new Promise(resolve => setTimeout(resolve, delay));
-
-  await spin();
-  res.send("Spin process initiated.");
-});
-
-app.listen(port, () => {
-  console.log(`Server listening at http://localhost:${port}`);
-  console.log("Server started and listening for requests.");
-});
+};
 
