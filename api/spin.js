@@ -1,6 +1,6 @@
 
 require("dotenv").config();
-const ethers = require("ethers");
+const { ethers, JsonRpcProvider } = require("ethers");
 
 // This is the ABI of the MedalSpin contract.
 const abi = [{"inputs":[],"stateMutability":"nonpayable","type":"constructor"},{"inputs":[],"name":"HashAlreadyCollected","type":"error"},{"inputs":[],"name":"InvalidTimestamps","type":"error"},{"inputs":[],"name":"SpinTooSoon","type":"error"},{"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"collector","type":"address"},{"indexed":false,"internalType":"bytes32","name":"hash","type":"bytes32"},{"indexed":false,"internalType":"uint256","name":"timestamp","type":"uint256"}],"name":"Spin","type":"event"},{"inputs":[{"internalType":"address","name":"collector","type":"address"}],"name":"canSpin","outputs":[{"internalType":"bool","name":"","type":"bool"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"bytes32","name":"hash","type":"bytes32"}],"name":"getCollector","outputs":[{"internalType":"address","name":"","type":"address"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"collector","type":"address"}],"name":"getSpins","outputs":[{"components":[{"internalType":"bytes32","name":"hash","type":"bytes32"},{"internalType":"uint256","name":"timestamp","type":"uint256"}],"internalType":"struct SpinInfo[]","name":"","type":"tuple[]"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"bytes32","name":"hash","type":"bytes32"}],"name":"spin","outputs":[],"stateMutability":"nonpayable","type":"function"}];
@@ -10,7 +10,7 @@ const contractAddress = "0x99BB9Dca4F8Ed3FB04eCBE2bA9f5f378301DBaC1";
 
 // We will use a public provider for this example. For a production environment,
 // it's recommended to use a dedicated provider like Infura or Alchemy.
-const provider = new ethers.providers.JsonRpcProvider("https://shape-mainnet.g.alchemy.com/public", {
+const provider = new JsonRpcProvider("https://shape-mainnet.g.alchemy.com/public", {
     name: 'shape-mainnet',
     chainId: 360
 });
