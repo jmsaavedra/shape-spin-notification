@@ -10,7 +10,10 @@ const contractAddress = "0x99BB9Dca4F8Ed3FB04eCBE2bA9f5f378301DBaC1";
 
 // We will use a public provider for this example. For a production environment,
 // it's recommended to use a dedicated provider like Infura or Alchemy.
-const provider = new ethers.providers.JsonRpcProvider("https://rpc.ankr.com/eth");
+const provider = new ethers.providers.JsonRpcProvider("https://shape-mainnet.g.alchemy.com/public", {
+    name: 'shape-mainnet',
+    chainId: 360
+});
 
 // This is the function that will be called by the cron job.
 async function spin() {
