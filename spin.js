@@ -15,7 +15,7 @@ const provider = new ethers.providers.JsonRpcProvider("https://shape-mainnet.g.a
     chainId: 360
 });
 
-// This is the function that will be called by the cron job.
+// This is the function that will be called by the cron job. // Added a small change to force a new deployment.
 async function spin() {
   try {
     // We are using a placeholder for the private key. In a real application,
@@ -46,6 +46,7 @@ async function spin() {
     // Generate a random hash.
     const hash = ethers.utils.randomBytes(32);
 
+    console.log("Attempting to send spin transaction...");
     // Call the spin function.
     const tx = await contract.spin(hash);
     console.log(`Spin transaction sent! View on ShapeScan: https://shapescan.xyz/tx/${tx.hash}`);
