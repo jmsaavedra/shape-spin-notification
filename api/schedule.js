@@ -113,10 +113,13 @@ module.exports = async (req, res) => {
         
         .status-indicator {
             display: inline-block;
-            width: 8px;
-            height: 8px;
+            width: 12px;
+            height: 12px;
             border-radius: 50%;
-            margin-right: 8px;
+            margin-right: 10px;
+            vertical-align: middle;
+            position: relative;
+            top: -1px;
         }
         
         .status-indicator.active {
@@ -171,7 +174,7 @@ module.exports = async (req, res) => {
                         </div>
                         
                         <div class="card">
-                            <div class="card-label">Last Spin</div>
+                            <div class="card-label">Last Spin (ET)</div>
                             <div class="card-value">\${data.lastSpinTime || 'Never'}</div>
                         </div>
                         
@@ -210,7 +213,7 @@ module.exports = async (req, res) => {
                                     <div style="margin-bottom: 8px; padding-bottom: 8px; border-bottom: 1px solid #222;">
                                         <div style="color: #888;">Spin #\${i + 1}</div>
                                         <div style="font-size: 12px;">\${spin.date}</div>
-                                        <div style="font-size: 10px; opacity: 0.5; word-break: break-all;">\${spin.hash}</div>
+                                        <a href="https://shapescan.xyz/tx/\${spin.hash}" target="_blank" rel="noopener noreferrer" style="font-size: 10px; opacity: 0.5; word-break: break-all; color: inherit; text-decoration: none;" onmouseover="this.style.opacity='1'; this.style.color='#fff'" onmouseout="this.style.opacity='0.5'; this.style.color='inherit'">\${spin.hash}</a>
                                     </div>
                                 \`).join('')}
                             </div>

@@ -1,4 +1,4 @@
-# 🌀 Spin Shape
+# 🌀 Spin for SHAPE
 
 Automated daily spin scheduler for the Shape Network Medal game with an incrementing time schedule.
 
