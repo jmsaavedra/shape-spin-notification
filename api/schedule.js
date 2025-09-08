@@ -181,21 +181,21 @@ module.exports = async (req, res) => {
                         </div>
                         
                         <div class="card">
-                            <div class="card-label">Next Spin</div>
-                            <div class="card-value">\${data.nextSpinTime}</div>
-                        </div>
-                        
-                        <div class="card">
-                            <div class="card-label">Next Schedule</div>
-                            <div class="card-value">\${data.nextSpinSchedule}</div>
-                        </div>
-                        
-                        <div class="card">
                             <div class="card-label">Can Spin Now</div>
                             <div class="card-value">
                                 <span class="status-indicator \${data.canSpinNow ? 'active' : 'inactive'}"></span>
                                 \${data.canSpinNow ? 'Yes' : 'No'}
                             </div>
+                        </div>
+                        
+                        <div class="card">
+                            <div class="card-label">Next Spin (ET)</div>
+                            <div class="card-value">\${data.nextSpinTime}</div>
+                        </div>
+                        
+                        <div class="card">
+                            <div class="card-label">Time Until</div>
+                            <div class="card-value">\${data.timeUntilSpin || 'Calculating...'}</div>
                         </div>
                         
                         <div class="card description">
@@ -270,10 +270,18 @@ module.exports = async (req, res) => {
     }
     
     const nextSpinTime = scheduleState.getNextSpinTimeString(spinCount);
+    const nextSpinDate = scheduleState.calculateNextSpinTime(spinCount);
     const canSpinNow = spins.length === 0 || scheduleState.shouldSpinNow(
       spins.length > 0 ? Number(spins[spins.length - 1].timestamp) * 1000 : null, 
       spinCount
     );
+    
+    // Calculate time until next spin
+    const now = Date.now();
+    const msUntil = nextSpinDate.getTime() - now;
+    const hoursUntil = Math.floor(msUntil / (1000 * 60 * 60));
+    const minutesUntil = Math.floor((msUntil % (1000 * 60 * 60)) / (1000 * 60));
+    const timeUntilSpin = msUntil > 0 ? `${hoursUntil}h ${minutesUntil}m` : 'Now';
     
     // Calculate the schedule pattern
     const baseTime = new Date();
@@ -299,8 +307,9 @@ module.exports = async (req, res) => {
       nextSpinTime: nextSpinTime,
       nextSpinSchedule: scheduleTime,
       canSpinNow: canSpinNow,
+      timeUntilSpin: timeUntilSpin,
       walletAddress: wallet.address,
-      description: `Spin #${spinCount + 1} will occur at ${scheduleTime} (incrementing by 1 minute daily)`,
+      description: `Spin #${spinCount + 1} will occur at ${scheduleTime}`,
       spinHistory: spinHistory
     });
     
