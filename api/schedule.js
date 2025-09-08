@@ -213,7 +213,10 @@ module.exports = async (req, res) => {
                                     <div style="margin-bottom: 8px; padding-bottom: 8px; border-bottom: 1px solid #222;">
                                         <div style="color: #888;">Spin #\${i + 1}</div>
                                         <div style="font-size: 12px;">\${spin.date}</div>
-                                        <a href="https://shapescan.xyz/tx/\${spin.hash}" target="_blank" rel="noopener noreferrer" style="font-size: 10px; opacity: 0.5; word-break: break-all; color: inherit; text-decoration: none;" onmouseover="this.style.opacity='1'; this.style.color='#fff'" onmouseout="this.style.opacity='0.5'; this.style.color='inherit'">\${spin.hash}</a>
+                                        <div style="font-size: 10px; opacity: 0.5;">
+                                            <span style="color: #666;">Spin Hash:</span>
+                                            <span style="word-break: break-all;">\${spin.hash}</span>
+                                        </div>
                                     </div>
                                 \`).join('')}
                             </div>
