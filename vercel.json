@@ -6,9 +6,6 @@
     }
   ],
   "functions": {
-    "api/spin.js": {
-      "maxDuration": 30
-    },
     "api/cron.js": {
       "maxDuration": 30
     }
