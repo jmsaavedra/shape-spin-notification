@@ -159,12 +159,58 @@ module.exports = async (req, res) => {
     </div>
     
     <script>
+        let globalData = null;
+        let updateInterval = null;
+        
+        function updateTimers() {
+            if (!globalData) return;
+            
+            const now = Date.now();
+            
+            // Update Time Since
+            if (globalData.lastSpinTime && globalData.lastSpinTime !== 'Never') {
+                const lastSpinMs = new Date(globalData.lastSpinTime).getTime();
+                const msSince = now - lastSpinMs;
+                const hoursSince = Math.floor(msSince / (1000 * 60 * 60));
+                const minutesSince = Math.floor((msSince % (1000 * 60 * 60)) / (1000 * 60));
+                const secondsSince = Math.floor((msSince % (1000 * 60)) / 1000);
+                
+                const timeSinceEl = document.getElementById('time-since');
+                if (timeSinceEl) {
+                    timeSinceEl.textContent = \`\${hoursSince}h \${minutesSince}m \${secondsSince}s\`;
+                }
+            }
+            
+            // Update Time Until
+            if (globalData.nextSpinTime) {
+                const nextSpinMs = new Date(globalData.nextSpinTime).getTime();
+                const msUntil = nextSpinMs - now;
+                
+                if (msUntil > 0) {
+                    const hoursUntil = Math.floor(msUntil / (1000 * 60 * 60));
+                    const minutesUntil = Math.floor((msUntil % (1000 * 60 * 60)) / (1000 * 60));
+                    const secondsUntil = Math.floor((msUntil % (1000 * 60)) / 1000);
+                    
+                    const timeUntilEl = document.getElementById('time-until');
+                    if (timeUntilEl) {
+                        timeUntilEl.textContent = \`\${hoursUntil}h \${minutesUntil}m \${secondsUntil}s\`;
+                    }
+                } else {
+                    const timeUntilEl = document.getElementById('time-until');
+                    if (timeUntilEl) {
+                        timeUntilEl.textContent = 'Now';
+                    }
+                }
+            }
+        }
+        
         async function loadSchedule() {
             try {
                 const response = await fetch('/api/schedule', {
                     headers: { 'Accept': 'application/json' }
                 });
                 const data = await response.json();
+                globalData = data;
                 
                 const html = \`
                     <div class="grid">
@@ -180,7 +226,7 @@ module.exports = async (req, res) => {
                         
                         <div class="card">
                             <div class="card-label">Time Since</div>
-                            <div class="card-value">\${data.timeSinceLastSpin || 'N/A'}</div>
+                            <div class="card-value" id="time-since">\${data.timeSinceLastSpin || 'N/A'}</div>
                         </div>
                         
                         <div class="card">
@@ -198,7 +244,7 @@ module.exports = async (req, res) => {
                         
                         <div class="card">
                             <div class="card-label">Time Until</div>
-                            <div class="card-value">\${data.timeUntilSpin || 'Calculating...'}</div>
+                            <div class="card-value" id="time-until">\${data.timeUntilSpin || 'Calculating...'}</div>
                         </div>
                         
                         <div class="card description">
@@ -228,13 +274,18 @@ module.exports = async (req, res) => {
                 document.getElementById('content').innerHTML = html;
                 document.getElementById('content').classList.remove('loading');
                 
+                // Start the timer for live updates
+                if (updateInterval) clearInterval(updateInterval);
+                updateInterval = setInterval(updateTimers, 1000);
+                updateTimers(); // Run immediately
+                
             } catch (error) {
                 document.getElementById('content').innerHTML = '<div class="error">Error loading schedule</div>';
             }
         }
         
         loadSchedule();
-        // Refresh every 30 seconds
+        // Refresh data every 30 seconds
         setInterval(loadSchedule, 30000);
     </script>
 </body>
