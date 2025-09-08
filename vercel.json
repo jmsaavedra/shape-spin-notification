@@ -2,6 +2,15 @@
   "functions": {
     "api/cron.js": {
       "maxDuration": 30
+    },
+    "api/check-and-notify.js": {
+      "maxDuration": 30
     }
-  }
+  },
+  "crons": [
+    {
+      "path": "/api/check-and-notify",
+      "schedule": "*/30 * * * *"
+    }
+  ]
 }
