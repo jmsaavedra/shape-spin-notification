@@ -3,7 +3,10 @@ require("dotenv").config();
 const { ethers, JsonRpcProvider } = require("ethers");
 const scheduleState = require("../lib/schedule-state");
 
-const abi = [{"inputs":[{"internalType":"address","name":"collector","type":"address"}],"name":"getSpins","outputs":[{"components":[{"internalType":"bytes32","name":"hash","type":"bytes32"},{"internalType":"uint256","name":"timestamp","type":"uint256"}],"internalType":"struct SpinInfo[]","name":"","type":"tuple[]"}],"stateMutability":"view","type":"function"}];
+const abi = [
+  {"inputs":[{"internalType":"address","name":"collector","type":"address"}],"name":"canSpin","outputs":[{"internalType":"bool","name":"","type":"bool"}],"stateMutability":"view","type":"function"},
+  {"inputs":[{"internalType":"address","name":"collector","type":"address"}],"name":"getSpins","outputs":[{"components":[{"internalType":"bytes32","name":"hash","type":"bytes32"},{"internalType":"uint256","name":"timestamp","type":"uint256"}],"internalType":"struct SpinInfo[]","name":"","type":"tuple[]"}],"stateMutability":"view","type":"function"}
+];
 
 const contractAddress = "0x99BB9Dca4F8Ed3FB04eCBE2bA9f5f378301DBaC1";
 
@@ -113,10 +116,10 @@ module.exports = async (req, res) => {
         
         .status-indicator {
             display: inline-block;
-            width: 12px;
-            height: 12px;
+            width: 16px;
+            height: 16px;
             border-radius: 50%;
-            margin-right: 10px;
+            margin-right: 12px;
             vertical-align: middle;
             position: relative;
             top: -1px;
@@ -328,10 +331,9 @@ module.exports = async (req, res) => {
     
     const nextSpinTime = scheduleState.getNextSpinTimeString(spinCount);
     const nextSpinDate = scheduleState.calculateNextSpinTime(spinCount);
-    const canSpinNow = spins.length === 0 || scheduleState.shouldSpinNow(
-      spins.length > 0 ? Number(spins[spins.length - 1].timestamp) * 1000 : null, 
-      spinCount
-    );
+    
+    // Get the actual blockchain answer about whether we can spin
+    const canSpinNow = await contract.canSpin(wallet.address);
     
     // Calculate time until next spin
     const now = Date.now();
