@@ -1,5 +1,9 @@
 # 🌀 Shape Medal Spin Notification App
 
+![SPIN Logo](assets/SPIN-logo-header.png)
+
+**Demo Instance: [https://spin-shape.vercel.app/](https://spin-shape.vercel.app/)**
+
 Automated daily spin status iMessage notification for the Shape Network [Medal Spin Game](https://stack.shape.network/medal-spin).
 
 ## Overview
@@ -34,6 +38,7 @@ This project monitors your wallet on the [MedalSpin contract](https://shapescan.
 ### Prerequisites
 - Node.js 18+
 - **Vercel Pro account** ($20/month - required for timely notifications)
+- **LoopMessage account** (if you want to receive iMessage/SMS notifications) - [Sign up at loopmessage.com](https://loopmessage.com)
 - Public wallet address to monitor
 
 ### Installation

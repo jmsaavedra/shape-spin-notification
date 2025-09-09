@@ -58,15 +58,15 @@ module.exports = async (req, res) => {
     
     console.log(`Current spin count: ${spinCount}, Can spin: ${canSpinNow}`);
     
-    // Check if this is a new spin opportunity we haven't notified about
-    if (canSpinNow && notificationsEnabled) {
+    // Check current spin status and send appropriate notification
+    if (notificationsEnabled) {
       // Initialize on first run
       if (lastNotifiedSpinCount === null) {
         lastNotifiedSpinCount = spinCount - 1; // Assume we've notified for all previous spins
       }
       
-      // Only notify if we haven't already for this spin number
-      if (spinCount >= lastNotifiedSpinCount + 1) {
+      // If can spin now and haven't notified for this spin number
+      if (canSpinNow && spinCount >= lastNotifiedSpinCount + 1) {
         console.log(`New spin available! Sending LoopMessage notification for spin #${spinCount + 1}`);
         
         const notifier = new LoopMessageNotifier(loopAuthKey, loopSecretKey, notificationNumber, senderName);
@@ -94,6 +94,45 @@ module.exports = async (req, res) => {
           return res.status(200).json({
             message: "Spin available - notification failed",
             spinNumber: spinCount + 1,
+            notificationSent: false,
+            provider: "LoopMessage",
+            error: notifyError.message
+          });
+        }
+      }
+      // If cannot spin (user already completed it) and we haven't acknowledged this spin yet
+      else if (!canSpinNow && spinCount > lastNotifiedSpinCount) {
+        console.log(`User already completed spin #${spinCount}. Sending confirmation notification.`);
+        
+        const notifier = new LoopMessageNotifier(loopAuthKey, loopSecretKey, notificationNumber, senderName);
+        const nextSpinDate = scheduleState.calculateNextSpinTime(lastSpinTimestamp);
+        const nextSpinDateFormatted = nextSpinDate.toLocaleString('en-US', {
+          timeZone: 'America/New_York',
+          weekday: 'short',
+          month: 'short',
+          day: 'numeric',
+          hour: 'numeric',
+          minute: '2-digit',
+          hour12: true
+        });
+        
+        try {
+          await notifier.sendAlreadyCompletedNotification(spinCount, nextSpinDateFormatted);
+          
+          lastNotifiedSpinCount = spinCount; // Update to current spin count
+          
+          return res.status(200).json({
+            message: "Already spun - confirmation notification sent",
+            spinNumber: spinCount,
+            notificationSent: true,
+            provider: "LoopMessage",
+            nextSpinTime: nextSpinDateFormatted
+          });
+        } catch (notifyError) {
+          console.error("Failed to send confirmation notification:", notifyError);
+          return res.status(200).json({
+            message: "Already spun - notification failed",
+            spinNumber: spinCount,
             notificationSent: false,
             provider: "LoopMessage",
             error: notifyError.message
