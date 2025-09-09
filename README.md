@@ -22,7 +22,7 @@ This project monitors your wallet on the [MedalSpin contract](https://shapescan.
 3. **Notification** sends iMessage with MetaMask deep link when ready
 4. **Manual Spin** - Click the link to open MetaMask and spin
 
-## Contract Details
+## Shape MedalSpin Contract Details
 
 - **Address**: [`0x99BB9Dca4F8Ed3FB04eCBE2bA9f5f378301DBaC1`](https://shapescan.xyz/address/0x99BB9Dca4F8Ed3FB04eCBE2bA9f5f378301DBaC1)
 - **Network**: Shape Mainnet (Chain ID: 360)
