@@ -1,8 +1,5 @@
 {
   "functions": {
-    "api/cron.js": {
-      "maxDuration": 30
-    },
     "api/check-and-notify-loop.js": {
       "maxDuration": 30
     }
@@ -10,7 +7,7 @@
   "crons": [
     {
       "path": "/api/check-and-notify-loop",
-      "schedule": "*/30 * * * *"
+      "schedule": "*/5 * * * *"
     }
   ]
 }
