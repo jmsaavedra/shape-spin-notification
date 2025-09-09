@@ -1,10 +1,10 @@
-# 🌀 Shape Medal Spin Notification App
+# 🌀 Shape Medal Spin Notification App 🌀
 
 <img src="public/assets/SPIN-logo-header.png" alt="SPIN Logo" width="50%">
 
-**Demo Instance: [https://spin-shape.vercel.app/](https://spin-shape.vercel.app/)**
+**Live Demo Instance: [https://spin-shape.vercel.app/](https://spin-shape.vercel.app/)**
 
-Automated daily spin status iMessage notification for the Shape Network [Medal Spin Game](https://stack.shape.network/medal-spin).
+Automated daily spin status iMessage notification for the Shape Network [Medal Spin Game](https://stack.shape.network/medal-spin). Never miss a daily spin again!
 
 ## Overview
 
@@ -37,9 +37,10 @@ This project monitors your wallet on the [MedalSpin contract](https://shapescan.
 
 ### Prerequisites
 - Node.js 18+
-- **Vercel Pro account** ($20/month - required for timely notifications)
-- **[LoopMessage](https://loopmessage.com) account** - if you want to receive iMessage/SMS notifications (Free Sandbox, plenty)
-- Public wallet address to monitor
+- ETH wallet with elegible Shape Stack
+- **[Vercel Pro](https://vercel.com) account** ($20/month) - Web app hosting with timely cron job
+- **[LoopMessage](https://loopmessage.com) account** (Free) - if you want to receive iMessage/SMS notifications
+
 
 ### Installation
 
@@ -170,7 +171,7 @@ vercel logs
 
 - **Requires Vercel Pro** ($20/month) - Free tier's once-daily check is useless for this use case
 - This bot only monitors and notifies - it does NOT automatically spin
-- You must manually spin through Shape's website or MetaMask
+- You must manually spin (this app texts you a link to do so when it's time!)
 - Medal outcomes are determined when you visit the Shape Medal site
 - Notifications include a MetaMask deep link for quick access
 
