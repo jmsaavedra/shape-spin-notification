@@ -600,9 +600,9 @@
                                     <div class="spin-history-row">
                                         ${spinIconSmallSVG}
                                         <span style="color: #fff; font-weight: 600;">Spin #${i + 1}</span>
-                                        ${spin.gap ? `<span style="color: #4ade80; font-size: 12px; font-weight: 600;">${spin.gap}</span>` : ''}
                                         <span style="color: #fff;">•</span>
                                         <span style="font-size: 13px; color: #fff;">${spin.timestamp ? new Date(spin.timestamp).toLocaleString() : spin.date}</span>
+                                        ${spin.gap ? `<span style="color: #4ade80; font-size: 12px; font-weight: 600; margin-left: 8px;">${spin.gap}</span>` : ''}
                                     </div>
                                 `).join('')}
                             </div>
