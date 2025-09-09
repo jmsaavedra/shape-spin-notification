@@ -6,26 +6,26 @@
     <title>Spin for SHAPE</title>
     
     <!-- Basic Meta Tags -->
-    <meta name="description" content="You spin me right round, baby">
-    <meta name="keywords" content="shape, network, blockchain, medal, spin, daily, crypto, web3, automation">
+    <meta name="description" content="Monitor and track daily spins on Shape Network">
+    <meta name="keywords" content="shape, network, blockchain, medal, spin, daily, crypto, web3">
     <meta name="author" content="quietloops">
     <meta name="robots" content="noindex, nofollow">
     <meta name="language" content="English">
     
     <!-- Open Graph / Social Media -->
     <meta property="og:title" content="Spin for SHAPE">
-    <meta property="og:description" content="You spin me right round, baby">
+    <meta property="og:description" content="Monitor and track daily spins on Shape Network">
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://spin-shape.vercel.app/">
-    <meta property="og:image" content="https://spin-shape.vercel.app/android-chrome-512x512.png">
+    <meta property="og:image" content="https://spin-shape.vercel.app/assets/SPIN-logo-header.png">
     <meta property="og:site_name" content="Spin for SHAPE">
     <meta property="og:locale" content="en_US">
     
     <!-- Twitter -->
-    <meta name="twitter:card" content="summary">
+    <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:title" content="Spin for SHAPE">
-    <meta name="twitter:description" content="You spin me right round, baby">
-    <meta name="twitter:image" content="https://spin-shape.vercel.app/android-chrome-512x512.png">
+    <meta name="twitter:description" content="Monitor and track daily spins on Shape Network">
+    <meta name="twitter:image" content="https://spin-shape.vercel.app/assets/SPIN-logo-header.png">
     <meta name="twitter:site" content="@quietloops">
     
     <!-- Additional Meta -->
@@ -34,38 +34,586 @@
     
     <!-- Favicons -->
     <link rel="icon" type="image/x-icon" href="/favicon.ico">
-    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
-    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
-    <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/assets/favicon/favicon-16x16.png">
+    <link rel="apple-touch-icon" href="/assets/favicon/apple-touch-icon.png">
     <style>
-        body {
+        * {
             margin: 0;
             padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
             background: #000;
-            height: 100vh;
+            color: #fff;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, monospace;
+            min-height: 100vh;
+            padding: 40px 20px;
+        }
+        
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        
+        .header-logo {
+            text-align: center;
+            margin-bottom: 25px;
+        }
+        
+        .header-logo img {
+            max-width: 300px;
+            width: 100%;
+            height: auto;
+            filter: brightness(1.1);
+        }
+        
+        .medal-dots {
             display: flex;
             justify-content: center;
+            gap: 16px;
+            margin-top: 30px;
+            margin-bottom: 10px;
+        }
+        
+        .medal-dot {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            display: inline-block;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
+            transition: transform 0.2s;
+        }
+        
+        .medal-dot:hover {
+            transform: scale(1.2);
+        }
+        
+        .medal-dot.bronze {
+            background: linear-gradient(135deg, #CD7F32, #B87333);
+        }
+        
+        .medal-dot.silver {
+            background: linear-gradient(135deg, #C0C0C0, #E5E5E5);
+        }
+        
+        .medal-dot.gold {
+            background: linear-gradient(135deg, #FFD700, #FFA500);
+        }
+        
+        .medal-dot.obsidian {
+            background: linear-gradient(135deg, #1a1a1a, #000000);
+            border: 1px solid #333;
+        }
+        
+        .monitoring-address {
+            text-align: center;
+            margin-bottom: 30px;
+            padding: 15px;
+            background: #111;
+            border: 1px solid #222;
+            border-radius: 8px;
+            font-family: monospace;
+            font-size: 14px;
+            opacity: 0.8;
+        }
+        
+        .monitoring-address .label {
+            color: #666;
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 8px;
+        }
+        
+        .monitoring-address .address {
+            color: #fff;
+            word-break: break-all;
+            font-size: 13px;
+        }
+        
+        .spin-icon {
+            display: inline-block;
+            width: 16px;
+            height: 16px;
+            animation: spin 3s linear infinite;
+            opacity: 0.6;
+            margin-right: 8px;
+            vertical-align: middle;
+        }
+        
+        @keyframes spin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+        
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+        }
+        
+        .card {
+            background: #111;
+            border: 1px solid #222;
+            border-radius: 8px;
+            padding: 20px;
+        }
+        
+        /* Mobile layout */
+        @media (max-width: 768px) {
+            .grid {
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+                gap: 15px;
+            }
+            
+            /* Spin Count stays first and half width */
+            .card-spin-count {
+                grid-column: span 1;
+                order: 1;
+            }
+            
+            /* Can Spin Now moves to second position and half width */
+            .card-can-spin {
+                grid-column: span 1;
+                order: 2;
+            }
+            
+            /* Last Spin full width, third position */
+            .card:nth-child(2) {
+                grid-column: span 2;
+                order: 3;
+            }
+            
+            /* Time Since full width, fourth position */
+            .card:nth-child(3) {
+                grid-column: span 2;
+                order: 4;
+            }
+            
+            /* Next Spin full width, fifth position */
+            .card:nth-child(5) {
+                grid-column: span 2;
+                order: 5;
+            }
+            
+            /* Time Until full width, sixth position */
+            .card:nth-child(6) {
+                grid-column: span 2;
+                order: 6;
+            }
+            
+            /* Ensure buttons and other grid children maintain proper order */
+            .spin-button {
+                order: 7;
+            }
+            
+            .card.description {
+                order: 8;
+            }
+            
+            .card:last-child {
+                order: 9;
+            }
+            
+            /* Slightly smaller padding on mobile */
+            .card {
+                padding: 15px;
+            }
+        }
+        
+        .card-label {
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            opacity: 0.5;
+            margin-bottom: 8px;
+        }
+        
+        .card-value {
+            font-size: 20px;
+            font-weight: 500;
+        }
+        
+        .card-value.large {
+            font-size: 32px;
+        }
+        
+        .status-indicator {
+            display: inline-block;
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            margin-right: 12px;
+            vertical-align: middle;
+            position: relative;
+            top: -1px;
+        }
+        
+        .status-indicator.active {
+            background: #0f0;
+        }
+        
+        .status-indicator.inactive {
+            background: #f00;
+        }
+        
+        .description {
+            grid-column: 1 / -1;
+            text-align: center;
+            opacity: 0.7;
+            font-size: 14px;
+        }
+        
+        .loading {
+            text-align: center;
+            padding: 40px;
+            opacity: 0.5;
+        }
+        
+        .spin-history-row {
+            display: flex;
             align-items: center;
-            overflow: hidden;
+            gap: 10px;
+            padding: 10px 0;
+            border-bottom: 1px solid #222;
+            font-family: monospace;
+            font-size: 13px;
+            opacity: 0.9;
         }
         
-        a {
+        .spin-history-row:last-child {
+            border-bottom: none;
+        }
+        
+        .spin-history-row:hover {
+            opacity: 1;
+            background: rgba(255, 255, 255, 0.02);
+        }
+        
+        .spin-button {
+            grid-column: 1 / -1;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 12px;
+            text-align: center;
             text-decoration: none;
-            font-size: 120px;
-            cursor: pointer;
-            transition: transform 0.2s ease;
+            font-size: 18px;
+            font-weight: 600;
+            transition: transform 0.2s, box-shadow 0.2s;
+            display: block;
+            margin-top: 10px;
         }
         
-        a:hover {
-            transform: scale(1.1);
+        .spin-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.4);
         }
         
-        a:active {
-            transform: scale(0.95);
+        .spin-button.disabled {
+            background: #333;
+            cursor: not-allowed;
+            opacity: 0.5;
+        }
+        
+        .spin-button.disabled:hover {
+            transform: none;
+            box-shadow: none;
+        }
+        
+        .footer {
+            margin-top: 60px;
+            padding: 30px 20px 40px;
+            border-top: 1px solid #222;
+        }
+        
+        .footer-content {
+            max-width: 800px;
+            margin: 0 auto;
+            text-align: center;
+        }
+        
+        .footer-links {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+            margin-bottom: 25px;
+            font-size: 14px;
+            opacity: 0.8;
+        }
+        
+        .footer-links a {
+            color: #fff;
+            text-decoration: none;
+            transition: opacity 0.2s;
+        }
+        
+        .footer-links a:hover {
+            opacity: 1;
+            text-decoration: underline;
+        }
+        
+        .footer-separator {
+            color: #444;
+        }
+        
+        .github-link {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        
+        .github-link:hover {
+            text-decoration: none !important;
+            opacity: 1;
+        }
+        
+        .github-link:hover span {
+            text-decoration: underline;
+        }
+        
+        @media (max-width: 480px) {
+            .footer-links {
+                flex-direction: column;
+                gap: 10px;
+            }
+            
+            .footer-separator {
+                display: none;
+            }
         }
     </style>
 </head>
 <body>
-    <a href="/api/schedule">🤫</a>
+    <div class="container">
+        <div class="header-logo">
+            <img src="/assets/SPIN-logo-header.png" alt="SPIN for SHAPE" />
+        </div>
+        <div class="monitoring-address">
+            <div class="label">Monitoring Wallet</div>
+            <div class="address" id="wallet-address">Loading...</div>
+        </div>
+        <div id="content" class="loading">Loading...</div>
+    </div>
+    <footer class="footer">
+        <div class="footer-content">
+            <div class="footer-links">
+                <span>Made with 🤍 by <a href="https://x.com/josdotph" target="_blank" rel="noopener">@josdotph</a></span>
+                <span class="footer-separator">•</span>
+                <a href="https://github.com/jmsaavedra/spin-shape" target="_blank" rel="noopener" class="github-link">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
+                    </svg>
+                    <span>View on GitHub</span>
+                </a>
+            </div>
+            <div class="medal-dots">
+                <span class="medal-dot bronze"></span>
+                <span class="medal-dot silver"></span>
+                <span class="medal-dot gold"></span>
+                <span class="medal-dot obsidian"></span>
+            </div>
+        </div>
+    </footer>
+    
+    <script>
+        let globalData = null;
+        let updateInterval = null;
+        
+        // Define the spinning SVG icon once
+        const spinIconSVG = `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="spin-icon">
+            <path d="M2 12c0-2.8 2.2-5 5-5s5 2.2 5 5 2.2 5 5 5 5-2.2 5-5"></path>
+            <path d="M7 20.7a1 1 0 1 1 5-8.7 1 1 0 1 0 5-8.6"></path>
+            <path d="M7 3.3a1 1 0 1 1 5 8.6 1 1 0 1 0 5 8.6"></path>
+            <circle cx="12" cy="12" r="10"></circle>
+        </svg>`;
+        
+        // Smaller version for history rows
+        const spinIconSmallSVG = `<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="spin-icon" style="width: 14px; height: 14px;">
+            <path d="M2 12c0-2.8 2.2-5 5-5s5 2.2 5 5 2.2 5 5 5 5-2.2 5-5"></path>
+            <path d="M7 20.7a1 1 0 1 1 5-8.7 1 1 0 1 0 5-8.6"></path>
+            <path d="M7 3.3a1 1 0 1 1 5 8.6 1 1 0 1 0 5 8.6"></path>
+            <circle cx="12" cy="12" r="10"></circle>
+        </svg>`;
+        
+        function updateTimers() {
+            if (!globalData) return;
+            
+            const now = Date.now();
+            
+            // Update Time Since
+            if (globalData.lastSpinTimestamp) {
+                const msSince = now - globalData.lastSpinTimestamp;
+                const hoursSince = Math.floor(msSince / (1000 * 60 * 60));
+                const minutesSince = Math.floor((msSince % (1000 * 60 * 60)) / (1000 * 60));
+                const secondsSince = Math.floor((msSince % (1000 * 60)) / 1000);
+                
+                const timeSinceEl = document.getElementById('time-since');
+                if (timeSinceEl) {
+                    timeSinceEl.textContent = `${hoursSince}h ${minutesSince}m ${secondsSince}s`;
+                }
+            }
+            
+            // Update Time Until
+            if (globalData.nextSpinTimestamp) {
+                const msUntil = globalData.nextSpinTimestamp - now;
+                
+                if (msUntil > 0) {
+                    const hoursUntil = Math.floor(msUntil / (1000 * 60 * 60));
+                    const minutesUntil = Math.floor((msUntil % (1000 * 60 * 60)) / (1000 * 60));
+                    const secondsUntil = Math.floor((msUntil % (1000 * 60)) / 1000);
+                    
+                    const timeUntilEl = document.getElementById('time-until');
+                    if (timeUntilEl) {
+                        timeUntilEl.textContent = `${hoursUntil}h ${minutesUntil}m ${secondsUntil}s`;
+                    }
+                } else {
+                    const timeUntilEl = document.getElementById('time-until');
+                    if (timeUntilEl) {
+                        timeUntilEl.textContent = 'Now';
+                    }
+                }
+            }
+        }
+        
+        async function loadSchedule() {
+            try {
+                const response = await fetch('/api/schedule', {
+                    headers: { 'Accept': 'application/json' }
+                });
+                const data = await response.json();
+                globalData = data;
+                
+                // Update wallet address with ENS name if available
+                const walletDisplay = data.ensName 
+                    ? `${data.ensName} (${data.walletAddress.slice(0, 6)}...${data.walletAddress.slice(-4)})`
+                    : data.walletAddress;
+                document.getElementById('wallet-address').textContent = walletDisplay || 'Not configured';
+                
+                // Detect if we're on mobile
+                const isMobile = window.innerWidth <= 768;
+                
+                // On desktop, always use regular URL. On mobile, respect the .env setting
+                const shouldUseDeepLink = isMobile && data.useMetaMaskDeepLink;
+                
+                const spinLink = data.canSpinNow 
+                    ? (shouldUseDeepLink 
+                        ? 'https://metamask.app.link/dapp/stack.shape.network/medal-spin'
+                        : 'https://stack.shape.network/medal-spin')
+                    : '#';
+                
+                const html = `
+                    <div class="grid">
+                        <div class="card card-spin-count">
+                            <div class="card-label">
+                                ${spinIconSVG}
+                                Spin Count
+                            </div>
+                            <div class="card-value large">${data.currentSpinCount}</div>
+                        </div>
+                        
+                        <div class="card">
+                            <div class="card-label">
+                                ${spinIconSVG}
+                                Last Spin
+                            </div>
+                            <div class="card-value" id="last-spin-time">${data.lastSpinTimestamp ? new Date(data.lastSpinTimestamp).toLocaleString() : 'Never'}</div>
+                        </div>
+                        
+                        <div class="card">
+                            <div class="card-label">
+                                ${spinIconSVG}
+                                Time Since
+                            </div>
+                            <div class="card-value" id="time-since">${data.timeSinceLastSpin || 'N/A'}</div>
+                        </div>
+                        
+                        <div class="card card-can-spin">
+                            <div class="card-label">
+                                ${spinIconSVG}
+                                Can Spin Now
+                            </div>
+                            <div class="card-value large" style="display: flex; align-items: center; justify-content: flex-start;">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="${data.canSpinNow ? '#4ade80' : '#ff0000'}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width: 28px !important; height: 28px !important; margin-right: 12px; display: inline-block; animation: spin 3s linear infinite;">
+                                    <path d="M2 12c0-2.8 2.2-5 5-5s5 2.2 5 5 2.2 5 5 5 5-2.2 5-5"></path>
+                                    <path d="M7 20.7a1 1 0 1 1 5-8.7 1 1 0 1 0 5-8.6"></path>
+                                    <path d="M7 3.3a1 1 0 1 1 5 8.6 1 1 0 1 0 5 8.6"></path>
+                                    <circle cx="12" cy="12" r="10"></circle>
+                                </svg>
+                                ${data.canSpinNow ? 'Yes' : 'No'}
+                            </div>
+                        </div>
+                        
+                        <div class="card">
+                            <div class="card-label">
+                                ${spinIconSVG}
+                                Next Spin
+                            </div>
+                            <div class="card-value" id="next-spin-time">${data.nextSpinTimestamp ? new Date(data.nextSpinTimestamp).toLocaleString() : 'Calculating...'}</div>
+                        </div>
+                        
+                        <div class="card">
+                            <div class="card-label">
+                                ${spinIconSVG}
+                                Time Until
+                            </div>
+                            <div class="card-value" id="time-until">${data.timeUntilSpin || 'Calculating...'}</div>
+                        </div>
+                        
+                        ${data.canSpinNow ? `
+                            <a href="${spinLink}" class="spin-button">
+                                🎰 ${shouldUseDeepLink ? 'Spin Now in MetaMask' : 'Spin Now on Shape'}
+                            </a>
+                        ` : `
+                            <div class="spin-button disabled">
+                                ⏳ Wait ${data.timeUntilSpin || 'Calculating...'}
+                            </div>
+                        `}
+                        
+                        <div class="card description">
+                            ${data.description}
+                            ${data.notificationStatus ? `<div style="margin-top: 8px; font-size: 12px; opacity: 0.6;">${data.notificationStatus}</div>` : ''}
+                        </div>
+                        
+                        ${data.spinHistory && data.spinHistory.length > 0 ? `
+                        <div class="card" style="grid-column: 1 / -1;">
+                            <div class="card-label">Spin History</div>
+                            <div style="margin-top: 16px;">
+                                ${data.spinHistory.map((spin, i) => `
+                                    <div class="spin-history-row">
+                                        ${spinIconSmallSVG}
+                                        <span style="color: #fff; font-weight: 600;">Spin #${i + 1}</span>
+                                        <span style="color: #fff;">•</span>
+                                        <span style="font-size: 13px; color: #fff;">${spin.timestamp ? new Date(spin.timestamp).toLocaleString() : spin.date}</span>
+                                    </div>
+                                `).join('')}
+                            </div>
+                        </div>
+                        ` : ''}
+                    </div>
+                `;
+                
+                document.getElementById('content').innerHTML = html;
+                document.getElementById('content').classList.remove('loading');
+                
+                // Start the timer for live updates
+                if (updateInterval) clearInterval(updateInterval);
+                updateInterval = setInterval(updateTimers, 1000);
+                updateTimers(); // Run immediately
+                
+            } catch (error) {
+                document.getElementById('content').innerHTML = '<div class="error">Error loading schedule</div>';
+                document.getElementById('wallet-address').textContent = 'Error loading';
+            }
+        }
+        
+        loadSchedule();
+        // Refresh data every 30 seconds
+        setInterval(loadSchedule, 30000);
+    </script>
 </body>
 </html>
