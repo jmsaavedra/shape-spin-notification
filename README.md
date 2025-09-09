@@ -45,8 +45,8 @@ This project monitors your wallet on the [MedalSpin contract](https://shapescan.
 
 1. Clone the repository:
 ```bash
-git clone https://github.com/yourusername/spin-shape.git
-cd spin-shape
+git clone https://github.com/jmsaavedra/shape-spin-notification.git
+cd shape-spin-notification
 ```
 
 2. Install dependencies:
