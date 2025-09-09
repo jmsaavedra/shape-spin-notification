@@ -8,18 +8,18 @@ This project monitors your wallet on the [MedalSpin contract](https://shapescan.
 
 ## Features
 
-- 🤖 **Spin Monitoring** - Checks every 10 minutes when your next spin is available
-- 📱 **iMessage Notifications** - Get alerted within 10 minutes of spin availability (with MetaMask deep links)
+- 🤖 **Spin Monitoring** - Checks regularly when your next spin is available (configurable interval)
+- 📱 **iMessage/SMS Notifications** - Get alerted promptly when spin is available (automatic SMS fallback)
 - 🔒 **Secure** - Uses public addresses only, no private keys needed for monitoring
 - 📊 **Dashboard** - Real-time schedule tracking and spin history
 - 🎯 **Efficient** - Uses Alchemy RPC for reliability
-- ⚡ **Fast** - Notifications within 10 minutes of spin availability
+- ⚡ **Fast** - Timely notifications based on your configured check interval
 
 ## How It Works
 
-1. **Vercel Cron Job** runs every 10 minutes to check spin availability
+1. **Vercel Cron Job** runs at your configured interval to check spin availability
 2. **Smart Monitor** checks if you can spin on the blockchain
-3. **Notification** sends iMessage with MetaMask deep link when ready
+3. **Notification** sends iMessage when ready (automatic SMS fallback if needed)
 4. **Manual Spin** - Click the link to open MetaMask and spin
 
 ## Shape MedalSpin Contract Details
@@ -53,8 +53,9 @@ npm install
 ```env
 PUBLIC_ADDRESS=0x...  # Wallet address to monitor
 ALCHEMY_API_KEY=your_key  # Optional but recommended for reliability
+CRON_INTERVAL_MINUTES=5  # How often to check (5, 10, 15, 30, etc.)
 
-# For iMessage notifications (optional):
+# For iMessage text notifications (optional):
 LOOPMESSAGE_AUTH_KEY=your_auth_key
 LOOPMESSAGE_SECRET_KEY=your_secret_key
 NOTIFICATION_NUMBER=+1234567890
@@ -78,7 +79,7 @@ Main dashboard showing:
 - ENS name resolution
 - Monitoring wallet address
 
-### 📅 `/api/schedule`
+### 📅 `/api/status`
 JSON API returning spin status data (used by dashboard)
 
 ### 🔧 `/api/debug`
@@ -96,7 +97,21 @@ The bot tracks a simple 24-hour cooldown period:
 
 - Each spin becomes available exactly 24 hours after your last spin
 - Notifications are sent at the next cron interval after availability
-- Default cron runs every 5-10 minutes for timely notifications
+- Cron interval is configurable via `CRON_INTERVAL_MINUTES` environment variable
+
+### Dynamic Cron Configuration
+
+The cron schedule is dynamically generated during deployment:
+
+1. Set `CRON_INTERVAL_MINUTES` in your Vercel environment variables (e.g., `5`, `10`, `30`)
+2. During deployment, `vercel-build` script generates `vercel.json` from `vercel.template.json`
+3. The generated cron schedule matches your configured interval
+4. Dashboard automatically displays accurate notification timing
+
+To change the check interval:
+- Update `CRON_INTERVAL_MINUTES` in Vercel dashboard
+- Redeploy your application
+- The new schedule takes effect immediately
 
 ## Security
 

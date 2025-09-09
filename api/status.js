@@ -129,16 +129,31 @@ module.exports = async (req, res) => {
       hour12: true
     });
     
-    // Format spin history with timestamps (no hash since it's not useful)
-    const spinHistory = spins.map((spin, index) => ({
-      spinNumber: index + 1,
-      timestamp: Number(spin.timestamp) * 1000, // Convert to milliseconds
-      date: new Date(Number(spin.timestamp) * 1000).toLocaleString('en-US', {
-        timeZone: 'America/New_York',
-        dateStyle: 'short',
-        timeStyle: 'medium'
-      })
-    }));
+    // Format spin history with timestamps and calculate gaps
+    const spinHistory = spins.map((spin, index) => {
+      const timestamp = Number(spin.timestamp) * 1000; // Convert to milliseconds
+      let gap = null;
+      
+      // Calculate gap from previous spin
+      if (index > 0) {
+        const prevTimestamp = Number(spins[index - 1].timestamp) * 1000;
+        const gapMs = timestamp - prevTimestamp;
+        const hours = Math.floor(gapMs / (1000 * 60 * 60));
+        const minutes = Math.floor((gapMs % (1000 * 60 * 60)) / (1000 * 60));
+        gap = `+${hours}h ${minutes}m`;
+      }
+      
+      return {
+        spinNumber: index + 1,
+        timestamp: timestamp,
+        date: new Date(timestamp).toLocaleString('en-US', {
+          timeZone: 'America/New_York',
+          dateStyle: 'short',
+          timeStyle: 'medium'
+        }),
+        gap: gap
+      };
+    });
     
     // Get the date portion for the description
     const nextSpinDateFormatted = nextSpinDate.toLocaleDateString('en-US', {
@@ -172,7 +187,7 @@ module.exports = async (req, res) => {
       timeUntilSpin: timeUntilSpin,
       walletAddress: publicAddress,
       ensName: ensName,
-      description: `Spin #${spinCount + 1} notification will be sent after automated server check at ${notificationTimeString} ET (checks every ${cronInterval} min)`,
+      description: `Spin #${spinCount + 1} notification will be sent at ${notificationTimeString} ET`,
       notificationStatus: notificationStatus,
       useMetaMaskDeepLink: process.env.USE_METAMASK_MOBILE_DEEPLINK === 'true',
       spinHistory: spinHistory

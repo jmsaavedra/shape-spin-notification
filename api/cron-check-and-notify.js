@@ -71,7 +71,7 @@ module.exports = async (req, res) => {
         
         const notifier = new LoopMessageNotifier(loopAuthKey, loopSecretKey, notificationNumber, senderName);
         const nextSpinTime = scheduleState.getNextSpinTimeString(lastSpinTimestamp);
-        const dashboardUrl = 'https://spin-shape.vercel.app/api/schedule';
+        const dashboardUrl = 'https://spin-shape.vercel.app/api/status';
         
         try {
           await notifier.sendSpinAvailableNotification(
