@@ -2,6 +2,7 @@
 require("dotenv").config();
 const { ethers, JsonRpcProvider } = require("ethers");
 const scheduleState = require("../lib/schedule-state");
+const { caches, TTL } = require("../lib/cache");
 
 const abi = [
   {"inputs":[{"internalType":"address","name":"collector","type":"address"}],"name":"canSpin","outputs":[{"internalType":"bool","name":"","type":"bool"}],"stateMutability":"view","type":"function"},
@@ -26,37 +27,67 @@ module.exports = async (req, res) => {
       return res.status(500).json({ error: "PUBLIC_ADDRESS not configured" });
     }
 
-    // Try to resolve ENS name
+    // Try to resolve ENS name with caching
     let ensName = null;
-    try {
-      // Create mainnet provider for ENS resolution (ENS is on Ethereum mainnet)
-      // Don't pass network config - let ethers auto-detect to get ENS support
-      const mainnetProvider = new JsonRpcProvider(
-        `https://eth-mainnet.g.alchemy.com/v2/${alchemyApiKey}`
-      );
-      
-      // Wait for network to be ready
-      await mainnetProvider.getNetwork();
-      
-      ensName = await mainnetProvider.lookupAddress(publicAddress);
-      
-      // If we got an ENS name, verify it resolves back to the same address
-      if (ensName) {
-        const resolvedAddress = await mainnetProvider.resolveName(ensName);
-        if (resolvedAddress?.toLowerCase() !== publicAddress.toLowerCase()) {
-          // ENS mismatch - reverse and forward resolution don't match
-          ensName = null;
+    const ensCacheKey = `ens:${publicAddress.toLowerCase()}`;
+    
+    // Check cache first
+    ensName = caches.ens.get(ensCacheKey);
+    
+    if (ensName === null) {
+      // Not in cache, fetch from blockchain
+      try {
+        // Create mainnet provider for ENS resolution (ENS is on Ethereum mainnet)
+        // Don't pass network config - let ethers auto-detect to get ENS support
+        const mainnetProvider = new JsonRpcProvider(
+          `https://eth-mainnet.g.alchemy.com/v2/${alchemyApiKey}`
+        );
+        
+        // Wait for network to be ready
+        await mainnetProvider.getNetwork();
+        
+        ensName = await mainnetProvider.lookupAddress(publicAddress);
+        
+        // If we got an ENS name, verify it resolves back to the same address
+        if (ensName) {
+          const resolvedAddress = await mainnetProvider.resolveName(ensName);
+          if (resolvedAddress?.toLowerCase() !== publicAddress.toLowerCase()) {
+            // ENS mismatch - reverse and forward resolution don't match
+            ensName = null;
+          }
         }
+        
+        // Cache the result (even if null) for 30 days
+        caches.ens.set(ensCacheKey, ensName, TTL.ENS);
+        console.log(`ENS lookup cached for ${publicAddress}: ${ensName || 'none'}`);
+      } catch (error) {
+        console.log('ENS lookup error:', error.message);
+        // Cache null for shorter time on error (1 hour)
+        caches.ens.set(ensCacheKey, null, TTL.CONTRACT);
       }
-    } catch (error) {
-      console.log('ENS lookup error:', error.message);
+    } else {
+      console.log(`ENS lookup from cache for ${publicAddress}: ${ensName || 'none'}`);
     }
 
     // Since we're only reading, we don't need a wallet with private key
     const contract = new ethers.Contract(contractAddress, abi, provider);
     
-    const spins = await contract.getSpins(publicAddress);
-    const spinCount = spins.length;
+    // Get spins with smart caching
+    const spinsCacheKey = `spins:${publicAddress.toLowerCase()}`;
+    let spins = caches.spins.get(spinsCacheKey);
+    let spinCount;
+    
+    if (spins === null) {
+      // Not in cache, fetch from blockchain
+      spins = await contract.getSpins(publicAddress);
+      // Cache permanently - will be invalidated when new spin detected
+      caches.spins.set(spinsCacheKey, spins);
+      console.log(`Fetched ${spins.length} spins from blockchain for ${publicAddress}`);
+    } else {
+      console.log(`Using cached ${spins.length} spins for ${publicAddress}`);
+    }
+    
+    spinCount = spins.length;
     
     let lastSpinTime = null;
     let lastSpinTimestamp = null;
@@ -80,8 +111,20 @@ module.exports = async (req, res) => {
     const nextSpinTime = scheduleState.getNextSpinTimeString(lastSpinTimestamp);
     const nextSpinDate = scheduleState.calculateNextSpinTime(lastSpinTimestamp);
     
-    // Get the actual blockchain answer about whether we can spin
+    // Always fetch canSpin fresh - it's time-sensitive
     const canSpinNow = await contract.canSpin(publicAddress);
+    console.log(`canSpin fetched from blockchain: ${canSpinNow}`);
+    
+    // If they can spin now but we have cached spins, check if we should invalidate
+    if (canSpinNow && spins.length > 0) {
+      // Check if it's been 24h since last spin
+      const hoursSince = (Date.now() - lastSpinTimestamp) / (1000 * 60 * 60);
+      if (hoursSince >= 24) {
+        // They're eligible for a new spin, clear the spins cache so it refreshes next time
+        caches.spins.set(spinsCacheKey, null);
+        console.log('User eligible for new spin, cleared spins cache for next refresh');
+      }
+    }
     
     // Calculate time until next spin
     const now = Date.now();

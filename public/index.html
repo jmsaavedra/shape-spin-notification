@@ -629,9 +629,56 @@
             }
         }
         
-        loadSchedule();
-        // Refresh data every 30 seconds
-        setInterval(loadSchedule, 30000);
+        // Smart polling system
+        let pollInterval = null;
+        let lastSpinCount = null;
+        let checkInterval = 30000; // Start with 30 seconds
+        
+        async function checkForUpdates() {
+            try {
+                const response = await fetch('/api/check-updates', {
+                    headers: { 'Accept': 'application/json' }
+                });
+                const data = await response.json();
+                
+                // Update polling interval based on server suggestion
+                if (data.suggestedPollInterval && data.suggestedPollInterval !== checkInterval) {
+                    checkInterval = data.suggestedPollInterval;
+                    console.log(`Polling interval adjusted to ${checkInterval/1000} seconds`);
+                    
+                    // Restart the interval with new timing
+                    if (pollInterval) clearInterval(pollInterval);
+                    pollInterval = setInterval(checkForUpdates, checkInterval);
+                }
+                
+                // If there are updates or spin status changed, fetch full data
+                const previousCanSpin = globalData?.canSpinNow;
+                if (data.hasUpdates || data.spinCount !== lastSpinCount || data.canSpinNow !== previousCanSpin) {
+                    console.log('Updates detected, fetching full data...');
+                    await loadSchedule();
+                    lastSpinCount = data.spinCount;
+                    
+                    // Show a notification if spin is now available
+                    if (data.canSpinNow && !previousCanSpin) {
+                        console.log('🎰 SPIN IS NOW AVAILABLE!');
+                        // Could add browser notification here if desired
+                    }
+                }
+            } catch (error) {
+                console.error('Error checking for updates:', error);
+            }
+        }
+        
+        // Initial load
+        loadSchedule().then(() => {
+            lastSpinCount = globalData?.currentSpinCount;
+            // Start smart polling
+            checkForUpdates();
+            pollInterval = setInterval(checkForUpdates, checkInterval);
+        });
+        
+        // Also do a full refresh every 10 minutes as a fallback
+        setInterval(loadSchedule, 10 * 60 * 1000);
     </script>
 </body>
 </html>

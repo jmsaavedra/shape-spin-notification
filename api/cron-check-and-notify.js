@@ -3,6 +3,7 @@ require("dotenv").config();
 const { ethers, JsonRpcProvider } = require("ethers");
 const scheduleState = require("../lib/schedule-state");
 const LoopMessageNotifier = require("../lib/loopmessage-notify");
+const { caches, TTL } = require("../lib/cache");
 
 const abi = [
   {"inputs":[{"internalType":"address","name":"collector","type":"address"}],"name":"canSpin","outputs":[{"internalType":"bool","name":"","type":"bool"}],"stateMutability":"view","type":"function"},
@@ -45,9 +46,26 @@ module.exports = async (req, res) => {
     // Since we're only reading, we don't need a wallet with private key
     const contract = new ethers.Contract(contractAddress, abi, provider);
     
-    // Get current spin count and check if we can spin
-    const spins = await contract.getSpins(publicAddress);
+    // Get current spin count with caching
+    const spinsCacheKey = `spins:${publicAddress.toLowerCase()}`;
+    let spins = caches.spins.get(spinsCacheKey);
+    
+    // For cron, we should periodically refresh the spins to detect new ones
+    // Check fresh data every time since this is our notification trigger
+    const freshSpins = await contract.getSpins(publicAddress);
+    
+    // If we have cached spins and the count changed, user completed a spin
+    if (spins && freshSpins.length > spins.length) {
+      console.log(`New spin detected! Count increased from ${spins.length} to ${freshSpins.length}`);
+    }
+    
+    // Update cache with fresh data
+    spins = freshSpins;
+    caches.spins.set(spinsCacheKey, spins);
+    
     const spinCount = spins.length;
+    
+    // Always fetch canSpin fresh for accurate notification timing
     const canSpinNow = await contract.canSpin(publicAddress);
     
     let lastSpinTimestamp = null;
