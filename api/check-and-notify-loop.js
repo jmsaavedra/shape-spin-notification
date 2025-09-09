@@ -11,7 +11,10 @@ const abi = [
 
 const contractAddress = "0x99BB9Dca4F8Ed3FB04eCBE2bA9f5f378301DBaC1";
 
-const provider = new JsonRpcProvider("https://shape-mainnet.g.alchemy.com/public", {
+const alchemyApiKey = process.env.ALCHEMY_API_KEY || 'public';
+const rpcUrl = `https://shape-mainnet.g.alchemy.com/v2/${alchemyApiKey}`;
+
+const provider = new JsonRpcProvider(rpcUrl, {
     name: 'shape-mainnet',
     chainId: 360
 });
@@ -20,25 +23,16 @@ const provider = new JsonRpcProvider("https://shape-mainnet.g.alchemy.com/public
 let lastNotifiedSpinCount = null;
 
 module.exports = async (req, res) => {
-  // Verify cron authentication
-  const authHeader = req.headers['authorization'];
-  
-  if (process.env.CRON_SECRET) {
-    if (authHeader !== `Bearer ${process.env.CRON_SECRET}`) {
-      return res.status(401).json({ error: 'Unauthorized' });
-    }
-  }
-
   try {
     // Check required environment variables
-    const privateKey = process.env.PRIVATE_KEY;
+    const publicAddress = process.env.PUBLIC_ADDRESS;
     const loopAuthKey = process.env.LOOPMESSAGE_AUTH_KEY;
     const loopSecretKey = process.env.LOOPMESSAGE_SECRET_KEY;
     const notificationNumber = process.env.NOTIFICATION_NUMBER;
     const senderName = process.env.LOOPMESSAGE_SENDER_NAME || 'Spin Shape';
     
-    if (!privateKey) {
-      throw new Error("PRIVATE_KEY environment variable is not set");
+    if (!publicAddress) {
+      throw new Error("PUBLIC_ADDRESS environment variable is not set");
     }
     
     // Only send notifications if LoopMessage is configured
@@ -48,13 +42,19 @@ module.exports = async (req, res) => {
       console.log("LoopMessage notifications not configured. Set LOOPMESSAGE_AUTH_KEY, LOOPMESSAGE_SECRET_KEY, and NOTIFICATION_NUMBER to enable.");
     }
 
-    const wallet = new ethers.Wallet(privateKey, provider);
-    const contract = new ethers.Contract(contractAddress, abi, wallet);
+    // Since we're only reading, we don't need a wallet with private key
+    const contract = new ethers.Contract(contractAddress, abi, provider);
     
     // Get current spin count and check if we can spin
-    const spins = await contract.getSpins(wallet.address);
+    const spins = await contract.getSpins(publicAddress);
     const spinCount = spins.length;
-    const canSpinNow = await contract.canSpin(wallet.address);
+    const canSpinNow = await contract.canSpin(publicAddress);
+    
+    let lastSpinTimestamp = null;
+    if (spins.length > 0) {
+      const lastSpinTs = spins[spins.length - 1].timestamp;
+      lastSpinTimestamp = Number(lastSpinTs) * 1000; // Convert to milliseconds
+    }
     
     console.log(`Current spin count: ${spinCount}, Can spin: ${canSpinNow}`);
     
@@ -70,7 +70,7 @@ module.exports = async (req, res) => {
         console.log(`New spin available! Sending LoopMessage notification for spin #${spinCount + 1}`);
         
         const notifier = new LoopMessageNotifier(loopAuthKey, loopSecretKey, notificationNumber, senderName);
-        const nextSpinTime = scheduleState.getNextSpinTimeString(spinCount);
+        const nextSpinTime = scheduleState.getNextSpinTimeString(lastSpinTimestamp);
         const dashboardUrl = 'https://spin-shape.vercel.app/api/schedule';
         
         try {
@@ -105,7 +105,7 @@ module.exports = async (req, res) => {
     // Calculate when the next spin will be available
     let timeUntilNextCheck = "Not available";
     if (!canSpinNow && spins.length > 0) {
-      const nextSpinDate = scheduleState.calculateNextSpinTime(spinCount);
+      const nextSpinDate = scheduleState.calculateNextSpinTime(lastSpinTimestamp);
       const msUntil = nextSpinDate.getTime() - Date.now();
       const hoursUntil = Math.floor(msUntil / (1000 * 60 * 60));
       const minutesUntil = Math.floor((msUntil % (1000 * 60 * 60)) / (1000 * 60));
