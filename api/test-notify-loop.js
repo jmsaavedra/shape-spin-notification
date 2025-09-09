@@ -3,15 +3,6 @@ require("dotenv").config();
 const LoopMessageNotifier = require("../lib/loopmessage-notify");
 
 module.exports = async (req, res) => {
-  // Simple auth check - you should use a more secure method in production
-  const authHeader = req.headers['authorization'];
-  
-  if (process.env.CRON_SECRET) {
-    if (authHeader !== `Bearer ${process.env.CRON_SECRET}`) {
-      return res.status(401).json({ error: 'Unauthorized' });
-    }
-  }
-
   try {
     const loopAuthKey = process.env.LOOPMESSAGE_AUTH_KEY;
     const loopSecretKey = process.env.LOOPMESSAGE_SECRET_KEY;

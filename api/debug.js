@@ -10,26 +10,29 @@ const abi = [
 
 const contractAddress = "0x99BB9Dca4F8Ed3FB04eCBE2bA9f5f378301DBaC1";
 
-const provider = new JsonRpcProvider("https://shape-mainnet.g.alchemy.com/public", {
+const alchemyApiKey = process.env.ALCHEMY_API_KEY || 'public';
+const rpcUrl = `https://shape-mainnet.g.alchemy.com/v2/${alchemyApiKey}`;
+
+const provider = new JsonRpcProvider(rpcUrl, {
     name: 'shape-mainnet',
     chainId: 360
 });
 
 module.exports = async (req, res) => {
   try {
-    const privateKey = process.env.PRIVATE_KEY;
-    if (!privateKey) {
-      return res.status(500).json({ error: "PRIVATE_KEY not configured" });
+    const publicAddress = process.env.PUBLIC_ADDRESS;
+    if (!publicAddress) {
+      return res.status(500).json({ error: "PUBLIC_ADDRESS not configured" });
     }
 
-    const wallet = new ethers.Wallet(privateKey, provider);
-    const contract = new ethers.Contract(contractAddress, abi, wallet);
+    // Since we're only reading, we don't need a wallet with private key
+    const contract = new ethers.Contract(contractAddress, abi, provider);
     
-    // Get all spins for our wallet
-    const spins = await contract.getSpins(wallet.address);
+    // Get all spins for our address
+    const spins = await contract.getSpins(publicAddress);
     
     // Check if we can spin now (contract's own logic)
-    const canSpinNow = await contract.canSpin(wallet.address);
+    const canSpinNow = await contract.canSpin(publicAddress);
     
     // Process spin data
     const processedSpins = spins.map((spin, index) => ({
@@ -74,7 +77,7 @@ module.exports = async (req, res) => {
         ]
       },
       walletData: {
-        address: wallet.address,
+        address: publicAddress,
         totalSpins: spins.length,
         canSpinNow: canSpinNow,
         canSpinReason: canSpinNow ? "24+ hours have passed" : "Must wait 24 hours between spins"
@@ -87,7 +90,7 @@ module.exports = async (req, res) => {
       sampleHashCheck: sampleHashCollector ? {
         hash: spins[0].hash,
         collector: sampleHashCollector,
-        isOurs: sampleHashCollector.toLowerCase() === wallet.address.toLowerCase()
+        isOurs: sampleHashCollector.toLowerCase() === publicAddress.toLowerCase()
       } : null
     });
     

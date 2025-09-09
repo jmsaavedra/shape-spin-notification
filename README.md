@@ -1,25 +1,26 @@
-# 🌀 Spin for SHAPE
+# 🌀 Shape Medal Spin Notification App
 
-Automated daily spin scheduler for the Shape Network Medal game with an incrementing time schedule.
+Automated daily spin status iMessage notification for the Shape Network Medal Spin Game.
 
 ## Overview
 
-This project automates daily spins on the [MedalSpin contract](https://shapescan.xyz/address/0x99BB9Dca4F8Ed3FB04eCBE2bA9f5f378301DBaC1) deployed on Shape Network. It ensures you never miss your daily spin while implementing a unique incrementing schedule system that adds 1 minute each day (4:00 PM, 4:01 PM, 4:02 PM, etc.).
+This project monitors your wallet on the [MedalSpin contract](https://shapescan.xyz/address/0x99BB9Dca4F8Ed3FB04eCBE2bA9f5f378301DBaC1) and sends you iMessage notifications when you can spin. It tracks the incrementing schedule that adds 1 minute each day (4:00 PM, 4:01 PM, 4:02 PM, etc.).
 
 ## Features
 
-- 🤖 **Automated Daily Spins** - Never miss your 24-hour spin window
-- ⏰ **Smart Scheduling** - Incrementing schedule adds 1 minute daily to account for blockchain processing time
-- 🔒 **Secure** - Protected endpoints with CRON_SECRET authentication
+- 🤖 **Spin Monitoring** - Checks every 10 minutes when your next spin is available
+- 📱 **iMessage Notifications** - Get alerted within 10 minutes of spin availability (with MetaMask deep links)
+- 🔒 **Secure** - Uses public addresses only, no private keys needed for monitoring
 - 📊 **Dashboard** - Real-time schedule tracking and spin history
-- 🎯 **Efficient** - Optimized cron checks only during potential spin windows
+- 🎯 **Efficient** - Uses Alchemy RPC for reliability
+- ⚡ **Fast** - Notifications within 10 minutes of spin availability
 
 ## How It Works
 
-1. **Vercel Cron Job** runs every 15 minutes between 3-10 PM UTC
-2. **Smart Scheduler** checks if 24+ hours have passed and if it's the scheduled time
-3. **Contract Interaction** calls `spin()` with a random hash on the MedalSpin contract
-4. **Medal Collection** - Visit [Shape Medal Spin](https://stack.shape.network/medal-spin) to claim your medals
+1. **Vercel Cron Job** runs every 10 minutes to check spin availability
+2. **Smart Monitor** checks if you can spin on the blockchain
+3. **Notification** sends iMessage with MetaMask deep link when ready
+4. **Manual Spin** - Click the link to open MetaMask and spin
 
 ## Contract Details
 
@@ -32,8 +33,8 @@ This project automates daily spins on the [MedalSpin contract](https://shapescan
 
 ### Prerequisites
 - Node.js 18+
-- Vercel account
-- Wallet with ETH on Shape Network
+- **Vercel Pro account** ($20/month - required for timely notifications)
+- Public wallet address to monitor
 
 ### Installation
 
@@ -48,10 +49,15 @@ cd spin-shape
 npm install
 ```
 
-3. Configure environment variables in Vercel:
+3. Configure environment variables:
 ```env
-PRIVATE_KEY=your_wallet_private_key
-CRON_SECRET=your_generated_secret  # Generate with: openssl rand -base64 32
+PUBLIC_ADDRESS=0x...  # Wallet address to monitor
+ALCHEMY_API_KEY=your_key  # Optional but recommended for reliability
+
+# For iMessage notifications (optional):
+LOOPMESSAGE_AUTH_KEY=your_auth_key
+LOOPMESSAGE_SECRET_KEY=your_secret_key
+NOTIFICATION_NUMBER=+1234567890
 ```
 
 4. Deploy to Vercel:
@@ -78,8 +84,8 @@ Technical details including:
 - Spin time gaps analysis
 - Hash verification
 
-### 🎯 `/api/cron` (Protected)
-Automated spin execution endpoint (Vercel Cron only)
+### 🔔 `/api/check-and-notify-loop`
+Cron endpoint that checks if you can spin and sends notifications
 
 ## Schedule Logic
 
@@ -95,9 +101,9 @@ This ensures a consistent 24-hour gap while preventing timing conflicts.
 
 ## Security
 
-- ✅ CRON_SECRET authentication prevents unauthorized access
-- ✅ Method validation (GET only)
-- ✅ Environment variables for sensitive data
+- ✅ Read-only operations (no private keys needed)
+- ✅ Public address monitoring only
+- ✅ Environment variables for API credentials
 - ✅ Rate limiting through Vercel
 
 ## Development
@@ -114,10 +120,17 @@ vercel logs
 
 ## Important Notes
 
-- Spins are recorded on-chain and cannot be reversed
+- **Requires Vercel Pro** ($20/month) - Free tier's once-daily check is useless for this use case
+- This bot only monitors and notifies - it does NOT automatically spin
+- You must manually spin through Shape's website or MetaMask
 - Medal outcomes are determined when you visit the Shape Medal site
-- The bot only handles the blockchain transaction, not medal generation
-- Maintain ETH balance for gas fees
+- Notifications include a MetaMask deep link for quick access
+
+## Support
+
+Support open source software! Tips appreciated.
+- **ETH**: `0x56bdE1E5efC80B1E2B958f2D311f4176945Ae77f`
+- **SOL**: `4ReFALhC44f2V3x14MkVQGjXUPTnXRzwUdJuvRkU8KBG`
 
 ## License
 
