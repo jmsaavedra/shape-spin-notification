@@ -1,5 +1,4 @@
 {
-  "outputDirectory": ".",
   "functions": {
     "api/cron-check-and-notify.js": {
       "maxDuration": 30
