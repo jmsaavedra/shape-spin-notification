@@ -3,4 +3,3 @@ node_modules
 .DS_Store
 .vercel
 public/assets/dev/
-vercel.json
