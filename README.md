@@ -38,7 +38,7 @@ This project monitors your wallet on the [MedalSpin contract](https://shapescan.
 ### Prerequisites
 - Node.js 18+
 - **Vercel Pro account** ($20/month - required for timely notifications)
-- **LoopMessage account** (if you want to receive iMessage/SMS notifications) - [Sign up at loopmessage.com](https://loopmessage.com)
+- **[LoopMessage](https://loopmessage.com) account** - if you want to receive iMessage/SMS notifications (Free Sandbox, plenty)
 - Public wallet address to monitor
 
 ### Installation
@@ -61,7 +61,6 @@ npm install
 ```env
 PUBLIC_ADDRESS=0x...  # Wallet address to monitor
 ALCHEMY_API_KEY=your_key  # Optional but recommended for reliability
-CRON_INTERVAL_MINUTES=5  # How often to check (5, 10, 15, 30, etc.)
 
 # For iMessage text notifications (optional):
 LOOPMESSAGE_AUTH_KEY=your_auth_key
@@ -105,23 +104,24 @@ The bot tracks a simple 24-hour cooldown period:
 
 - Each spin becomes available exactly 24 hours after your last spin
 - Notifications are sent at the next cron interval after availability
-- Cron interval is configurable via `CRON_INTERVAL_MINUTES` environment variable
+- Cron interval is automatically detected from vercel.json configuration
 
-### Cron Schedule Configuration
+### Changing the Cron Schedule
 
-To set or change the check interval:
+To modify how often the app checks for spins:
 
 1. Edit `vercel.json` and update the cron schedule:
    ```json
    "schedule": "*/10 * * * *"  // Change 10 to your desired minutes
    ```
-   Common intervals: `*/5` (5 min), `*/10` (10 min), `*/15` (15 min), `*/30` (30 min)
 
-2. Set matching `CRON_INTERVAL_MINUTES` in your Vercel environment variables
+2. Deploy to Vercel - the dashboard will automatically detect the new interval
 
-3. Commit and push the changes
-
-**Note**: The CRON_INTERVAL_MINUTES environment variable is used for dashboard display accuracy.
+Common intervals:
+- `*/5 * * * *` - Every 5 minutes
+- `*/10 * * * *` - Every 10 minutes  
+- `*/15 * * * *` - Every 15 minutes
+- `*/30 * * * *` - Every 30 minutes
 
 ## Security
 
@@ -132,12 +132,36 @@ To set or change the check interval:
 
 ## Development
 
-Run locally:
-```bash
-npx vercel dev --listen 4000
-```
+### Running Locally
 
-View logs:
+1. **Set up environment variables**:
+   ```bash
+   cp .env.example .env
+   # Edit .env and add your configuration
+   ```
+
+2. **Install dependencies**:
+   ```bash
+   npm install
+   ```
+
+3. **Start the development server**:
+   ```bash
+   npx vercel dev --listen 4000
+   ```
+   The app will be available at http://localhost:4000
+
+4. **Test the endpoints**:
+   - Dashboard: http://localhost:4000
+   - Status API: http://localhost:4000/api/status
+   - Debug info: http://localhost:4000/api/debug
+   - Manual cron trigger: http://localhost:4000/api/cron-check-and-notify
+
+**Note**: When running locally, the cron job won't run automatically. You can manually trigger it by visiting `/api/cron-check-and-notify` in your browser.
+
+### Production Logs
+
+View Vercel deployment logs:
 ```bash
 vercel logs
 ```

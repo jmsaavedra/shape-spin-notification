@@ -100,11 +100,11 @@ module.exports = async (req, res) => {
           });
         }
       }
-      // If cannot spin (user already completed it) and we haven't acknowledged this spin yet
+      // If user has already completed their spin, just update the count without sending notification
       else if (!canSpinNow && spinCount > lastNotifiedSpinCount) {
-        console.log(`User already completed spin #${spinCount}. Sending confirmation notification.`);
+        console.log(`User already completed spin #${spinCount}. Updating count without notification.`);
+        lastNotifiedSpinCount = spinCount; // Update to current spin count
         
-        const notifier = new LoopMessageNotifier(loopAuthKey, loopSecretKey, notificationNumber, senderName);
         const nextSpinDate = scheduleState.calculateNextSpinTime(lastSpinTimestamp);
         const nextSpinDateFormatted = nextSpinDate.toLocaleString('en-US', {
           timeZone: 'America/New_York',
@@ -116,28 +116,12 @@ module.exports = async (req, res) => {
           hour12: true
         });
         
-        try {
-          await notifier.sendAlreadyCompletedNotification(spinCount, nextSpinDateFormatted);
-          
-          lastNotifiedSpinCount = spinCount; // Update to current spin count
-          
-          return res.status(200).json({
-            message: "Already spun - confirmation notification sent",
-            spinNumber: spinCount,
-            notificationSent: true,
-            provider: "LoopMessage",
-            nextSpinTime: nextSpinDateFormatted
-          });
-        } catch (notifyError) {
-          console.error("Failed to send confirmation notification:", notifyError);
-          return res.status(200).json({
-            message: "Already spun - notification failed",
-            spinNumber: spinCount,
-            notificationSent: false,
-            provider: "LoopMessage",
-            error: notifyError.message
-          });
-        }
+        return res.status(200).json({
+          message: "Already spun - tracking updated",
+          spinNumber: spinCount,
+          notificationSent: false,
+          nextSpinTime: nextSpinDateFormatted
+        });
       }
     }
     
