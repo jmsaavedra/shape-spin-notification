@@ -1,10 +1,10 @@
 # 🌀 Shape Medal Spin Notification App
 
-Automated daily spin status iMessage notification for the Shape Network Medal Spin Game.
+Automated daily spin status iMessage notification for the Shape Network [Medal Spin Game](https://stack.shape.network/medal-spin).
 
 ## Overview
 
-This project monitors your wallet on the [MedalSpin contract](https://shapescan.xyz/address/0x99BB9Dca4F8Ed3FB04eCBE2bA9f5f378301DBaC1) and sends you iMessage notifications when you can spin. It tracks the incrementing schedule that adds 1 minute each day (4:00 PM, 4:01 PM, 4:02 PM, etc.).
+This project monitors your wallet on the [MedalSpin contract](https://shapescan.xyz/address/0x99BB9Dca4F8Ed3FB04eCBE2bA9f5f378301DBaC1) and sends you iMessage notifications when you can spin. It tracks the 24-hour cooldown period between spins.
 
 ## Features
 
@@ -89,15 +89,11 @@ Cron endpoint that checks if you can spin and sends notifications
 
 ## Schedule Logic
 
-The bot implements an incrementing schedule to account for blockchain processing delays:
+The bot tracks a simple 24-hour cooldown period:
 
-- **Day 1**: 4:00 PM ET
-- **Day 2**: 4:01 PM ET  
-- **Day 3**: 4:02 PM ET
-- **Day 4**: 4:03 PM ET
-- ...and so on
-
-This ensures a consistent 24-hour gap while preventing timing conflicts.
+- Each spin becomes available exactly 24 hours after your last spin
+- Notifications are sent at the next cron interval after availability
+- Default cron runs every 5-10 minutes for timely notifications
 
 ## Security
 
