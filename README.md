@@ -1,6 +1,6 @@
 # 🌀 Shape Medal Spin Notification App
 
-![SPIN Logo](public/assets/SPIN-logo-header.png)
+<img src="public/assets/SPIN-logo-header.png" alt="SPIN Logo" width="50%">
 
 **Demo Instance: [https://spin-shape.vercel.app/](https://spin-shape.vercel.app/)**
 
@@ -55,6 +55,9 @@ npm install
 ```
 
 3. Configure environment variables:
+   - **For local development**: Copy `.env.example` to `.env` and fill in your values
+   - **For Vercel deployment**: Add these variables in your Vercel project settings
+
 ```env
 PUBLIC_ADDRESS=0x...  # Wallet address to monitor
 ALCHEMY_API_KEY=your_key  # Optional but recommended for reliability
