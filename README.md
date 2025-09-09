@@ -207,6 +207,8 @@ vercel logs
 
 ## Support
 
+Made with 🤍 by [@josdotph](https://twitter.com/josdotph). Read the story of this app [here](https://x.com/josdotph/status/1965448584763236541).
+
 Support open source software! Tips appreciated.
 
 - **ETH**: `0x56bdE1E5efC80B1E2B958f2D311f4176945Ae77f`
