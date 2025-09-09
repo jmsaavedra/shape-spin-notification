@@ -107,19 +107,21 @@ The bot tracks a simple 24-hour cooldown period:
 - Notifications are sent at the next cron interval after availability
 - Cron interval is configurable via `CRON_INTERVAL_MINUTES` environment variable
 
-### Dynamic Cron Configuration
+### Cron Schedule Configuration
 
-The cron schedule is dynamically generated during deployment:
+To set or change the check interval:
 
-1. Set `CRON_INTERVAL_MINUTES` in your Vercel environment variables (e.g., `5`, `10`, `30`)
-2. During deployment, `vercel-build` script generates `vercel.json` from `vercel.template.json`
-3. The generated cron schedule matches your configured interval
-4. Dashboard automatically displays accurate notification timing
+1. Edit `vercel.json` and update the cron schedule:
+   ```json
+   "schedule": "*/10 * * * *"  // Change 10 to your desired minutes
+   ```
+   Common intervals: `*/5` (5 min), `*/10` (10 min), `*/15` (15 min), `*/30` (30 min)
 
-To change the check interval:
-- Update `CRON_INTERVAL_MINUTES` in Vercel dashboard
-- Redeploy your application
-- The new schedule takes effect immediately
+2. Set matching `CRON_INTERVAL_MINUTES` in your Vercel environment variables
+
+3. Commit and push the changes
+
+**Note**: The CRON_INTERVAL_MINUTES environment variable is used for dashboard display accuracy.
 
 ## Security
 

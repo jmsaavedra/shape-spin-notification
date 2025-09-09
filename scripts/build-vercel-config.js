@@ -11,8 +11,8 @@ if (process.env.NODE_ENV !== 'production' && !process.env.VERCEL) {
   require('dotenv').config();
 }
 
-console.log('Build environment:', process.env.VERCEL ? 'Vercel' : 'Local');
-console.log('CRON_INTERVAL_MINUTES from env:', process.env.CRON_INTERVAL_MINUTES);
+// Note: This script is kept for reference but Vercel uses the committed vercel.json
+// Users should manually update vercel.json when changing cron intervals
 
 const cronInterval = process.env.CRON_INTERVAL_MINUTES || '10';
 
