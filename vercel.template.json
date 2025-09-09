@@ -7,7 +7,7 @@
   "crons": [
     {
       "path": "/api/cron-check-and-notify",
-      "schedule": "*/30 * * * *"
+      "schedule": "*/{{CRON_INTERVAL_MINUTES}} * * * *"
     }
   ]
 }

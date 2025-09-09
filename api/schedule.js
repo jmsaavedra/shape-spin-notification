@@ -99,7 +99,19 @@ module.exports = async (req, res) => {
     });
     
     // Calculate when the notification will actually arrive (next cron interval)
-    const cronInterval = parseInt(process.env.CRON_INTERVAL_MINUTES || '10');
+    // Parse the cron interval from vercel.json to keep it in sync
+    let cronInterval = 10; // default fallback
+    try {
+      const vercelConfig = require('../vercel.json');
+      const cronSchedule = vercelConfig.crons?.[0]?.schedule || '*/10 * * * *';
+      // Extract the interval from patterns like "*/5 * * * *" or "*/30 * * * *"
+      const match = cronSchedule.match(/^\*\/(\d+)/);
+      if (match) {
+        cronInterval = parseInt(match[1]);
+      }
+    } catch (error) {
+      console.log('Could not parse vercel.json, using default interval:', error.message);
+    }
     const notificationTime = new Date(nextSpinDate);
     const minutes = notificationTime.getMinutes();
     const nextInterval = Math.ceil(minutes / cronInterval) * cronInterval;

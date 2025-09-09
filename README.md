@@ -65,18 +65,21 @@ NOTIFICATION_NUMBER=+1234567890
 vercel --prod
 ```
 
-## API Endpoints
+## Routes & Endpoints
 
 ### 🏠 `/` 
-Minimalist homepage with secret emoji link
-
-### 📅 `/api/schedule`
-Dashboard showing:
+Main dashboard showing:
 - Current spin count
 - Last spin time
 - Next scheduled spin
+- Can spin now status
 - Complete spin history
-- Live status updates
+- Live timer updates
+- ENS name resolution
+- Monitoring wallet address
+
+### 📅 `/api/schedule`
+JSON API returning spin status data (used by dashboard)
 
 ### 🔧 `/api/debug`
 Technical details including:
@@ -84,7 +87,7 @@ Technical details including:
 - Spin time gaps analysis
 - Hash verification
 
-### 🔔 `/api/check-and-notify-loop`
+### 🔔 `/api/cron-check-and-notify`
 Cron endpoint that checks if you can spin and sends notifications
 
 ## Schedule Logic

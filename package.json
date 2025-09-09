@@ -4,7 +4,10 @@
   "description": "This project contains a script that calls the `spin` method on the deployed `MedalSpin` contract every 24.1 hours.",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "prebuild": "node scripts/build-vercel-config.js",
+    "build": "echo 'Build complete'",
+    "vercel-build": "node scripts/build-vercel-config.js"
   },
   "keywords": [],
   "author": "",
