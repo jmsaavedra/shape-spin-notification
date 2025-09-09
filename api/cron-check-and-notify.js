@@ -4,6 +4,7 @@ const { ethers, JsonRpcProvider } = require("ethers");
 const scheduleState = require("../lib/schedule-state");
 const LoopMessageNotifier = require("../lib/loopmessage-notify");
 const { caches, TTL } = require("../lib/cache");
+const { batchContractCalls } = require("../lib/multicall");
 
 const abi = [
   {"inputs":[{"internalType":"address","name":"collector","type":"address"}],"name":"canSpin","outputs":[{"internalType":"bool","name":"","type":"bool"}],"stateMutability":"view","type":"function"},
@@ -48,25 +49,26 @@ module.exports = async (req, res) => {
     
     // Get current spin count with caching
     const spinsCacheKey = `spins:${publicAddress.toLowerCase()}`;
-    let spins = caches.spins.get(spinsCacheKey);
+    let cachedSpins = caches.spins.get(spinsCacheKey);
     
-    // For cron, we should periodically refresh the spins to detect new ones
-    // Check fresh data every time since this is our notification trigger
-    const freshSpins = await contract.getSpins(publicAddress);
+    // For cron, batch fetch both spins and canSpin fresh every time
+    // This is our notification trigger so we need accurate real-time data
+    const [freshSpins, canSpinNow] = await batchContractCalls([
+      { contract, method: 'getSpins', args: [publicAddress] },
+      { contract, method: 'canSpin', args: [publicAddress] }
+    ], provider);
     
     // If we have cached spins and the count changed, user completed a spin
-    if (spins && freshSpins.length > spins.length) {
-      console.log(`New spin detected! Count increased from ${spins.length} to ${freshSpins.length}`);
+    if (cachedSpins && freshSpins.length > cachedSpins.length) {
+      console.log(`New spin detected! Count increased from ${cachedSpins.length} to ${freshSpins.length}`);
     }
     
     // Update cache with fresh data
-    spins = freshSpins;
+    const spins = freshSpins;
     caches.spins.set(spinsCacheKey, spins);
     
     const spinCount = spins.length;
-    
-    // Always fetch canSpin fresh for accurate notification timing
-    const canSpinNow = await contract.canSpin(publicAddress);
+    console.log(`Current spin count: ${spinCount}, Can spin: ${canSpinNow} (via multicall)`);
     
     let lastSpinTimestamp = null;
     if (spins.length > 0) {

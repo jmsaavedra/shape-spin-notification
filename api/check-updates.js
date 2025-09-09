@@ -2,6 +2,7 @@
 require("dotenv").config();
 const { ethers, JsonRpcProvider } = require("ethers");
 const { caches } = require("../lib/cache");
+const { batchContractCalls } = require("../lib/multicall");
 
 const abi = [
   {"inputs":[{"internalType":"address","name":"collector","type":"address"}],"name":"canSpin","outputs":[{"internalType":"bool","name":"","type":"bool"}],"stateMutability":"view","type":"function"},
@@ -26,11 +27,11 @@ module.exports = async (req, res) => {
 
     const contract = new ethers.Contract(contractAddress, abi, provider);
     
-    // Quick checks - minimize API calls
-    const [canSpinNow, spins] = await Promise.all([
-      contract.canSpin(publicAddress),
-      contract.getSpins(publicAddress)
-    ]);
+    // Batch both contract calls into a single RPC request using multicall
+    const [canSpinNow, spins] = await batchContractCalls([
+      { contract, method: 'canSpin', args: [publicAddress] },
+      { contract, method: 'getSpins', args: [publicAddress] }
+    ], provider);
     
     const spinCount = spins.length;
     let lastSpinTimestamp = null;

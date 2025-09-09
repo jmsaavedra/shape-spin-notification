@@ -3,6 +3,7 @@ require("dotenv").config();
 const { ethers, JsonRpcProvider } = require("ethers");
 const scheduleState = require("../lib/schedule-state");
 const { caches, TTL } = require("../lib/cache");
+const { batchContractCalls } = require("../lib/multicall");
 
 const abi = [
   {"inputs":[{"internalType":"address","name":"collector","type":"address"}],"name":"canSpin","outputs":[{"internalType":"bool","name":"","type":"bool"}],"stateMutability":"view","type":"function"},
@@ -75,16 +76,26 @@ module.exports = async (req, res) => {
     // Get spins with smart caching
     const spinsCacheKey = `spins:${publicAddress.toLowerCase()}`;
     let spins = caches.spins.get(spinsCacheKey);
+    let canSpinNow;
     let spinCount;
     
     if (spins === null) {
-      // Not in cache, fetch from blockchain
-      spins = await contract.getSpins(publicAddress);
-      // Cache permanently - will be invalidated when new spin detected
+      // Not in cache, batch fetch both spins and canSpin from blockchain
+      const [spinsResult, canSpinResult] = await batchContractCalls([
+        { contract, method: 'getSpins', args: [publicAddress] },
+        { contract, method: 'canSpin', args: [publicAddress] }
+      ], provider);
+      
+      spins = spinsResult;
+      canSpinNow = canSpinResult;
+      
+      // Cache spins permanently - will be invalidated when new spin detected
       caches.spins.set(spinsCacheKey, spins);
-      console.log(`Fetched ${spins.length} spins from blockchain for ${publicAddress}`);
+      console.log(`Fetched ${spins.length} spins and canSpin (${canSpinNow}) from blockchain via multicall`);
     } else {
-      console.log(`Using cached ${spins.length} spins for ${publicAddress}`);
+      // Spins are cached, only fetch canSpin
+      canSpinNow = await contract.canSpin(publicAddress);
+      console.log(`Using cached ${spins.length} spins, fetched canSpin: ${canSpinNow}`);
     }
     
     spinCount = spins.length;
@@ -110,10 +121,6 @@ module.exports = async (req, res) => {
     
     const nextSpinTime = scheduleState.getNextSpinTimeString(lastSpinTimestamp);
     const nextSpinDate = scheduleState.calculateNextSpinTime(lastSpinTimestamp);
-    
-    // Always fetch canSpin fresh - it's time-sensitive
-    const canSpinNow = await contract.canSpin(publicAddress);
-    console.log(`canSpin fetched from blockchain: ${canSpinNow}`);
     
     // If they can spin now but we have cached spins, check if we should invalidate
     if (canSpinNow && spins.length > 0) {
