@@ -6,8 +6,13 @@
 const fs = require('fs');
 const path = require('path');
 
-// Load environment variables
-require('dotenv').config();
+// Load environment variables (only in local development)
+if (process.env.NODE_ENV !== 'production' && !process.env.VERCEL) {
+  require('dotenv').config();
+}
+
+console.log('Build environment:', process.env.VERCEL ? 'Vercel' : 'Local');
+console.log('CRON_INTERVAL_MINUTES from env:', process.env.CRON_INTERVAL_MINUTES);
 
 const cronInterval = process.env.CRON_INTERVAL_MINUTES || '10';
 
