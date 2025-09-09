@@ -1,6 +1,6 @@
 # 🌀 Shape Medal Spin Notification App
 
-![SPIN Logo](assets/SPIN-logo-header.png)
+![SPIN Logo](public/assets/SPIN-logo-header.png)
 
 **Demo Instance: [https://spin-shape.vercel.app/](https://spin-shape.vercel.app/)**
 

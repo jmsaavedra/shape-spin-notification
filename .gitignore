@@ -2,5 +2,5 @@
 node_modules
 .DS_Store
 .vercel
-assets/dev/
+public/assets/dev/
 vercel.json
