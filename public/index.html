@@ -205,16 +205,18 @@
                 order: 6;
             }
             
-            /* Ensure buttons and other grid children maintain proper order */
-            .spin-button {
+            /* Description card comes after schedule cards */
+            .card.description {
                 order: 7;
             }
             
-            .card.description {
+            /* Medal stats comes after description */
+            .card.medal-stats {
                 order: 8;
             }
             
-            .card:last-child {
+            /* Spin history comes after medal stats */
+            .card.spin-history {
                 order: 9;
             }
             
@@ -263,10 +265,10 @@
         .description {
             grid-column: 1 / -1;
             text-align: center;
-            font-size: 16px;
+            font-size: 18px;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             border: 2px solid #667eea;
-            padding: 24px;
+            padding: 24px 32px;
             font-weight: 500;
             animation: pulse-glow 3s ease-in-out infinite;
         }
@@ -287,14 +289,43 @@
         }
         
         .spin-history-row {
-            display: flex;
+            display: grid;
+            grid-template-columns: 24px 80px 20px auto 70px 1fr 90px;
             align-items: center;
-            gap: 10px;
+            gap: 8px;
             padding: 10px 0;
             border-bottom: 1px solid #222;
             font-family: monospace;
             font-size: 13px;
             opacity: 0.9;
+        }
+        
+        @media (max-width: 768px) {
+            .spin-history-row {
+                display: flex;
+                flex-wrap: wrap;
+                gap: 5px;
+                font-size: 11px;
+                position: relative;
+                padding-right: 70px;
+            }
+            
+            .spin-history-row > span:nth-child(5) {
+                display: none;
+            }
+            
+            .spin-history-row > span:nth-child(6) {
+                display: none;
+            }
+            
+            .spin-history-row .medal-badge {
+                position: absolute;
+                right: 5px;
+                top: 50%;
+                transform: translateY(-50%);
+                font-size: 10px;
+                padding: 2px 6px;
+            }
         }
         
         .spin-history-row:last-child {
@@ -306,9 +337,8 @@
             background: rgba(255, 255, 255, 0.02);
         }
         
-        .spin-button {
-            grid-column: 1 / -1;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        .spin-button-available {
+            background: linear-gradient(135deg, #22c55e 0%, #10b981 100%);
             color: white;
             padding: 20px;
             border-radius: 12px;
@@ -318,23 +348,24 @@
             font-weight: 600;
             transition: transform 0.2s, box-shadow 0.2s;
             display: block;
-            margin-top: 10px;
+            margin-bottom: 20px;
+            border: 2px solid #22c55e;
+            animation: pulse-glow-green 2s ease-in-out infinite;
         }
         
-        .spin-button:hover {
+        .spin-button-available:hover {
             transform: translateY(-2px);
-            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.4);
+            box-shadow: 0 10px 30px rgba(34, 197, 94, 0.4);
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
         }
         
-        .spin-button.disabled {
-            background: #333;
-            cursor: not-allowed;
-            opacity: 0.5;
-        }
-        
-        .spin-button.disabled:hover {
-            transform: none;
-            box-shadow: none;
+        @keyframes pulse-glow-green {
+            0%, 100% {
+                box-shadow: 0 0 20px rgba(34, 197, 94, 0.4);
+            }
+            50% {
+                box-shadow: 0 0 40px rgba(34, 197, 94, 0.6);
+            }
         }
         
         .footer {
@@ -561,7 +592,15 @@
                         : 'https://stack.shape.network/medal-spin')
                     : '#';
                 
+                // Only show spin button when spin is available
+                const spinButton = data.canSpinNow ? `
+                    <a href="${spinLink}" class="spin-button-available">
+                        🎰 ${shouldUseDeepLink ? 'Spin Now in MetaMask' : 'Spin Now on Shape'}
+                    </a>
+                ` : '';
+                
                 const html = `
+                    ${spinButton}
                     <div class="grid">
                         <div class="card card-spin-count">
                             <div class="card-label">
@@ -619,23 +658,13 @@
                             <div class="card-value" id="time-until">${data.timeUntilSpin || 'Calculating...'}</div>
                         </div>
                         
-                        ${data.canSpinNow ? `
-                            <a href="${spinLink}" class="spin-button">
-                                🎰 ${shouldUseDeepLink ? 'Spin Now in MetaMask' : 'Spin Now on Shape'}
-                            </a>
-                        ` : `
-                            <div class="spin-button disabled">
-                                ⏳ Wait ${data.timeUntilSpin || 'Calculating...'}
-                            </div>
-                        `}
-                        
                         <div class="card description">
-                            ${data.description}
+                            <div>Spin #${data.currentSpinCount + 1} notification will be sent at <span style="white-space: nowrap">${data.notificationTime || 'calculating...'}</span></div>
                             ${data.notificationStatus ? `<div style="margin-top: 8px; font-size: 12px; opacity: 0.6;">${data.notificationStatus}</div>` : ''}
                         </div>
                         
                         ${data.medalStats ? `
-                        <div class="card" style="grid-column: 1 / -1;">
+                        <div class="card medal-stats" style="grid-column: 1 / -1;">
                             <div class="card-label">Spin Medal Statistics</div>
                             <div style="margin-top: 16px; display: flex; gap: 15px; flex-wrap: wrap; align-items: center;">
                                 <div style="display: flex; align-items: center; gap: 8px;">
@@ -655,14 +684,11 @@
                                     <span style="color: #fff; font-size: 14px;">Black: ${data.medalStats.black}</span>
                                 </div>
                             </div>
-                            <div style="margin-top: 12px; font-size: 11px; color: #999; font-style: italic;">
-                                Medals are matched to spins based on blockchain timestamps (awarded within minutes of spinning).
-                            </div>
                         </div>
                         ` : ''}
                         
                         ${data.spinHistory && data.spinHistory.length > 0 ? `
-                        <div class="card" style="grid-column: 1 / -1;">
+                        <div class="card spin-history" style="grid-column: 1 / -1;">
                             <div class="card-label">Spin History</div>
                             <div style="margin-top: 16px;">
                                 ${data.spinHistory.map((spin, i) => {
@@ -679,9 +705,18 @@
                                     <div class="spin-history-row">
                                         ${spinIconSmallSVG}
                                         <span style="color: #fff; font-weight: 600;">Spin #${i + 1}</span>
-                                        <span style="color: #fff;">•</span>
-                                        <span style="font-size: 13px; color: #fff;">${spin.timestamp ? new Date(spin.timestamp).toLocaleString() : spin.date}</span>
-                                        ${spin.gap ? `<span style="color: #4ade80; font-size: 12px; font-weight: 600; margin-left: 8px;">${spin.gap}</span>` : ''}
+                                        <span style="color: #fff; text-align: center;">•</span>
+                                        <span style="font-size: 13px; color: #fff;">${spin.timestamp ? new Date(spin.timestamp).toLocaleString('en-US', { 
+                                            year: 'numeric',
+                                            month: 'numeric',
+                                            day: 'numeric',
+                                            hour: '2-digit',
+                                            minute: '2-digit',
+                                            second: '2-digit',
+                                            hour12: false
+                                        }) : spin.date}</span>
+                                        <span style="color: #4ade80; font-size: 12px; font-weight: 600; text-align: left;">${spin.gap || 'First'}</span>
+                                        <span></span>
                                         ${medalBadge}
                                     </div>
                                     `;
@@ -713,7 +748,7 @@
         
         async function checkForUpdates() {
             try {
-                const response = await fetch('/api/check-updates', {
+                const response = await fetch('/api/updates', {
                     headers: { 'Accept': 'application/json' }
                 });
                 const data = await response.json();

@@ -1,7 +1,7 @@
 {
   "name": "spin-shape",
   "version": "1.0.0",
-  "description": "This project contains a script that calls the `spin` method on the deployed `MedalSpin` contract every 24.1 hours.",
+  "description": "Text notification app for Shape Medal Spin eligibility.",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"

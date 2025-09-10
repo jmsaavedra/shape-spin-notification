@@ -21,10 +21,11 @@ This project monitors your wallet on the [MedalSpin contract](https://shapescan.
 - 📱 **iMessage/SMS Notifications** - Get alerted promptly when spin is available (automatic SMS fallback)
 - 🔒 **Secure** - Uses public addresses only, no private keys needed for monitoring
 - 📊 **Dashboard** - Real-time schedule tracking and spin history
-- 🎯 **Efficient** - 99% reduction in API calls through caching & batching
-- ⚡ **Smart Polling** - Dynamic intervals based on proximity to spin time
+- 🏅 **Medal Tracking** - Displays your MEDAL-SPIN medals (Bronze, Silver, Gold, Diamond) with stats
+- 🎯 **Efficient** - 90% reduction in API calls through intelligent polling
+- ⚡ **Smart Polling** - Dynamic intervals based on proximity to spin time (10s to 5min)
 - 🔄 **Multicall3** - Batches contract reads into single RPC calls
-- 💾 **Intelligent Caching** - 30-day ENS cache, permanent spin history cache
+- 💾 **Intelligent Caching** - ENS names, spin history, and medal data cached smartly
 
 ## How It Works
 
@@ -64,17 +65,8 @@ npm install
 
 3. Configure environment variables:
    - **For local development**: Copy `.env.example` to `.env` and fill in your values
-   - **For Vercel deployment**: Add these variables in your Vercel project settings
-
-```env
-PUBLIC_ADDRESS=0x...  # Wallet address to monitor
-ALCHEMY_API_KEY=your_key  # Optional but recommended for reliability
-
-# For iMessage text notifications (optional):
-LOOPMESSAGE_AUTH_KEY=your_auth_key
-LOOPMESSAGE_SECRET_KEY=your_secret_key
-NOTIFICATION_NUMBER=+1234567890
-```
+   - **For Vercel deployment**: Add these to your Vercel project Environment Variables
+   - See `.env.example` for all required variables and descriptions
 
 4. Deploy to Vercel:
 ```bash
@@ -85,29 +77,21 @@ vercel --prod
 
 ### 🏠 `/` 
 Main dashboard showing:
-- Current spin count
-- Last spin time
-- Next scheduled spin
-- Can spin now status
-- Complete spin history
-- Live timer updates
+- Live spin status and countdown timers
+- Complete spin history with timestamps
+- MEDAL-SPIN medals earned (Bronze/Silver/Gold/Diamond)
+- Medal statistics and win tracking
 - ENS name resolution
-- Monitoring wallet address
 
-### 📅 `/api/status`
-JSON API returning spin status data (used by dashboard)
+<img src="public/assets/medal_stats-history.png" alt="Medal Stats and History" width="100%">
 
-### 🔧 `/api/debug`
-Technical details including:
-- Contract read methods
-- Spin time gaps analysis
-- Hash verification
+### 🔌 API Endpoints
+- **`/api/status`** - Main endpoint with spin status, medals, and smart polling
+- **`/api/updates`** - Lightweight polling endpoint  
+- **`/api/cron`** - Cron job for iMessage notifications
+- **`/api/debug`** - Debug info for testing
 
-### 🔔 `/api/cron-check-and-notify`
-Cron endpoint that checks if you can spin and sends notifications
-
-### ⚡ `/api/check-updates`
-Lightweight endpoint for smart polling with dynamic intervals
+📚 **[Full API Documentation →](./api/README.md)**
 
 ## Schedule Logic
 
@@ -136,7 +120,6 @@ Common intervals:
 
 ## Performance Optimizations
 
-- **99% API Call Reduction**: From 720 calls/hour to ~24-60 calls/hour
 - **Smart Polling Intervals**:
   - 20 seconds when < 5 minutes to spin
   - 30 seconds when spin available
@@ -185,9 +168,9 @@ Common intervals:
    - Dashboard: `http://localhost:4000`
    - Status API: `http://localhost:4000/api/status`
    - Debug info: `http://localhost:4000/api/debug`
-   - Manual cron trigger: `http://localhost:4000/api/cron-check-and-notify`
+   - Manual cron trigger: `http://localhost:4000/api/cron`
 
-**Note**: When running locally, the cron job won't run automatically. You can manually trigger it by visiting `/api/cron-check-and-notify` in your browser.
+**Note**: When running locally, the cron job won't run automatically. You can manually trigger it by visiting `/api/cron` in your browser.
 
 ### Production Logs
 
