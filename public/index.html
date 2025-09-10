@@ -634,7 +634,7 @@
                                 ${spinIconSVG}
                                 Last Spin
                             </div>
-                            <div class="card-value" id="last-spin-time">${data.lastSpinTimestamp ? new Date(data.lastSpinTimestamp).toLocaleString() : 'Never'}</div>
+                            <div class="card-value" id="last-spin-time">${data.lastSpinTime || 'Never'}</div>
                         </div>
                         
                         <div class="card">
@@ -666,7 +666,7 @@
                                 ${spinIconSVG}
                                 Next Spin
                             </div>
-                            <div class="card-value" id="next-spin-time">${data.nextSpinTimestamp ? new Date(data.nextSpinTimestamp).toLocaleString() : 'Calculating...'}</div>
+                            <div class="card-value" id="next-spin-time">${data.nextSpinTime || 'Calculating...'}</div>
                         </div>
                         
                         <div class="card">
