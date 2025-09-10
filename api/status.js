@@ -133,11 +133,20 @@ module.exports = async (req, res) => {
     if (spins.length > 0) {
       const lastSpinTs = spins[spins.length - 1].timestamp;
       lastSpinTimestamp = Number(lastSpinTs) * 1000; // Convert to milliseconds
-      lastSpinTime = new Date(lastSpinTimestamp).toLocaleString('en-US', {
+      const lastSpinDate = new Date(lastSpinTimestamp);
+      const lastSpinDateString = lastSpinDate.toLocaleDateString('en-US', {
         timeZone: 'America/New_York',
-        dateStyle: 'short',
-        timeStyle: 'medium'
+        year: '2-digit',
+        month: '2-digit',
+        day: '2-digit'
       });
+      const lastSpinTimeString = lastSpinDate.toLocaleTimeString('en-US', {
+        timeZone: 'America/New_York',
+        hour: 'numeric',
+        minute: '2-digit',
+        second: '2-digit'
+      });
+      lastSpinTime = `${lastSpinDateString}, ${lastSpinTimeString}`;
       
       const now = Date.now();
       const hoursSince = Math.floor((now - lastSpinTimestamp) / (1000 * 60 * 60));
@@ -207,6 +216,12 @@ module.exports = async (req, res) => {
       hour12: true
     });
     
+    const notificationDateString = notificationTime.toLocaleDateString('en-US', {
+      timeZone: 'America/New_York',
+      month: 'short',
+      day: 'numeric'
+    });
+    
     // Process MEDAL-SPIN medals
     let medalSpinMedals = [];
     let medalStats = null;
@@ -214,11 +229,22 @@ module.exports = async (req, res) => {
     // Smart caching: Skip fetching if we have cached data and conditions are met
     const currentTime = Math.floor(Date.now() / 1000);
     const todayStart = Math.floor(new Date().setHours(0, 0, 0, 0) / 1000);
-    const shouldUseCachedMedals = cachedMedalSpinData && lastFetchTimestamp && (
+    
+    // Check if the most recent spin has a medal matched
+    let mostRecentSpinHasMedal = false;
+    if (cachedMedalSpinData && spins.length > 0) {
+      const mostRecentSpinTime = Number(spins[spins.length - 1].timestamp) * 1000;
+      mostRecentSpinHasMedal = cachedMedalSpinData.medals.some(m => {
+        const timeDiff = m.timestamp - mostRecentSpinTime;
+        return timeDiff >= 0 && timeDiff <= 1800000; // Within 30 minutes
+      });
+    }
+    
+    const shouldUseCachedMedals = cachedMedalSpinData && lastFetchTimestamp && mostRecentSpinHasMedal && (
       // Can't spin and we've fetched today
       (!canSpinNow && lastFetchTimestamp >= todayStart) ||
-      // Can't spin and fetched within last hour
-      (!canSpinNow && (currentTime - lastFetchTimestamp) < 3600) ||
+      // Can't spin and fetched within last 5 minutes (reduced from 1 hour)
+      (!canSpinNow && (currentTime - lastFetchTimestamp) < 300) ||
       // Have all medals up to yesterday and can't spin today
       (!canSpinNow && lastSpinTimestamp && lastFetchTimestamp >= (lastSpinTimestamp + 600))
     );
@@ -350,8 +376,8 @@ module.exports = async (req, res) => {
         // Find a medal that was awarded shortly after this spin
         const matchingMedal = medalSpinMedals.find(m => {
           const timeDiff = m.timestamp - spinTimestamp;
-          // Medal should be awarded within 10 minutes (600 seconds) after spin
-          return timeDiff >= 0 && timeDiff <= 600;
+          // Medal should be awarded within 30 minutes (1800 seconds) after spin
+          return timeDiff >= 0 && timeDiff <= 1800;
         });
         
         if (matchingMedal) {
@@ -365,11 +391,22 @@ module.exports = async (req, res) => {
       return {
         spinNumber: index + 1,
         timestamp: timestamp,
-        date: new Date(timestamp).toLocaleString('en-US', {
-          timeZone: 'America/New_York',
-          dateStyle: 'short',
-          timeStyle: 'medium'
-        }),
+        date: (() => {
+          const d = new Date(timestamp);
+          const dateStr = d.toLocaleDateString('en-US', {
+            timeZone: 'America/New_York',
+            year: '2-digit',
+            month: '2-digit',
+            day: '2-digit'
+          });
+          const timeStr = d.toLocaleTimeString('en-US', {
+            timeZone: 'America/New_York',
+            hour: 'numeric',
+            minute: '2-digit',
+            second: '2-digit'
+          });
+          return `${dateStr}, ${timeStr}`;
+        })(),
         gap: gap,
         medal: medal
       };
@@ -421,8 +458,9 @@ module.exports = async (req, res) => {
       timeUntilSpin: timeUntilSpin,
       walletAddress: publicAddress,
       ensName: ensName,
-      description: `Spin #${spinCount + 1} notification will be sent at ${notificationTimeString} ET`,
+      description: `Spin #${spinCount + 1} notification will be sent on ${notificationDateString} at ${notificationTimeString} ET`,
       notificationTime: `${notificationTimeString} ET`,
+      notificationDate: notificationDateString,
       notificationStatus: notificationStatus,
       useMetaMaskDeepLink: process.env.USE_METAMASK_MOBILE_DEEPLINK === 'true',
       spinHistory: spinHistory,
