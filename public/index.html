@@ -389,6 +389,44 @@
             text-decoration: underline;
         }
         
+        .medal-badge {
+            display: inline-flex;
+            align-items: center;
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 11px;
+            font-weight: 600;
+            margin-left: 8px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .medal-badge.bronze {
+            background: linear-gradient(135deg, #CD7F32, #B87333);
+            color: white;
+        }
+        
+        .medal-badge.silver {
+            background: linear-gradient(135deg, #C0C0C0, #B8B8B8);
+            color: #333;
+        }
+        
+        .medal-badge.gold {
+            background: linear-gradient(135deg, #FFD700, #FFC700);
+            color: #333;
+        }
+        
+        .medal-badge.black {
+            background: linear-gradient(135deg, #2a2a2a, #1a1a1a);
+            color: white;
+        }
+        
+        .medal-badge.none {
+            background: rgba(255, 255, 255, 0.1);
+            color: #999;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        
         @media (max-width: 480px) {
             .footer-links {
                 flex-direction: column;
@@ -596,19 +634,58 @@
                             ${data.notificationStatus ? `<div style="margin-top: 8px; font-size: 12px; opacity: 0.6;">${data.notificationStatus}</div>` : ''}
                         </div>
                         
+                        ${data.medalStats ? `
+                        <div class="card" style="grid-column: 1 / -1;">
+                            <div class="card-label">Spin Medal Statistics</div>
+                            <div style="margin-top: 16px; display: flex; gap: 15px; flex-wrap: wrap; align-items: center;">
+                                <div style="display: flex; align-items: center; gap: 8px;">
+                                    <span class="medal-dot bronze"></span>
+                                    <span style="color: #fff; font-size: 14px;">Bronze: ${data.medalStats.bronze}</span>
+                                </div>
+                                <div style="display: flex; align-items: center; gap: 8px;">
+                                    <span class="medal-dot silver"></span>
+                                    <span style="color: #fff; font-size: 14px;">Silver: ${data.medalStats.silver}</span>
+                                </div>
+                                <div style="display: flex; align-items: center; gap: 8px;">
+                                    <span class="medal-dot gold"></span>
+                                    <span style="color: #fff; font-size: 14px;">Gold: ${data.medalStats.gold}</span>
+                                </div>
+                                <div style="display: flex; align-items: center; gap: 8px;">
+                                    <span class="medal-dot obsidian"></span>
+                                    <span style="color: #fff; font-size: 14px;">Black: ${data.medalStats.black}</span>
+                                </div>
+                            </div>
+                            <div style="margin-top: 12px; font-size: 11px; color: #999; font-style: italic;">
+                                Medals are matched to spins based on blockchain timestamps (awarded within minutes of spinning).
+                            </div>
+                        </div>
+                        ` : ''}
+                        
                         ${data.spinHistory && data.spinHistory.length > 0 ? `
                         <div class="card" style="grid-column: 1 / -1;">
                             <div class="card-label">Spin History</div>
                             <div style="margin-top: 16px;">
-                                ${data.spinHistory.map((spin, i) => `
+                                ${data.spinHistory.map((spin, i) => {
+                                    const medal = spin.medal;
+                                    let medalBadge = '';
+                                    if (medal) {
+                                        const tierClass = medal.tier.toLowerCase().replace('/', '');
+                                        medalBadge = `<span class="medal-badge ${tierClass}">${medal.tier === 'Black/Obsidian' ? 'Black' : medal.tier}</span>`;
+                                    } else {
+                                        medalBadge = '<span class="medal-badge none">No Medal</span>';
+                                    }
+                                    
+                                    return `
                                     <div class="spin-history-row">
                                         ${spinIconSmallSVG}
                                         <span style="color: #fff; font-weight: 600;">Spin #${i + 1}</span>
                                         <span style="color: #fff;">•</span>
                                         <span style="font-size: 13px; color: #fff;">${spin.timestamp ? new Date(spin.timestamp).toLocaleString() : spin.date}</span>
                                         ${spin.gap ? `<span style="color: #4ade80; font-size: 12px; font-weight: 600; margin-left: 8px;">${spin.gap}</span>` : ''}
+                                        ${medalBadge}
                                     </div>
-                                `).join('')}
+                                    `;
+                                }).join('')}
                             </div>
                         </div>
                         ` : ''}
