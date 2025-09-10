@@ -133,11 +133,20 @@ module.exports = async (req, res) => {
     if (spins.length > 0) {
       const lastSpinTs = spins[spins.length - 1].timestamp;
       lastSpinTimestamp = Number(lastSpinTs) * 1000; // Convert to milliseconds
-      lastSpinTime = new Date(lastSpinTimestamp).toLocaleString('en-US', {
+      const lastSpinDate = new Date(lastSpinTimestamp);
+      const lastSpinDateString = lastSpinDate.toLocaleDateString('en-US', {
         timeZone: 'America/New_York',
-        dateStyle: 'short',
-        timeStyle: 'medium'
+        year: '2-digit',
+        month: '2-digit',
+        day: '2-digit'
       });
+      const lastSpinTimeString = lastSpinDate.toLocaleTimeString('en-US', {
+        timeZone: 'America/New_York',
+        hour: 'numeric',
+        minute: '2-digit',
+        second: '2-digit'
+      });
+      lastSpinTime = `${lastSpinDateString}, ${lastSpinTimeString}`;
       
       const now = Date.now();
       const hoursSince = Math.floor((now - lastSpinTimestamp) / (1000 * 60 * 60));
@@ -205,6 +214,12 @@ module.exports = async (req, res) => {
       hour: 'numeric',
       minute: '2-digit',
       hour12: true
+    });
+    
+    const notificationDateString = notificationTime.toLocaleDateString('en-US', {
+      timeZone: 'America/New_York',
+      month: 'short',
+      day: 'numeric'
     });
     
     // Process MEDAL-SPIN medals
@@ -376,11 +391,22 @@ module.exports = async (req, res) => {
       return {
         spinNumber: index + 1,
         timestamp: timestamp,
-        date: new Date(timestamp).toLocaleString('en-US', {
-          timeZone: 'America/New_York',
-          dateStyle: 'short',
-          timeStyle: 'medium'
-        }),
+        date: (() => {
+          const d = new Date(timestamp);
+          const dateStr = d.toLocaleDateString('en-US', {
+            timeZone: 'America/New_York',
+            year: '2-digit',
+            month: '2-digit',
+            day: '2-digit'
+          });
+          const timeStr = d.toLocaleTimeString('en-US', {
+            timeZone: 'America/New_York',
+            hour: 'numeric',
+            minute: '2-digit',
+            second: '2-digit'
+          });
+          return `${dateStr}, ${timeStr}`;
+        })(),
         gap: gap,
         medal: medal
       };
@@ -432,8 +458,9 @@ module.exports = async (req, res) => {
       timeUntilSpin: timeUntilSpin,
       walletAddress: publicAddress,
       ensName: ensName,
-      description: `Spin #${spinCount + 1} notification will be sent at ${notificationTimeString} ET`,
+      description: `Spin #${spinCount + 1} notification will be sent on ${notificationDateString} at ${notificationTimeString} ET`,
       notificationTime: `${notificationTimeString} ET`,
+      notificationDate: notificationDateString,
       notificationStatus: notificationStatus,
       useMetaMaskDeepLink: process.env.USE_METAMASK_MOBILE_DEEPLINK === 'true',
       spinHistory: spinHistory,
