@@ -1,12 +1,12 @@
 {
   "functions": {
-    "api/cron-check-and-notify.js": {
+    "api/cron.js": {
       "maxDuration": 30
     }
   },
   "crons": [
     {
-      "path": "/api/cron-check-and-notify",
+      "path": "/api/cron",
       "schedule": "*/5 * * * *"
     }
   ]

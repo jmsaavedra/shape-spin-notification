@@ -39,8 +39,8 @@ This directory contains all Vercel serverless functions that power the Shape Spi
 - First load: 4 Alchemy API calls
 - With cache: 2 Alchemy API calls
 
-### `/api/check-updates`
-**File:** `check-updates.js`  
+### `/api/updates`
+**File:** `updates.js`  
 **Method:** `GET`  
 **Description:** Lightweight endpoint for checking if spin count has changed. Used by frontend for efficient polling.
 
@@ -57,8 +57,8 @@ This directory contains all Vercel serverless functions that power the Shape Spi
 - Returns suggested polling interval
 - Used to trigger full status refresh only when needed
 
-### `/api/cron-check-and-notify`
-**File:** `cron-check-and-notify.js`  
+### `/api/cron`
+**File:** `cron.js`  
 **Method:** `GET`  
 **Description:** Cron job endpoint that checks spin availability and sends iMessage notifications via LoopMessage.
 

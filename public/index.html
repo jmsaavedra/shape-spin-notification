@@ -713,7 +713,7 @@
         
         async function checkForUpdates() {
             try {
-                const response = await fetch('/api/check-updates', {
+                const response = await fetch('/api/updates', {
                     headers: { 'Accept': 'application/json' }
                 });
                 const data = await response.json();
