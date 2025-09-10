@@ -214,11 +214,22 @@ module.exports = async (req, res) => {
     // Smart caching: Skip fetching if we have cached data and conditions are met
     const currentTime = Math.floor(Date.now() / 1000);
     const todayStart = Math.floor(new Date().setHours(0, 0, 0, 0) / 1000);
-    const shouldUseCachedMedals = cachedMedalSpinData && lastFetchTimestamp && (
+    
+    // Check if the most recent spin has a medal matched
+    let mostRecentSpinHasMedal = false;
+    if (cachedMedalSpinData && spins.length > 0) {
+      const mostRecentSpinTime = Number(spins[spins.length - 1].timestamp) * 1000;
+      mostRecentSpinHasMedal = cachedMedalSpinData.medals.some(m => {
+        const timeDiff = m.timestamp - mostRecentSpinTime;
+        return timeDiff >= 0 && timeDiff <= 1800000; // Within 30 minutes
+      });
+    }
+    
+    const shouldUseCachedMedals = cachedMedalSpinData && lastFetchTimestamp && mostRecentSpinHasMedal && (
       // Can't spin and we've fetched today
       (!canSpinNow && lastFetchTimestamp >= todayStart) ||
-      // Can't spin and fetched within last hour
-      (!canSpinNow && (currentTime - lastFetchTimestamp) < 3600) ||
+      // Can't spin and fetched within last 5 minutes (reduced from 1 hour)
+      (!canSpinNow && (currentTime - lastFetchTimestamp) < 300) ||
       // Have all medals up to yesterday and can't spin today
       (!canSpinNow && lastSpinTimestamp && lastFetchTimestamp >= (lastSpinTimestamp + 600))
     );
@@ -350,8 +361,8 @@ module.exports = async (req, res) => {
         // Find a medal that was awarded shortly after this spin
         const matchingMedal = medalSpinMedals.find(m => {
           const timeDiff = m.timestamp - spinTimestamp;
-          // Medal should be awarded within 10 minutes (600 seconds) after spin
-          return timeDiff >= 0 && timeDiff <= 600;
+          // Medal should be awarded within 30 minutes (1800 seconds) after spin
+          return timeDiff >= 0 && timeDiff <= 1800;
         });
         
         if (matchingMedal) {
