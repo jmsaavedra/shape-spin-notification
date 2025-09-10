@@ -10,7 +10,14 @@ const abi = [
   {"inputs":[{"internalType":"address","name":"collector","type":"address"}],"name":"getSpins","outputs":[{"components":[{"internalType":"bytes32","name":"hash","type":"bytes32"},{"internalType":"uint256","name":"timestamp","type":"uint256"}],"internalType":"struct SpinInfo[]","name":"","type":"tuple[]"}],"stateMutability":"view","type":"function"}
 ];
 
+// Stack NFT ABI for medals
+const stackAbi = [
+  {"inputs":[{"internalType":"address","name":"_address","type":"address"}],"name":"addressToTokenId","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},
+  {"inputs":[{"internalType":"uint256","name":"stackId","type":"uint256"}],"name":"getStackMedals","outputs":[{"components":[{"internalType":"address","name":"stackOwner","type":"address"},{"internalType":"uint256","name":"stackId","type":"uint256"},{"internalType":"bytes32","name":"medalUID","type":"bytes32"},{"internalType":"uint16","name":"medalTier","type":"uint16"},{"internalType":"bytes","name":"medalData","type":"bytes"},{"internalType":"uint256","name":"timestamp","type":"uint256"}],"internalType":"struct ShapeMedalSchema[]","name":"","type":"tuple[]"}],"stateMutability":"view","type":"function"}
+];
+
 const contractAddress = "0x99BB9Dca4F8Ed3FB04eCBE2bA9f5f378301DBaC1";
+const STACK_NFT_CONTRACT = "0x76d6aC90A62Ca547d51D7AcAeD014167F81B9931";
 
 const alchemyApiKey = process.env.ALCHEMY_API_KEY || 'public';
 const rpcUrl = `https://shape-mainnet.g.alchemy.com/v2/${alchemyApiKey}`;
@@ -72,6 +79,7 @@ module.exports = async (req, res) => {
 
     // Since we're only reading, we don't need a wallet with private key
     const contract = new ethers.Contract(contractAddress, abi, provider);
+    const stackContract = new ethers.Contract(STACK_NFT_CONTRACT, stackAbi, provider);
     
     // Get spins with smart caching
     const spinsCacheKey = `spins:${publicAddress.toLowerCase()}`;
@@ -79,23 +87,41 @@ module.exports = async (req, res) => {
     let canSpinNow;
     let spinCount;
     
+    // Variables for Stack NFT data
+    let stackId = null;
+    let allMedals = [];
+    
+    // Check medal cache - we cache the processed MEDAL-SPIN medals, not all 288
+    const medalsCacheKey = `medalSpin:${publicAddress.toLowerCase()}`;
+    const lastFetchKey = `lastMedalFetch:${publicAddress.toLowerCase()}`;
+    let cachedMedalSpinData = caches.spins.get(medalsCacheKey); // Use spins cache for permanent storage
+    let lastFetchTimestamp = caches.spins.get(lastFetchKey);
+    
     if (spins === null) {
-      // Not in cache, batch fetch both spins and canSpin from blockchain
-      const [spinsResult, canSpinResult] = await batchContractCalls([
+      // Not in cache, batch fetch spins, canSpin, and stackId from blockchain
+      const [spinsResult, canSpinResult, stackIdResult] = await batchContractCalls([
         { contract, method: 'getSpins', args: [publicAddress] },
-        { contract, method: 'canSpin', args: [publicAddress] }
+        { contract, method: 'canSpin', args: [publicAddress] },
+        { contract: stackContract, method: 'addressToTokenId', args: [publicAddress] }
       ], provider);
       
       spins = spinsResult;
       canSpinNow = canSpinResult;
+      stackId = stackIdResult.toString();
       
       // Cache spins permanently - will be invalidated when new spin detected
       caches.spins.set(spinsCacheKey, spins);
-      console.log(`Fetched ${spins.length} spins and canSpin (${canSpinNow}) from blockchain via multicall`);
+      console.log(`Fetched ${spins.length} spins, canSpin (${canSpinNow}), and Stack ID (${stackId}) via multicall`);
     } else {
-      // Spins are cached, only fetch canSpin
-      canSpinNow = await contract.canSpin(publicAddress);
-      console.log(`Using cached ${spins.length} spins, fetched canSpin: ${canSpinNow}`);
+      // Spins are cached, fetch canSpin and stackId
+      const [canSpinResult, stackIdResult] = await batchContractCalls([
+        { contract, method: 'canSpin', args: [publicAddress] },
+        { contract: stackContract, method: 'addressToTokenId', args: [publicAddress] }
+      ], provider);
+      
+      canSpinNow = canSpinResult;
+      stackId = stackIdResult.toString();
+      console.log(`Using cached ${spins.length} spins, fetched canSpin and stackId via multicall`);
     }
     
     spinCount = spins.length;
@@ -127,9 +153,11 @@ module.exports = async (req, res) => {
       // Check if it's been 24h since last spin
       const hoursSince = (Date.now() - lastSpinTimestamp) / (1000 * 60 * 60);
       if (hoursSince >= 24) {
-        // They're eligible for a new spin, clear the spins cache so it refreshes next time
+        // They're eligible for a new spin, clear the spins and medals cache so it refreshes next time
         caches.spins.set(spinsCacheKey, null);
-        console.log('User eligible for new spin, cleared spins cache for next refresh');
+        caches.spins.set(medalsCacheKey, null);
+        caches.spins.set(lastFetchKey, null);
+        console.log('User eligible for new spin, cleared spins and medals cache for next refresh');
       }
     }
     
@@ -179,7 +207,126 @@ module.exports = async (req, res) => {
       hour12: true
     });
     
-    // Format spin history with timestamps and calculate gaps
+    // Process MEDAL-SPIN medals
+    let medalSpinMedals = [];
+    let medalStats = null;
+    
+    // Smart caching: Skip fetching if we have cached data and conditions are met
+    const currentTime = Math.floor(Date.now() / 1000);
+    const todayStart = Math.floor(new Date().setHours(0, 0, 0, 0) / 1000);
+    const shouldUseCachedMedals = cachedMedalSpinData && lastFetchTimestamp && (
+      // Can't spin and we've fetched today
+      (!canSpinNow && lastFetchTimestamp >= todayStart) ||
+      // Can't spin and fetched within last hour
+      (!canSpinNow && (currentTime - lastFetchTimestamp) < 3600) ||
+      // Have all medals up to yesterday and can't spin today
+      (!canSpinNow && lastSpinTimestamp && lastFetchTimestamp >= (lastSpinTimestamp + 600))
+    );
+    
+    if (shouldUseCachedMedals) {
+      medalSpinMedals = cachedMedalSpinData.medals;
+      medalStats = cachedMedalSpinData.stats;
+      console.log(`Using fully cached MEDAL-SPIN data (can't spin, data is current): ${medalSpinMedals.length} medals`);
+    } else if (stackId !== "0" && stackId) {
+      // Fetch medals if we have a valid Stack ID and they're not cached
+      try {
+        allMedals = await stackContract.getStackMedals(stackId);
+        console.log(`Fetched ${allMedals.length} medals for Stack ID ${stackId}, processing MEDAL-SPIN medals...`);
+        
+        // Process medals to find MEDAL-SPIN ones
+        try {
+        
+        // Filter for MEDAL-SPIN medals
+        const tierNames = ['Unknown', 'Bronze', 'Silver', 'Gold', 'Black/Obsidian'];
+        
+        for (const medal of allMedals) {
+          try {
+            // Check if this medal has the right tier number
+            const tierNumber = typeof medal.medalTier === 'bigint' ? 
+              Number(medal.medalTier) : medal.medalTier;
+            
+            // Skip processing if tier is out of range
+            if (tierNumber < 1 || tierNumber > 4) continue;
+            
+            let metadata = {};
+            try {
+              const dataString = ethers.toUtf8String(medal.medalData);
+              metadata = JSON.parse(dataString);
+            } catch (e) {
+              try {
+                const decoded = ethers.AbiCoder.defaultAbiCoder().decode(['string'], medal.medalData);
+                metadata = JSON.parse(decoded[0]);
+              } catch (e2) {}
+            }
+            
+            if (metadata.projectId === 'MEDAL-SPIN') {
+              // Convert BigInt timestamp to number
+              const medalTimestamp = typeof medal.timestamp === 'bigint' ? 
+                Number(medal.timestamp) : Number(medal.timestamp);
+              
+              medalSpinMedals.push({
+                tier: tierNumber,
+                tierName: tierNames[tierNumber] || `Tier-${tierNumber}`,
+                name: metadata.name || metadata.id || 'Medal',
+                timestamp: medalTimestamp
+              });
+            }
+          } catch (error) {
+            // Skip medals that can't be processed
+          }
+        }
+        
+          // If we have cached data and new timestamp, merge with existing medals
+          if (cachedMedalSpinData && lastFetchTimestamp && medalSpinMedals.length > 0) {
+            // Find medals newer than our last fetch
+            const newMedals = medalSpinMedals.filter(m => m.timestamp > lastFetchTimestamp);
+            if (newMedals.length > 0) {
+              console.log(`Found ${newMedals.length} new MEDAL-SPIN medals since last fetch`);
+              // Merge new medals with cached ones
+              const existingTimestamps = new Set(cachedMedalSpinData.medals.map(m => m.timestamp));
+              newMedals.forEach(medal => {
+                if (!existingTimestamps.has(medal.timestamp)) {
+                  cachedMedalSpinData.medals.push(medal);
+                }
+              });
+              medalSpinMedals = cachedMedalSpinData.medals;
+            } else {
+              console.log(`No new MEDAL-SPIN medals since last fetch`);
+              // Still update our last fetch time since we checked
+              medalSpinMedals = cachedMedalSpinData.medals;
+            }
+          }
+          
+          // Calculate medal statistics
+          if (medalSpinMedals.length > 0) {
+            // Sort medals by tier for proper assignment
+            medalSpinMedals.sort((a, b) => a.tier - b.tier);
+            
+            medalStats = {
+              total: medalSpinMedals.length,
+              bronze: medalSpinMedals.filter(m => m.tier === 1).length,
+              silver: medalSpinMedals.filter(m => m.tier === 2).length,
+              gold: medalSpinMedals.filter(m => m.tier === 3).length,
+              black: medalSpinMedals.filter(m => m.tier === 4).length
+            };
+            
+            // Cache the processed MEDAL-SPIN data (just 4 medals instead of 288!)
+            const cacheData = { medals: medalSpinMedals, stats: medalStats };
+            caches.spins.set(medalsCacheKey, cacheData);
+            // Store the timestamp of this fetch
+            caches.spins.set(lastFetchKey, currentTime);
+            console.log(`Cached ${medalSpinMedals.length} MEDAL-SPIN medals with fetch timestamp ${currentTime}`);
+          }
+        } catch (error) {
+          // If medal processing fails, just continue without medals
+          console.log('Could not process medals:', error.message);
+        }
+      } catch (error) {
+        console.log('Error fetching medals:', error.message);
+      }
+    }
+    
+    // Format spin history with timestamps, gaps, and medals
     const spinHistory = spins.map((spin, index) => {
       const timestamp = Number(spin.timestamp) * 1000; // Convert to milliseconds
       let gap = null;
@@ -193,6 +340,28 @@ module.exports = async (req, res) => {
         gap = `+${hours}h ${minutes}m`;
       }
       
+      // Match medals to spins by timestamp
+      // Medals are typically awarded within 10 minutes after a spin
+      let medal = null;
+      
+      if (medalSpinMedals && medalSpinMedals.length > 0) {
+        const spinTimestamp = Number(spin.timestamp);
+        
+        // Find a medal that was awarded shortly after this spin
+        const matchingMedal = medalSpinMedals.find(m => {
+          const timeDiff = m.timestamp - spinTimestamp;
+          // Medal should be awarded within 10 minutes (600 seconds) after spin
+          return timeDiff >= 0 && timeDiff <= 600;
+        });
+        
+        if (matchingMedal) {
+          medal = {
+            tier: matchingMedal.tierName,
+            name: matchingMedal.name
+          };
+        }
+      }
+      
       return {
         spinNumber: index + 1,
         timestamp: timestamp,
@@ -201,7 +370,8 @@ module.exports = async (req, res) => {
           dateStyle: 'short',
           timeStyle: 'medium'
         }),
-        gap: gap
+        gap: gap,
+        medal: medal
       };
     });
     
@@ -225,6 +395,20 @@ module.exports = async (req, res) => {
       notificationStatus = `iMessage notification is enabled, will be sent to ${censored}`;
     }
     
+    // Calculate intelligent polling interval based on time until next spin
+    let suggestedPollInterval;
+    if (canSpinNow) {
+      suggestedPollInterval = 10000; // 10 seconds when spin is available
+    } else if (timeUntilSpin <= 60) {
+      suggestedPollInterval = 10000; // 10 seconds when spin is within 1 minute
+    } else if (timeUntilSpin <= 300) {
+      suggestedPollInterval = 30000; // 30 seconds when spin is within 5 minutes
+    } else if (timeUntilSpin <= 3600) {
+      suggestedPollInterval = 60000; // 1 minute when spin is within 1 hour
+    } else {
+      suggestedPollInterval = 300000; // 5 minutes when spin is over 1 hour away
+    }
+    
     res.status(200).json({
       currentSpinCount: spinCount,
       lastSpinTime: lastSpinTime,
@@ -240,7 +424,9 @@ module.exports = async (req, res) => {
       description: `Spin #${spinCount + 1} notification will be sent at ${notificationTimeString} ET`,
       notificationStatus: notificationStatus,
       useMetaMaskDeepLink: process.env.USE_METAMASK_MOBILE_DEEPLINK === 'true',
-      spinHistory: spinHistory
+      spinHistory: spinHistory,
+      medalStats: medalStats,
+      suggestedPollInterval: suggestedPollInterval
     });
     
   } catch (error) {
