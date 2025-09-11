@@ -142,11 +142,12 @@ module.exports = async (req, res) => {
       });
       const lastSpinTimeString = lastSpinDate.toLocaleTimeString('en-US', {
         timeZone: 'America/New_York',
-        hour: 'numeric',
+        hour: '2-digit',
         minute: '2-digit',
-        second: '2-digit'
+        second: '2-digit',
+        hour12: false
       });
-      lastSpinTime = `${lastSpinDateString}, ${lastSpinTimeString}`;
+      lastSpinTime = `${lastSpinDateString}, ${lastSpinTimeString} ET`;
       
       const now = Date.now();
       const hoursSince = Math.floor((now - lastSpinTimestamp) / (1000 * 60 * 60));
@@ -211,9 +212,9 @@ module.exports = async (req, res) => {
     
     const notificationTimeString = notificationTime.toLocaleTimeString('en-US', {
       timeZone: 'America/New_York',
-      hour: 'numeric',
+      hour: '2-digit',
       minute: '2-digit',
-      hour12: true
+      hour12: false
     });
     
     const notificationDateString = notificationTime.toLocaleDateString('en-US', {

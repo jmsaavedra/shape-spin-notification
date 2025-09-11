@@ -73,8 +73,8 @@
             display: flex;
             justify-content: center;
             gap: 16px;
-            margin-top: 30px;
-            margin-bottom: 10px;
+            margin-top: 10px;
+            margin-bottom: 0;
         }
         
         .medal-dot {
@@ -399,7 +399,7 @@
         
         .footer {
             margin-top: 60px;
-            padding: 30px 20px 40px;
+            padding: 30px 20px 20px;
             border-top: 1px solid #222;
         }
         
@@ -413,9 +413,13 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            margin-bottom: 15px;
+            margin-bottom: 20px;
             font-size: 14px;
             opacity: 0.8;
+        }
+        
+        .footer-row:last-of-type {
+            margin-bottom: 15px;
         }
         
         .footer-row a {
@@ -686,7 +690,7 @@
                         </div>
                         
                         <div class="card description">
-                            <div><strong style="font-weight: 700;">Spin #${data.currentSpinCount + 1}</strong> notification will be sent on <strong style="font-weight: 700;">${data.notificationDate || ''}</strong> at <span style="white-space: nowrap"><strong style="font-weight: 700;">${data.notificationTime || 'calculating...'}</strong></span></div>
+                            <div><strong style="font-weight: 900;">Spin #${data.currentSpinCount + 1}</strong> notification will be sent on <strong style="font-weight: 900;">${data.notificationDate || ''}</strong> at <span style="white-space: nowrap"><strong style="font-weight: 900;">${data.notificationTime || 'calculating...'}</strong></span></div>
                             ${data.notificationStatus ? `<div style="margin-top: 8px; font-size: 12px; opacity: 0.6;">${data.notificationStatus}</div>` : ''}
                         </div>
                         
@@ -748,7 +752,7 @@
                                         <span style="color: #fff; text-align: center; display: block;">•</span>
                                         <span style="font-size: 13px; color: #fff;">${dateStr}</span>
                                         <span style="font-size: 13px; color: #fff;">${timeStr}</span>
-                                        <span style="color: #4ade80; font-size: 12px; font-weight: 600; text-align: left;">${spin.gap || 'First'}</span>
+                                        <span style="color: #4ade80; font-size: 12px; font-weight: 600; text-align: left;">${spin.gap || 'First!'}</span>
                                         <span></span>
                                         ${medalBadge}
                                     </div>
