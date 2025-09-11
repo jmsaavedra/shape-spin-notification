@@ -283,10 +283,11 @@
             text-align: center;
             font-size: 18px;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background-size: 200% 200%;
             border: 2px solid #667eea;
             padding: 24px 32px;
             font-weight: 500;
-            animation: pulse-glow 3s ease-in-out infinite;
+            animation: pulse-glow 3s ease-in-out infinite, gradient-shift 4s ease infinite;
         }
         
         @keyframes pulse-glow {
@@ -295,6 +296,18 @@
             }
             50% {
                 box-shadow: 0 0 40px rgba(102, 126, 234, 0.6);
+            }
+        }
+        
+        @keyframes gradient-shift {
+            0% {
+                background-position: 0% 50%;
+            }
+            50% {
+                background-position: 100% 50%;
+            }
+            100% {
+                background-position: 0% 50%;
             }
         }
         
@@ -407,7 +420,7 @@
         }
         
         .footer-links a {
-            color: #4a9eff;
+            color: #764ba2;
             text-decoration: none;
             transition: opacity 0.2s;
         }
@@ -425,6 +438,10 @@
             display: flex;
             align-items: center;
             gap: 6px;
+        }
+        
+        .github-link svg {
+            color: #fff !important;
         }
         
         .github-link:hover {
@@ -678,7 +695,7 @@
                         </div>
                         
                         <div class="card description">
-                            <div>Spin #${data.currentSpinCount + 1} notification will be sent on ${data.notificationDate || ''} at <span style="white-space: nowrap">${data.notificationTime || 'calculating...'}</span></div>
+                            <div><strong>Spin #${data.currentSpinCount + 1}</strong> notification will be sent on <strong>${data.notificationDate || ''}</strong> at <span style="white-space: nowrap"><strong>${data.notificationTime || 'calculating...'}</strong></span></div>
                             ${data.notificationStatus ? `<div style="margin-top: 8px; font-size: 12px; opacity: 0.6;">${data.notificationStatus}</div>` : ''}
                         </div>
                         

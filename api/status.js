@@ -429,7 +429,7 @@ module.exports = async (req, res) => {
       const lastTwo = phone.slice(-2);
       const middleLength = phone.length - countryCode.length - 2;
       const censored = countryCode + '*'.repeat(middleLength) + lastTwo;
-      notificationStatus = `iMessage notification is enabled, will be sent to ${censored}`;
+      notificationStatus = `iMessage notification will be sent to ${censored}`;
     }
     
     // Calculate intelligent polling interval based on time until next spin
