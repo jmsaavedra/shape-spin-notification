@@ -364,7 +364,7 @@ module.exports = async (req, res) => {
         const gapMs = timestamp - prevTimestamp;
         const hours = Math.floor(gapMs / (1000 * 60 * 60));
         const minutes = Math.floor((gapMs % (1000 * 60 * 60)) / (1000 * 60));
-        gap = `+${hours}h${minutes}m`;
+        gap = `+${hours}h ${minutes}m`;
       }
       
       // Match medals to spins by timestamp
@@ -462,6 +462,7 @@ module.exports = async (req, res) => {
       description: `Spin #${spinCount + 1} notification will be sent on ${notificationDateString} at ${notificationTimeString} ET`,
       notificationTime: `${notificationTimeString} ET`,
       notificationDate: notificationDateString,
+      notificationTimestamp: notificationTime.getTime(),
       notificationStatus: notificationStatus,
       useMetaMaskDeepLink: process.env.USE_METAMASK_MOBILE_DEEPLINK === 'true',
       spinHistory: spinHistory,

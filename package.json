@@ -4,7 +4,10 @@
   "description": "Text notification app for Shape Medal Spin eligibility.",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "dev": "node dev-server.js",
+    "dev:watch": "nodemon dev-server.js --watch api --watch public",
+    "vercel-dev": "vercel dev --listen 4000",
+    "deploy": "vercel --prod"
   },
   "keywords": [],
   "author": "@josdotph",
