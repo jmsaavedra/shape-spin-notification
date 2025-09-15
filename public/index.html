@@ -823,7 +823,7 @@
                                         <span style="color: #fff; text-align: center; display: block;">•</span>
                                         <span class="date-col" style="font-size: 13px; color: #fff;">${dateStr}</span>
                                         <span class="time-col" style="font-size: 13px; color: #fff;">${timeStr}</span>
-                                        <span class="time-gap" style="color: #4ade80; font-size: 12px; font-weight: 600;">${spin.gap || 'First!'}</span>
+                                        <span class="time-gap" style="color: ${spin.gap ? '#4ade80' : '#a7f3d0'}; font-size: 12px; font-weight: 600;">${spin.gap || 'First!'}</span>
                                         <span></span>
                                         ${medalBadge}
                                     </div>
