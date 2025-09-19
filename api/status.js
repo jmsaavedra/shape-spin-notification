@@ -36,6 +36,18 @@ module.exports = async (req, res) => {
       return res.status(500).json({ error: "PUBLIC_ADDRESS not configured" });
     }
 
+    // TEMP: Clear ALL cache to force fresh calculation
+    console.log(`DEBUG: publicAddress=${publicAddress}, toLowerCase=${publicAddress.toLowerCase()}`);
+    const tempSpinsCacheKey = `spins:${publicAddress.toLowerCase()}`;
+    const tempMedalsCacheKey = `medalSpin:${publicAddress.toLowerCase()}`;
+    const tempLastFetchKey = `medalSpinFetch:${publicAddress.toLowerCase()}`;
+    const tempLastMedalFetchKey = `lastMedalFetch:${publicAddress.toLowerCase()}`;
+    caches.spins.set(tempSpinsCacheKey, null);
+    caches.spins.set(tempMedalsCacheKey, null);
+    caches.spins.set(tempLastFetchKey, null);
+    caches.spins.set(tempLastMedalFetchKey, null);
+    console.log('TEMP: Cleared ALL cache to force fresh calculation');
+
     // Try to resolve ENS name with caching
     let ensName = null;
     const ensCacheKey = `ens:${publicAddress.toLowerCase()}`;
@@ -347,15 +359,19 @@ module.exports = async (req, res) => {
             
             if (metadata.projectId === 'MEDAL-SPIN') {
               // Convert BigInt timestamp to number
-              const medalTimestamp = typeof medal.timestamp === 'bigint' ? 
+              const medalTimestamp = typeof medal.timestamp === 'bigint' ?
                 Number(medal.timestamp) : Number(medal.timestamp);
-              
-              medalSpinMedals.push({
-                tier: tierNumber,
-                tierName: tierNames[tierNumber] || `Tier-${tierNumber}`,
-                name: metadata.name || metadata.id || 'Medal',
-                timestamp: medalTimestamp
-              });
+
+              // Only include Bronze, Silver, and Gold medals for spin matching
+              // Black medals come from raffles, not spins
+              if (tierNumber >= 1 && tierNumber <= 3) {
+                medalSpinMedals.push({
+                  tier: tierNumber,
+                  tierName: tierNames[tierNumber] || `Tier-${tierNumber}`,
+                  name: metadata.name || metadata.id || 'Medal',
+                  timestamp: medalTimestamp
+                });
+              }
             }
           } catch (error) {
             // Skip medals that can't be processed
@@ -383,17 +399,49 @@ module.exports = async (req, res) => {
             }
           }
           
-          // Calculate medal statistics
-          if (medalSpinMedals.length > 0) {
-            // Sort medals by tier for proper assignment
-            medalSpinMedals.sort((a, b) => a.tier - b.tier);
-            
+          // Calculate medal statistics using ALL medals (including Black)
+          // But keep medalSpinMedals filtered for spin assignment
+          if (allMedals.length > 0) {
+            // Get all MEDAL-SPIN medals for statistics (including Black)
+            const allMedalSpinMedalsForStats = [];
+            const tierNames = ['Unknown', 'Bronze', 'Silver', 'Gold', 'Black/Obsidian'];
+
+            for (const medal of allMedals) {
+              try {
+                const tierNumber = typeof medal.medalTier === 'bigint' ?
+                  Number(medal.medalTier) : medal.medalTier;
+
+                if (tierNumber >= 1 && tierNumber <= 4) {
+                  let metadata = {};
+                  try {
+                    const dataString = ethers.toUtf8String(medal.medalData);
+                    metadata = JSON.parse(dataString);
+                  } catch (e) {
+                    try {
+                      const decoded = ethers.AbiCoder.defaultAbiCoder().decode(['string'], medal.medalData);
+                      metadata = JSON.parse(decoded[0]);
+                    } catch (e2) {}
+                  }
+
+                  if (metadata.projectId === 'MEDAL-SPIN') {
+                    allMedalSpinMedalsForStats.push({
+                      tier: tierNumber,
+                      tierName: tierNames[tierNumber] || `Tier-${tierNumber}`,
+                      name: metadata.name || metadata.id || 'Medal'
+                    });
+                  }
+                }
+              } catch (error) {
+                // Skip medals that can't be processed
+              }
+            }
+
             medalStats = {
-              total: medalSpinMedals.length,
-              bronze: medalSpinMedals.filter(m => m.tier === 1).length,
-              silver: medalSpinMedals.filter(m => m.tier === 2).length,
-              gold: medalSpinMedals.filter(m => m.tier === 3).length,
-              black: medalSpinMedals.filter(m => m.tier === 4).length
+              total: allMedalSpinMedalsForStats.length,
+              bronze: allMedalSpinMedalsForStats.filter(m => m.tier === 1).length,
+              silver: allMedalSpinMedalsForStats.filter(m => m.tier === 2).length,
+              gold: allMedalSpinMedalsForStats.filter(m => m.tier === 3).length,
+              black: allMedalSpinMedalsForStats.filter(m => m.tier === 4).length
             };
             
             // Cache the processed MEDAL-SPIN data (just 4 medals instead of 288!)
@@ -426,28 +474,43 @@ module.exports = async (req, res) => {
         gap = `+${hours}h ${minutes}m`;
       }
       
-      // Match medals to spins by timestamp
-      // Medals are typically awarded within 10 minutes after a spin
+      // Match medals to spins sequentially
+      // Since you can't spin again without claiming the previous medal,
+      // we can assign medals in chronological order
       let medal = null;
-      
-      if (medalSpinMedals && medalSpinMedals.length > 0) {
-        const spinTimestamp = Number(spin.timestamp);
-        
-        // Find a medal that was awarded shortly after this spin
-        const matchingMedal = medalSpinMedals.find(m => {
-          const timeDiff = m.timestamp - spinTimestamp;
-          // Medal should be awarded within 30 minutes (1800 seconds) after spin
-          return timeDiff >= 0 && timeDiff <= 1800;
-        });
-        
-        if (matchingMedal) {
+
+      // Special case: Mark specific cheater spin for homepage wallet
+      const isCheaterSpin = publicAddress.toLowerCase() === '0x56bde1e5efc80b1e2b958f2d311f4176945ae77f' &&
+          index === 3 && // Spin #4 (0-indexed)
+          timestamp === 1757361651000; // Exact timestamp match
+
+      if (isCheaterSpin) {
+        medal = {
+          tier: "Cheater",
+          name: "Contract Spin",
+          isCheat: true
+        };
+      } else if (medalSpinMedals && medalSpinMedals.length > 0) {
+        // Sort medals by timestamp to ensure chronological order
+        const sortedMedals = [...medalSpinMedals].sort((a, b) => a.timestamp - b.timestamp);
+
+        // For homepage wallet, adjust medal assignment to account for cheater spin
+        let medalIndex = index;
+        if (publicAddress.toLowerCase() === '0x56bde1e5efc80b1e2b958f2d311f4176945ae77f' && index > 3) {
+          // Spins after the cheater spin (index 3) need to use one less medal index
+          medalIndex = index - 1;
+        }
+
+        // Assign the medal corresponding to this spin's adjusted index (if it exists)
+        if (sortedMedals[medalIndex]) {
+          const assignedMedal = sortedMedals[medalIndex];
           medal = {
-            tier: matchingMedal.tierName,
-            name: matchingMedal.name
+            tier: assignedMedal.tierName,
+            name: assignedMedal.name
           };
         }
       }
-      
+
       return {
         spinNumber: index + 1,
         timestamp: timestamp,
@@ -496,11 +559,20 @@ module.exports = async (req, res) => {
     let raffleStatus = null;
     let raffleHistory = [];
 
+    console.log(`DEBUG: globalRaffleData available: ${!!globalRaffleData}`);
     if (globalRaffleData) {
       // Calculate streak using existing spin data (no additional contract calls!)
+      // TEMP: Force require cache invalidation for testing
+      delete require.cache[require.resolve("../lib/black-medal-raffle")];
       const { calculateConsecutiveStreak } = require("../lib/black-medal-raffle");
       const currentStreak = calculateConsecutiveStreak(spins);
       const minimumStreak = globalRaffleData.minimumStreakLength;
+
+      // TEMP: Debug logging for streak calculation
+      console.log(`DEBUG STREAK: spins.length=${spins.length}, currentStreak=${currentStreak}, minimumStreak=${minimumStreak}, isFrozen=${globalRaffleData.isFrozen}`);
+      if (spins.length > 0) {
+        console.log(`DEBUG STREAK: Recent spins:`, spins.slice(-7).map(s => new Date(Number(s.timestamp) * 1000).toISOString().split('T')[0]));
+      }
 
       // Determine eligibility and status
       const isEligible = currentStreak >= minimumStreak && !globalRaffleData.isFrozen;

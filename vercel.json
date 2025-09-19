@@ -9,5 +9,15 @@
       "path": "/api/cron",
       "schedule": "*/5 * * * *"
     }
+  ],
+  "rewrites": [
+    {
+      "source": "/(0x[a-fA-F0-9]{40})",
+      "destination": "/wallet.html"
+    },
+    {
+      "source": "/([a-zA-Z0-9-]+\\.eth)",
+      "destination": "/wallet.html"
+    }
   ]
 }
