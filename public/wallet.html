@@ -506,7 +506,7 @@
 
         <div class="wallet-view-notice">
             <div class="notice-label">📊 Wallet Preview Mode</div>
-            <div style="color: #ccc; margin-bottom: 8px;">Viewing on-chain spin data for this wallet address. <a href="/" class="home-link">← Return to Dashboard</a></div>
+            <div style="color: #ccc; margin-bottom: 8px;">Viewing on-chain spin data for this wallet address.</div>
         </div>
 
         <div style="text-align: center; margin: -10px 0 20px 0; color: #999; font-size: 14px;">
@@ -778,12 +778,12 @@
 
                             <div class="card description">
                                 <div><strong style="font-weight: 900;">Read-Only View</strong> - Viewing on-chain data for this wallet address</div>
-                                <div style="margin-top: 8px; font-size: 14px; opacity: 0.7;">Notifications and spin functionality not available in wallet view</div>
+                                <div style="margin-top: 8px; font-size: 14px; opacity: 0.7;">Text Notification not available in wallet preview. <a href="https://github.com/jmsaavedra/shape-spin-notification" target="_blank" style="color: white; text-decoration: underline;">Deploy your own here!</a></div>
                             </div>
 
                             ${data.raffleStatus ? `
                             <div class="card raffle-status" style="grid-column: 1 / -1;">
-                                <div class="card-label">Black Medal Raffle</div>
+                                <div class="card-label">⚫ Black Medal Raffle</div>
                                 <div style="margin-top: 16px;">
                                     <div class="raffle-info-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; margin-bottom: 16px;">
                                         <div style="background: rgba(255, 255, 255, 0.05); padding: 12px; border-radius: 8px;">
@@ -793,7 +793,7 @@
                                             <div style="display: flex; align-items: center; gap: 8px;">
                                                 <div style="width: 8px; height: 8px; border-radius: 50%; background: ${data.raffleStatus.isEntered ? '#4ade80' : data.raffleStatus.isEligible ? '#f59e0b' : '#666'};"></div>
                                                 <span style="font-size: 16px; font-weight: bold; color: ${data.raffleStatus.isEntered ? '#4ade80' : data.raffleStatus.isEligible ? '#f59e0b' : '#999'};">
-                                                    ${data.raffleStatus.isEntered ? 'Entered' : data.raffleStatus.isEligible ? 'Eligible' : 'Not Eligible'}
+                                                    ${data.raffleStatus.isEntered ? 'Entered' : data.raffleStatus.isEligible ? 'Eligible' : 'Not Yet Eligible'}
                                                 </span>
                                             </div>
                                             <div style="font-size: 11px; color: #666; margin-top: 4px;">${data.raffleStatus.participantCount} participants</div>
@@ -804,7 +804,7 @@
                                             </div>
                                             <div style="display: flex; align-items: center; gap: 8px;">
                                                 <div style="font-size: 16px; font-weight: bold; color: ${data.raffleStatus.isEligible ? '#4ade80' : '#f59e0b'};">
-                                                    ${data.raffleStatus.currentStreak}/${data.raffleStatus.minimumStreakRequired} days
+                                                    ${data.raffleStatus.currentStreak} days
                                                 </div>
                                                 <div style="flex: 1; height: 6px; background: rgba(255, 255, 255, 0.1); border-radius: 3px; overflow: hidden;">
                                                     <div style="height: 100%; background: linear-gradient(90deg, #f59e0b, #4ade80); width: ${Math.round(data.raffleStatus.streakProgress * 100)}%; transition: width 0.3s ease;"></div>
@@ -813,17 +813,6 @@
                                             ${data.raffleStatus.isEntered ? `
                                                 <div style="font-size: 11px; color: #999; margin-top: 4px;">Building for Round #${data.raffleStatus.currentRound + 1}</div>
                                             ` : ''}
-                                        </div>
-                                        <div style="background: rgba(255, 255, 255, 0.05); padding: 12px; border-radius: 8px;">
-                                            <div style="font-size: 12px; color: #999; margin-bottom: 4px;">
-                                                Round #${data.raffleStatus.currentRound + 1} Window
-                                            </div>
-                                            <div style="font-size: 16px; font-weight: bold; color: ${data.raffleStatus.isEligible ? '#4ade80' : '#f59e0b'};">
-                                                ${data.raffleStatus.isEligible ? 'Ready' : `${data.raffleStatus.daysToEligibility} days left`}
-                                            </div>
-                                            <div style="font-size: 11px; color: #666; margin-top: 4px;">
-                                                ${data.raffleStatus.isEligible ? 'Eligible for future rounds' : 'Keep daily streak going'}
-                                            </div>
                                         </div>
                                     </div>
                                     ${data.raffleHistory && data.raffleHistory.length > 0 ? `
@@ -847,22 +836,40 @@
                             <div class="card medal-stats" style="grid-column: 1 / -1;">
                                 <div class="card-label">Spin Medal Statistics</div>
                                 <div class="medal-stats-grid" style="margin-top: 16px; display: flex; gap: 15px; flex-wrap: wrap; align-items: center;">
-                                    <div class="medal-stat-item" style="display: flex; align-items: center; gap: 8px;">
-                                        <span class="medal-dot bronze"></span>
-                                        <span style="color: #fff; font-size: 14px;">Bronze: ${data.medalStats.bronze}</span>
-                                    </div>
-                                    <div class="medal-stat-item" style="display: flex; align-items: center; gap: 8px;">
-                                        <span class="medal-dot silver"></span>
-                                        <span style="color: #fff; font-size: 14px;">Silver: ${data.medalStats.silver}</span>
-                                    </div>
-                                    <div class="medal-stat-item" style="display: flex; align-items: center; gap: 8px;">
-                                        <span class="medal-dot gold"></span>
-                                        <span style="color: #fff; font-size: 14px;">Gold: ${data.medalStats.gold}</span>
-                                    </div>
-                                    <div class="medal-stat-item" style="display: flex; align-items: center; gap: 8px;">
-                                        <span class="medal-dot obsidian"></span>
-                                        <span style="color: #fff; font-size: 14px;">Black: ${data.medalStats.black}</span>
-                                    </div>
+                                    ${(() => {
+                                        // Calculate percentages based only on bronze, silver, gold (excluding black)
+                                        const spinMedalTotal = data.medalStats.bronze + data.medalStats.silver + data.medalStats.gold;
+                                        const bronzePercent = spinMedalTotal > 0 ? Math.round((data.medalStats.bronze / spinMedalTotal) * 100) : 0;
+                                        const silverPercent = spinMedalTotal > 0 ? Math.round((data.medalStats.silver / spinMedalTotal) * 100) : 0;
+                                        const goldPercent = spinMedalTotal > 0 ? Math.round((data.medalStats.gold / spinMedalTotal) * 100) : 0;
+
+                                        return `
+                                            <div class="medal-stat-item" style="display: flex; align-items: center; gap: 8px;">
+                                                <span class="medal-dot bronze"></span>
+                                                <div style="color: #fff; font-size: 14px;">
+                                                    <div>${data.medalStats.bronze} <span style="color: #999;">(${bronzePercent}%)</span></div>
+                                                </div>
+                                            </div>
+                                            <div class="medal-stat-item" style="display: flex; align-items: center; gap: 8px;">
+                                                <span class="medal-dot silver"></span>
+                                                <div style="color: #fff; font-size: 14px;">
+                                                    <div>${data.medalStats.silver} <span style="color: #999;">(${silverPercent}%)</span></div>
+                                                </div>
+                                            </div>
+                                            <div class="medal-stat-item" style="display: flex; align-items: center; gap: 8px;">
+                                                <span class="medal-dot gold"></span>
+                                                <div style="color: #fff; font-size: 14px;">
+                                                    <div>${data.medalStats.gold} <span style="color: #999;">(${goldPercent}%)</span></div>
+                                                </div>
+                                            </div>
+                                            <div class="medal-stat-item" style="display: flex; align-items: center; gap: 8px;">
+                                                <span class="medal-dot obsidian"></span>
+                                                <div style="color: #fff; font-size: 14px;">
+                                                    <div>${data.medalStats.black}</div>
+                                                </div>
+                                            </div>
+                                        `;
+                                    })()}
                                 </div>
                             </div>
                             ` : ''}
@@ -875,11 +882,16 @@
                                         const medal = spin.medal;
                                         let medalBadge = '';
                                         if (medal) {
-                                            const tierClass = medal.tier.toLowerCase().replace('/', '');
-                                            const badgeText = isMobile ?
-                                                (medal.tier === 'Black/Obsidian' ? 'Bl' : medal.tier.substring(0, 2)) :
-                                                (medal.tier === 'Black/Obsidian' ? 'Black' : medal.tier);
-                                            medalBadge = `<span class="medal-badge ${tierClass}">${badgeText}</span>`;
+                                            if (medal.tier === 'Cheater') {
+                                                // Special handling for cheater medals - link to explanation
+                                                medalBadge = `<a href="https://x.com/josdotph/status/1965448593655181342" target="_blank" rel="noopener" style="text-decoration: none;"><span class="medal-badge cheater" style="background: #dc2626; color: white; cursor: pointer;">Cheater</span></a>`;
+                                            } else {
+                                                const tierClass = medal.tier.toLowerCase().replace('/', '');
+                                                const badgeText = isMobile ?
+                                                    (medal.tier === 'Black/Obsidian' ? 'Bl' : medal.tier.substring(0, 2)) :
+                                                    (medal.tier === 'Black/Obsidian' ? 'Black' : medal.tier);
+                                                medalBadge = `<span class="medal-badge ${tierClass}">${badgeText}</span>`;
+                                            }
                                         } else {
                                             medalBadge = `<span class="medal-badge none">${isMobile ? 'No' : 'No Medal'}</span>`;
                                         }
@@ -920,12 +932,48 @@
                                             <span style="color: #fff; text-align: center; display: block;">•</span>
                                             <span class="date-col" style="font-size: 13px; color: #fff;">${dateStr}</span>
                                             <span class="time-col" style="font-size: 13px; color: #fff;">${timeStr}</span>
-                                            <span class="time-gap" style="color: ${spin.gap ? '#4ade80' : '#d8b4fe'}; font-size: 12px; font-weight: 600;">${spin.gap || 'First!'}</span>
+                                            <span class="time-gap" style="color: ${(() => {
+                                                if (!spin.gap) return '#d8b4fe'; // First! - purple
+                                                // Parse gap to check if over 48 hours
+                                                const gapMatch = spin.gap.match(/(\d+)h/);
+                                                if (gapMatch) {
+                                                    const hours = parseInt(gapMatch[1]);
+                                                    return hours > 48 ? '#ef4444' : '#4ade80'; // red if > 48h, green otherwise
+                                                }
+                                                return '#4ade80'; // default green
+                                            })()}; font-size: 12px; font-weight: 600;">${spin.gap || 'First!'}</span>
                                             <span></span>
                                             ${medalBadge}
                                         </div>
                                         `;
                                     }).join('')}
+                                    ${(() => {
+                                        // Calculate average time between spins
+                                        if (data.spinHistory && data.spinHistory.length > 1) {
+                                            const spinTimestamps = data.spinHistory
+                                                .filter(spin => spin.spinNumber !== 'RAFFLE WINNER' && spin.timestamp)
+                                                .map(spin => spin.timestamp)
+                                                .sort((a, b) => a - b);
+
+                                            if (spinTimestamps.length > 1) {
+                                                let totalGapMs = 0;
+                                                for (let i = 1; i < spinTimestamps.length; i++) {
+                                                    totalGapMs += spinTimestamps[i] - spinTimestamps[i - 1];
+                                                }
+                                                const avgGapMs = totalGapMs / (spinTimestamps.length - 1);
+                                                const avgGapHours = Math.floor(avgGapMs / (1000 * 60 * 60));
+                                                const avgGapMinutes = Math.round((avgGapMs % (1000 * 60 * 60)) / (1000 * 60));
+
+                                                return `
+                                                    <div style="margin-top: 16px; padding-top: 16px; border-top: 1px solid #333;">
+                                                        <div style="font-size: 12px; color: #999; margin-bottom: 4px;">Average time between spins</div>
+                                                        <div style="font-size: 14px; color: #ccc;">+${avgGapHours}h ${avgGapMinutes}m</div>
+                                                    </div>
+                                                `;
+                                            }
+                                        }
+                                        return '';
+                                    })()}
                                 </div>
                             </div>
                             ` : data.currentSpinCount === 0 ? `

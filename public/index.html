@@ -865,7 +865,7 @@
                                         <div style="display: flex; align-items: center; gap: 8px;">
                                             <div style="width: 8px; height: 8px; border-radius: 50%; background: ${data.raffleStatus.isEntered ? '#4ade80' : data.raffleStatus.isEligible ? '#f59e0b' : '#666'};"></div>
                                             <span style="font-size: 16px; font-weight: bold; color: ${data.raffleStatus.isEntered ? '#4ade80' : data.raffleStatus.isEligible ? '#f59e0b' : '#999'};">
-                                                ${data.raffleStatus.isEntered ? 'Entered' : data.raffleStatus.isEligible ? 'Eligible' : 'Not Eligible'}
+                                                ${data.raffleStatus.isEntered ? 'Entered' : data.raffleStatus.isEligible ? 'Eligible' : 'Not Yet Eligible'}
                                             </span>
                                         </div>
                                         <div style="font-size: 11px; color: #666; margin-top: 4px;">${data.raffleStatus.participantCount} participants</div>
@@ -1017,12 +1017,48 @@
                                         <span style="color: #fff; text-align: center; display: block;">•</span>
                                         <span class="date-col" style="font-size: 13px; color: #fff;">${dateStr}</span>
                                         <span class="time-col" style="font-size: 13px; color: #fff;">${timeStr}</span>
-                                        <span class="time-gap" style="color: ${spin.gap ? '#4ade80' : '#d8b4fe'}; font-size: 12px; font-weight: 600;">${spin.gap || 'First!'}</span>
+                                        <span class="time-gap" style="color: ${(() => {
+                                            if (!spin.gap) return '#d8b4fe'; // First! - purple
+                                            // Parse gap to check if over 48 hours
+                                            const gapMatch = spin.gap.match(/(\d+)h/);
+                                            if (gapMatch) {
+                                                const hours = parseInt(gapMatch[1]);
+                                                return hours > 48 ? '#ef4444' : '#4ade80'; // red if > 48h, green otherwise
+                                            }
+                                            return '#4ade80'; // default green
+                                        })()}; font-size: 12px; font-weight: 600;">${spin.gap || 'First!'}</span>
                                         <span></span>
                                         ${medalBadge}
                                     </div>
                                     `;
                                 }).join('')}
+                                ${(() => {
+                                    // Calculate average time between spins
+                                    if (data.spinHistory && data.spinHistory.length > 1) {
+                                        const spinTimestamps = data.spinHistory
+                                            .filter(spin => spin.spinNumber !== 'RAFFLE WINNER' && spin.timestamp)
+                                            .map(spin => spin.timestamp)
+                                            .sort((a, b) => a - b);
+
+                                        if (spinTimestamps.length > 1) {
+                                            let totalGapMs = 0;
+                                            for (let i = 1; i < spinTimestamps.length; i++) {
+                                                totalGapMs += spinTimestamps[i] - spinTimestamps[i - 1];
+                                            }
+                                            const avgGapMs = totalGapMs / (spinTimestamps.length - 1);
+                                            const avgGapHours = Math.floor(avgGapMs / (1000 * 60 * 60));
+                                            const avgGapMinutes = Math.round((avgGapMs % (1000 * 60 * 60)) / (1000 * 60));
+
+                                            return `
+                                                <div style="margin-top: 16px; padding-top: 16px; border-top: 1px solid #333;">
+                                                    <div style="font-size: 12px; color: #999; margin-bottom: 4px;">Average time between spins</div>
+                                                    <div style="font-size: 14px; color: #ccc;">+${avgGapHours}h ${avgGapMinutes}m</div>
+                                                </div>
+                                            `;
+                                        }
+                                    }
+                                    return '';
+                                })()}
                             </div>
                         </div>
                         ` : ''}
