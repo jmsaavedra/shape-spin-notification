@@ -22,6 +22,7 @@ This project monitors your wallet on the [MedalSpin contract](https://shapescan.
 - 🔒 **Secure** - Uses public addresses only, no private keys needed for monitoring
 - 📊 **Dashboard** - Real-time schedule tracking and spin history
 - 🏅 **Medal Tracking** - Displays your MEDAL-SPIN medals (Bronze, Silver, Gold, Diamond) with stats
+- 🏆 **Black Medal Raffle** - Track your eligibility for weekly Black medal raffles (7-day streak required)
 - 🎯 **Efficient** - 90% reduction in API calls through intelligent polling
 - ⚡ **Smart Polling** - Dynamic intervals based on proximity to spin time (10s to 5min)
 - 🔄 **Multicall3** - Batches contract reads into single RPC calls
@@ -34,12 +35,23 @@ This project monitors your wallet on the [MedalSpin contract](https://shapescan.
 3. **Notification** sends iMessage when ready (automatic SMS fallback if needed)
 4. **Manual Spin** - Click the link to open MetaMask and spin
 
-## Shape MedalSpin Contract Details
+## Shape Contract Details
 
+### MedalSpin Contract
 - **Address**: [`0x99BB9Dca4F8Ed3FB04eCBE2bA9f5f378301DBaC1`](https://shapescan.xyz/address/0x99BB9Dca4F8Ed3FB04eCBE2bA9f5f378301DBaC1)
 - **Network**: Shape Mainnet (Chain ID: 360)
 - **Method**: `spin(bytes32 hash)`
 - **ABI**: [View on ShapeScan](https://shapescan.xyz/address/0x99BB9Dca4F8Ed3FB04eCBE2bA9f5f378301DBaC1?tab=contract_abi)
+
+### Black Medal Raffle Contract
+- **Address**: [`0xEFe03c16c2f08B622D0d9A01cC8169da33CfeEDe`](https://shapescan.xyz/address/0xEFe03c16c2f08B622D0d9A01cC8169da33CfeEDe)
+- **Network**: Shape Mainnet (Chain ID: 360)
+- **Purpose**: Weekly raffle system for rare Black medals
+- **Eligibility**: Requires 7 consecutive days of daily spins
+- **Entry**: Manual entry required at [Shape Medal Spin](https://stack.shape.network/medal-spin) when eligible
+- **ABI**: [View on ShapeScan](https://shapescan.xyz/address/0xEFe03c16c2f08B622D0d9A01cC8169da33CfeEDe?tab=contract_abi)
+
+The app automatically tracks your consecutive spin streak and displays your Black Medal raffle eligibility status. When you reach a 7-day streak, you'll see notifications and can enter the raffle directly through Shape's interface.
 
 ## Setup
 

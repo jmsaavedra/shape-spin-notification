@@ -4,6 +4,7 @@ const { ethers, JsonRpcProvider } = require("ethers");
 const scheduleState = require("../lib/schedule-state");
 const { caches, TTL } = require("../lib/cache");
 const { batchContractCalls } = require("../lib/multicall");
+const { getRaffleStatus, getRaffleHistory } = require("../lib/black-medal-raffle");
 
 const abi = [
   {"inputs":[{"internalType":"address","name":"collector","type":"address"}],"name":"canSpin","outputs":[{"internalType":"bool","name":"","type":"bool"}],"stateMutability":"view","type":"function"},
@@ -90,6 +91,9 @@ module.exports = async (req, res) => {
     // Variables for Stack NFT data
     let stackId = null;
     let allMedals = [];
+
+    // Variable for raffle data
+    let globalRaffleData = null;
     
     // Check medal cache - we cache the processed MEDAL-SPIN medals, not all 288
     const medalsCacheKey = `medalSpin:${publicAddress.toLowerCase()}`;
@@ -97,31 +101,86 @@ module.exports = async (req, res) => {
     let cachedMedalSpinData = caches.spins.get(medalsCacheKey); // Use spins cache for permanent storage
     let lastFetchTimestamp = caches.spins.get(lastFetchKey);
     
+    // Create raffle contract for multicall
+    const raffleContract = new ethers.Contract("0xEFe03c16c2f08B622D0d9A01cC8169da33CfeEDe", [
+      {"inputs": [{"internalType": "address", "name": "participant", "type": "address"}], "name": "isParticipantInCurrentRaffle", "outputs": [{"internalType": "bool", "name": "", "type": "bool"}], "stateMutability": "view", "type": "function"},
+      {"inputs": [], "name": "getCurrentRaffleList", "outputs": [{"internalType": "address[]", "name": "", "type": "address[]"}], "stateMutability": "view", "type": "function"},
+      {"inputs": [], "name": "getCurrentRaffleRound", "outputs": [{"internalType": "uint256", "name": "", "type": "uint256"}], "stateMutability": "view", "type": "function"},
+      {"inputs": [], "name": "getMinimumStreakLength", "outputs": [{"internalType": "uint256", "name": "", "type": "uint256"}], "stateMutability": "view", "type": "function"},
+      {"inputs": [], "name": "isFrozen", "outputs": [{"internalType": "bool", "name": "", "type": "bool"}], "stateMutability": "view", "type": "function"}
+    ], provider);
+
     if (spins === null) {
-      // Not in cache, batch fetch spins, canSpin, and stackId from blockchain
-      const [spinsResult, canSpinResult, stackIdResult] = await batchContractCalls([
+      // Not in cache, batch fetch ALL data (spin + raffle) from blockchain in ONE call
+      const [
+        spinsResult,
+        canSpinResult,
+        stackIdResult,
+        isParticipant,
+        currentRaffleList,
+        currentRound,
+        minimumStreakLength,
+        isFrozen
+      ] = await batchContractCalls([
         { contract, method: 'getSpins', args: [publicAddress] },
         { contract, method: 'canSpin', args: [publicAddress] },
-        { contract: stackContract, method: 'addressToTokenId', args: [publicAddress] }
+        { contract: stackContract, method: 'addressToTokenId', args: [publicAddress] },
+        { contract: raffleContract, method: 'isParticipantInCurrentRaffle', args: [publicAddress] },
+        { contract: raffleContract, method: 'getCurrentRaffleList', args: [] },
+        { contract: raffleContract, method: 'getCurrentRaffleRound', args: [] },
+        { contract: raffleContract, method: 'getMinimumStreakLength', args: [] },
+        { contract: raffleContract, method: 'isFrozen', args: [] }
       ], provider);
-      
+
       spins = spinsResult;
       canSpinNow = canSpinResult;
       stackId = stackIdResult.toString();
-      
+
+      // Store raffle data for later use
+      globalRaffleData = {
+        isParticipant,
+        currentRaffleList,
+        currentRound: Number(currentRound),
+        minimumStreakLength: Number(minimumStreakLength),
+        isFrozen
+      };
+
       // Cache spins permanently - will be invalidated when new spin detected
       caches.spins.set(spinsCacheKey, spins);
-      console.log(`Fetched ${spins.length} spins, canSpin (${canSpinNow}), and Stack ID (${stackId}) via multicall`);
+      console.log(`Fetched ${spins.length} spins, canSpin (${canSpinNow}), Stack ID (${stackId}), and raffle data via single multicall`);
     } else {
-      // Spins are cached, fetch canSpin and stackId
-      const [canSpinResult, stackIdResult] = await batchContractCalls([
+      // Spins are cached, fetch canSpin, stackId, and raffle data
+      const [
+        canSpinResult,
+        stackIdResult,
+        isParticipant,
+        currentRaffleList,
+        currentRound,
+        minimumStreakLength,
+        isFrozen
+      ] = await batchContractCalls([
         { contract, method: 'canSpin', args: [publicAddress] },
-        { contract: stackContract, method: 'addressToTokenId', args: [publicAddress] }
+        { contract: stackContract, method: 'addressToTokenId', args: [publicAddress] },
+        { contract: raffleContract, method: 'isParticipantInCurrentRaffle', args: [publicAddress] },
+        { contract: raffleContract, method: 'getCurrentRaffleList', args: [] },
+        { contract: raffleContract, method: 'getCurrentRaffleRound', args: [] },
+        { contract: raffleContract, method: 'getMinimumStreakLength', args: [] },
+        { contract: raffleContract, method: 'isFrozen', args: [] }
       ], provider);
-      
+
       canSpinNow = canSpinResult;
       stackId = stackIdResult.toString();
-      console.log(`Using cached ${spins.length} spins, fetched canSpin and stackId via multicall`);
+
+      // Store raffle data for later use
+      globalRaffleData = {
+        isParticipant,
+        currentRaffleList,
+        currentRound: Number(currentRound),
+        minimumStreakLength: Number(minimumStreakLength),
+        isFrozen
+      };
+
+      console.log(`Using cached ${spins.length} spins, fetched canSpin, stackId, and raffle data via single multicall`);
     }
     
     spinCount = spins.length;
@@ -433,18 +492,74 @@ module.exports = async (req, res) => {
       notificationStatus = `iMessage will be sent to ${censored}`;
     }
     
+    // Generate Black Medal Raffle status from already-fetched data
+    let raffleStatus = null;
+    let raffleHistory = [];
+
+    if (globalRaffleData) {
+      // Calculate streak using existing spin data (no additional contract calls!)
+      const { calculateConsecutiveStreak } = require("../lib/black-medal-raffle");
+      const currentStreak = calculateConsecutiveStreak(spins);
+      const minimumStreak = globalRaffleData.minimumStreakLength;
+
+      // Determine eligibility and status
+      const isEligible = currentStreak >= minimumStreak && !globalRaffleData.isFrozen;
+      const isEntered = globalRaffleData.isParticipant;
+      const participantCount = globalRaffleData.currentRaffleList.length;
+
+      raffleStatus = {
+        isEligible,
+        isEntered,
+        currentStreak,
+        minimumStreakRequired: minimumStreak,
+        streakProgress: Math.min(currentStreak / minimumStreak, 1.0),
+        daysToEligibility: Math.max(0, minimumStreak - currentStreak),
+        currentRound: globalRaffleData.currentRound,
+        participantCount,
+        isFrozen: globalRaffleData.isFrozen,
+        canEnter: isEligible && !isEntered && !globalRaffleData.isFrozen
+      };
+
+      console.log(`Generated raffle status from multicall data: eligible=${isEligible}, entered=${isEntered}, streak=${currentStreak}`);
+
+      // Get raffle history (cached for 1 hour)
+      const historyKey = 'raffleHistory';
+      raffleHistory = caches.spins.get(historyKey);
+
+      if (raffleHistory === null) {
+        const { getRaffleHistory } = require("../lib/black-medal-raffle");
+        raffleHistory = await getRaffleHistory(provider, 3);
+        caches.spins.set(historyKey, raffleHistory, 3600); // 1 hour
+        console.log(`Fetched Black Medal Raffle history: ${raffleHistory.length} recent rounds`);
+      }
+    } else {
+      console.log('No raffle data available');
+      raffleStatus = {
+        isEligible: false,
+        isEntered: false,
+        currentStreak: 0,
+        minimumStreakRequired: 7,
+        streakProgress: 0,
+        daysToEligibility: 7,
+        currentRound: 0,
+        participantCount: 0,
+        isFrozen: false,
+        canEnter: false
+      };
+    }
+
     // Calculate intelligent polling interval based on time until next spin
     let suggestedPollInterval;
     if (canSpinNow) {
-      suggestedPollInterval = 10000; // 10 seconds when spin is available
+      suggestedPollInterval = 30000; // 30 seconds when spin is available
     } else if (timeUntilSpin <= 60) {
-      suggestedPollInterval = 10000; // 10 seconds when spin is within 1 minute
+      suggestedPollInterval = 30000; // 30 seconds when spin is within 1 minute
     } else if (timeUntilSpin <= 300) {
       suggestedPollInterval = 30000; // 30 seconds when spin is within 5 minutes
     } else if (timeUntilSpin <= 3600) {
       suggestedPollInterval = 60000; // 1 minute when spin is within 1 hour
     } else {
-      suggestedPollInterval = 300000; // 5 minutes when spin is over 1 hour away
+      suggestedPollInterval = 600000; // 10 minutes when spin is over 1 hour away
     }
     
     res.status(200).json({
@@ -467,6 +582,8 @@ module.exports = async (req, res) => {
       useMetaMaskDeepLink: process.env.USE_METAMASK_MOBILE_DEEPLINK === 'true',
       spinHistory: spinHistory,
       medalStats: medalStats,
+      raffleStatus: raffleStatus,
+      raffleHistory: raffleHistory,
       suggestedPollInterval: suggestedPollInterval
     });
     
