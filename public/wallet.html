@@ -1,0 +1,1026 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Spin for SHAPE - Wallet View</title>
+
+    <!-- Basic Meta Tags -->
+    <meta name="description" content="View daily spins and medals for any wallet on Shape Network">
+    <meta name="keywords" content="shape, network, blockchain, medal, spin, daily, crypto, web3">
+    <meta name="author" content="quietloops">
+    <meta name="robots" content="noindex, nofollow">
+    <meta name="language" content="English">
+
+    <!-- Open Graph / Social Media -->
+    <meta property="og:title" content="Spin for SHAPE - Wallet View">
+    <meta property="og:description" content="View daily spins and medals for any wallet on Shape Network">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://spin-shape.vercel.app/">
+    <meta property="og:image" content="https://spin-shape.vercel.app/assets/SPIN-logo-header.png">
+    <meta property="og:site_name" content="Spin for SHAPE">
+    <meta property="og:locale" content="en_US">
+
+    <!-- Twitter -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Spin for SHAPE - Wallet View">
+    <meta name="twitter:description" content="View daily spins and medals for any wallet on Shape Network">
+    <meta name="twitter:image" content="https://spin-shape.vercel.app/assets/SPIN-logo-header.png">
+    <meta name="twitter:site" content="@quietloops">
+
+    <!-- Additional Meta -->
+    <meta name="theme-color" content="#000000">
+    <link rel="canonical" href="https://spin-shape.vercel.app/">
+
+    <!-- Favicons -->
+    <link rel="icon" type="image/x-icon" href="/favicon.ico">
+    <link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/assets/favicon/favicon-16x16.png">
+    <link rel="apple-touch-icon" href="/assets/favicon/apple-touch-icon.png">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: #000;
+            color: #fff;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, monospace;
+            min-height: 100vh;
+            padding: 40px 20px;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .header-logo {
+            text-align: center;
+            margin-bottom: 25px;
+        }
+
+        .header-logo img {
+            max-width: 300px;
+            width: 100%;
+            height: auto;
+            filter: brightness(1.1);
+        }
+
+        .wallet-view-notice {
+            text-align: center;
+            background: rgba(102, 126, 234, 0.1);
+            border: 1px solid rgba(102, 126, 234, 0.3);
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 20px;
+            font-size: 14px;
+        }
+
+        .wallet-view-notice .notice-label {
+            color: #667eea;
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+
+        .wallet-view-notice .home-link {
+            color: #667eea;
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        .wallet-view-notice .home-link:hover {
+            text-decoration: underline;
+        }
+
+        .medal-dots {
+            display: flex;
+            justify-content: center;
+            gap: 16px;
+            margin-top: 10px;
+            margin-bottom: 0;
+        }
+
+        .medal-dot {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            display: inline-block;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
+            transition: transform 0.2s;
+        }
+
+        .medal-dot:hover {
+            transform: scale(1.2);
+        }
+
+        .medal-dot.bronze {
+            background: linear-gradient(135deg, #CD7F32, #B87333);
+        }
+
+        .medal-dot.silver {
+            background: linear-gradient(135deg, #C0C0C0, #E5E5E5);
+        }
+
+        .medal-dot.gold {
+            background: linear-gradient(135deg, #FFD700, #FFA500);
+        }
+
+        .medal-dot.obsidian {
+            background: linear-gradient(135deg, #1a1a1a, #000000);
+            border: 1px solid #333;
+        }
+
+        .monitoring-address {
+            text-align: center;
+            margin-bottom: 30px;
+            padding: 15px;
+            background: #111;
+            border: 1px solid #222;
+            border-radius: 8px;
+            font-family: monospace;
+            font-size: 14px;
+            opacity: 0.8;
+        }
+
+        .monitoring-address .label {
+            color: #666;
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 8px;
+        }
+
+        .monitoring-address .address {
+            color: #fff;
+            word-break: break-all;
+            font-size: 13px;
+        }
+
+        .spin-icon {
+            display: inline-block;
+            width: 16px;
+            height: 16px;
+            animation: spin 3s linear infinite;
+            opacity: 0.6;
+            margin-right: 8px;
+            vertical-align: middle;
+        }
+
+        @keyframes spin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+        }
+
+        .card {
+            background: #111;
+            border: 1px solid #222;
+            border-radius: 8px;
+            padding: 20px;
+        }
+
+        @media (max-width: 768px) {
+            .medal-stats-grid {
+                display: grid !important;
+                grid-template-columns: 1fr 1fr !important;
+                grid-template-rows: auto auto !important;
+                gap: 12px 20px !important;
+                justify-items: start !important;
+                padding: 0 10px !important;
+            }
+
+            .medal-stat-item {
+                justify-content: flex-start !important;
+                width: 100%;
+            }
+        }
+
+        /* Mobile layout */
+        @media (max-width: 768px) {
+            .grid {
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+                gap: 15px;
+            }
+
+            /* Spin Count stays first and half width */
+            .card-spin-count {
+                grid-column: span 1;
+                order: 1;
+            }
+
+            /* Can Spin Now moves to second position and half width */
+            .card-can-spin {
+                grid-column: span 1;
+                order: 2;
+            }
+
+            /* Last Spin full width, third position */
+            .card:nth-child(2) {
+                grid-column: span 2;
+                order: 3;
+            }
+
+            /* Time Since full width, fourth position */
+            .card:nth-child(3) {
+                grid-column: span 2;
+                order: 4;
+            }
+
+            /* Next Spin full width, fifth position */
+            .card:nth-child(5) {
+                grid-column: span 2;
+                order: 5;
+            }
+
+            /* Time Until full width, sixth position */
+            .card:nth-child(6) {
+                grid-column: span 2;
+                order: 6;
+            }
+
+            /* Description card comes after schedule cards */
+            .card.description {
+                order: 7;
+            }
+
+            /* Raffle status comes before medal stats on mobile */
+            .card.raffle-status {
+                order: 8;
+            }
+
+            /* Medal stats comes after raffle status */
+            .card.medal-stats {
+                order: 9;
+            }
+
+            /* Spin history comes after medal stats */
+            .card.spin-history {
+                order: 10;
+            }
+
+            /* Slightly smaller padding on mobile */
+            .card {
+                padding: 15px;
+            }
+        }
+
+        .card-label {
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            opacity: 0.5;
+            margin-bottom: 8px;
+        }
+
+        .card-value {
+            font-size: 20px;
+            font-weight: 500;
+        }
+
+        .card-value.large {
+            font-size: 32px;
+        }
+
+        .status-indicator {
+            display: inline-block;
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            margin-right: 12px;
+            vertical-align: middle;
+            position: relative;
+            top: -1px;
+        }
+
+        .status-indicator.active {
+            background: #0f0;
+        }
+
+        .status-indicator.inactive {
+            background: #f00;
+        }
+
+        .description {
+            grid-column: 1 / -1;
+            text-align: center;
+            font-size: 18px;
+            background: linear-gradient(135deg, #888 0%, #555 100%);
+            background-size: 200% 200%;
+            border: 2px solid #666;
+            padding: 24px 32px;
+            font-weight: 500;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 40px;
+            opacity: 0.5;
+        }
+
+        .error {
+            text-align: center;
+            padding: 40px;
+            color: #ff6b6b;
+            background: rgba(255, 107, 107, 0.1);
+            border: 1px solid rgba(255, 107, 107, 0.3);
+            border-radius: 8px;
+            margin: 20px 0;
+        }
+
+        .spin-history-row {
+            display: grid;
+            grid-template-columns: 24px 70px 30px 75px 70px 70px 1fr 100px;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 10px 10px 0;
+            font-family: monospace;
+            font-size: 13px;
+            opacity: 0.9;
+            box-sizing: border-box;
+        }
+
+        @media (max-width: 768px) {
+            .spin-history-row {
+                display: flex;
+                flex-wrap: wrap;
+                gap: 5px;
+                font-size: 11px;
+                position: relative;
+                padding-right: 35px;
+            }
+
+            /* Hide only the time column on mobile */
+            .spin-history-row .time-col {
+                display: none;
+            }
+
+            /* Hide the empty span */
+            .spin-history-row > span:last-of-type:not(.medal-badge) {
+                display: none;
+            }
+
+            .spin-history-row .medal-badge {
+                position: absolute;
+                right: 5px;
+                top: 50%;
+                transform: translateY(-50%);
+                font-size: 10px;
+                padding: 2px 6px;
+                min-width: 30px;
+            }
+
+            /* Show the gap time in green on mobile */
+            .spin-history-row .time-gap {
+                color: #4ade80;
+                font-size: 11px;
+                font-weight: 600;
+            }
+
+        }
+
+        .spin-history-row:not(:last-child) {
+            border-bottom: 1px solid #222;
+        }
+
+        .spin-history-row:hover {
+            opacity: 1;
+            background: rgba(255, 255, 255, 0.02);
+        }
+
+        .footer {
+            margin-top: 60px;
+            padding: 30px 20px 20px;
+            border-top: 1px solid #222;
+        }
+
+        .footer-content {
+            max-width: 800px;
+            margin: 0 auto;
+            text-align: center;
+        }
+
+        .footer-row {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 20px;
+            font-size: 14px;
+            opacity: 0.8;
+        }
+
+        .footer-row:last-of-type {
+            margin-bottom: 15px;
+        }
+
+        .footer-row a {
+            color: #9f7aea;
+            text-decoration: none;
+            transition: opacity 0.2s;
+        }
+
+        .footer-row a:hover {
+            opacity: 1;
+            text-decoration: underline;
+        }
+
+        .github-link {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .github-link svg {
+            color: #fff !important;
+        }
+
+        .github-link:hover {
+            text-decoration: none !important;
+            opacity: 1;
+        }
+
+        .github-link:hover span {
+            text-decoration: underline;
+        }
+
+        .medal-badge {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            min-width: 100px;
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 11px;
+            font-weight: 600;
+            margin-left: 8px;
+            letter-spacing: 0.5px;
+            text-align: center;
+        }
+
+        .medal-badge.bronze {
+            background: linear-gradient(135deg, #CD7F32, #B87333);
+            color: white;
+        }
+
+        .medal-badge.silver {
+            background: linear-gradient(135deg, #C0C0C0, #B8B8B8);
+            color: #333;
+        }
+
+        .medal-badge.gold {
+            background: linear-gradient(135deg, #FFD700, #FFC700);
+            color: #333;
+        }
+
+        .medal-badge.black {
+            background: linear-gradient(135deg, #2a2a2a, #1a1a1a);
+            color: white;
+        }
+
+        .medal-badge.none {
+            background: rgba(255, 255, 255, 0.1);
+            color: #999;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        @media (max-width: 480px) {
+            .footer-row {
+                margin-bottom: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header-logo">
+            <img src="/assets/SPIN-logo-header.png" alt="SPIN for SHAPE" />
+        </div>
+
+        <div class="wallet-view-notice">
+            <div class="notice-label">📊 Wallet Preview Mode</div>
+            <div style="color: #ccc; margin-bottom: 8px;">Viewing on-chain spin data for this wallet address.</div>
+        </div>
+
+        <div style="text-align: center; margin: -10px 0 20px 0; color: #999; font-size: 14px;">
+            Viewing daily medal spins on <a href="https://stack.shape.network/medal-spin" target="_blank" style="color: #667eea;">Shape Network</a>.
+            Let's go <a href="https://shape.network/token" target="_blank" style="color: #667eea;">$SHAPE</a>!
+        </div>
+        <div class="monitoring-address">
+            <div class="card-label">Viewing Spin Stats for</div>
+            <div class="address" id="wallet-address">Loading...</div>
+        </div>
+        <div id="content" class="loading">Loading...</div>
+    </div>
+    <footer class="footer">
+        <div class="footer-content">
+            <div class="footer-row">
+                <span>a Shape Community tool by <a href="https://x.com/josdotph" target="_blank" rel="noopener">@josdotph</a></span>
+            </div>
+            <div class="footer-row">
+                <a href="https://github.com/jmsaavedra/shape-spin-notification" target="_blank" rel="noopener" class="github-link">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
+                    </svg>
+                    <span>Deploy Your Own</span>
+                </a>
+            </div>
+            <div class="medal-dots">
+                <span class="medal-dot bronze"></span>
+                <span class="medal-dot silver"></span>
+                <span class="medal-dot gold"></span>
+                <span class="medal-dot obsidian"></span>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        let globalData = null;
+        let updateInterval = null;
+        let walletAddress = null;
+
+        // Extract wallet address from URL path
+        function getWalletFromPath() {
+            const path = window.location.pathname;
+            // Remove leading slash and get the wallet address
+            const wallet = path.replace(/^\//, '');
+
+            // Validate wallet address (basic check for 0x format or ENS)
+            if (wallet.match(/^0x[a-fA-F0-9]{40}$/) || wallet.match(/^[a-zA-Z0-9-]+\.eth$/)) {
+                return wallet;
+            }
+
+            return null;
+        }
+
+        // Initialize wallet address from URL
+        walletAddress = getWalletFromPath();
+
+        if (!walletAddress) {
+            document.getElementById('content').innerHTML = '<div class="error">Invalid wallet address. Please provide a valid Ethereum address or ENS name.</div>';
+            document.getElementById('wallet-address').textContent = 'Invalid Address';
+            // Stop execution if invalid address
+        } else {
+            // Define the spinning SVG icon once
+            const spinIconSVG = `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="spin-icon">
+                <path d="M2 12c0-2.8 2.2-5 5-5s5 2.2 5 5 2.2 5 5 5 5-2.2 5-5"></path>
+                <path d="M7 20.7a1 1 0 1 1 5-8.7 1 1 0 1 0 5-8.6"></path>
+                <path d="M7 3.3a1 1 0 1 1 5 8.6 1 1 0 1 0 5 8.6"></path>
+                <circle cx="12" cy="12" r="10"></circle>
+            </svg>`;
+
+            // Smaller version for history rows
+            const spinIconSmallSVG = `<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="spin-icon" style="width: 14px; height: 14px;">
+                <path d="M2 12c0-2.8 2.2-5 5-5s5 2.2 5 5 2.2 5 5 5 5-2.2 5-5"></path>
+                <path d="M7 20.7a1 1 0 1 1 5-8.7 1 1 0 1 0 5-8.6"></path>
+                <path d="M7 3.3a1 1 0 1 1 5 8.6 1 1 0 1 0 5 8.6"></path>
+                <circle cx="12" cy="12" r="10"></circle>
+            </svg>`;
+
+            function updateTimers() {
+                if (!globalData) return;
+
+                const now = Date.now();
+
+                // Update Time Since
+                if (globalData.lastSpinTimestamp) {
+                    const msSince = now - globalData.lastSpinTimestamp;
+                    const hoursSince = Math.floor(msSince / (1000 * 60 * 60));
+                    const minutesSince = Math.floor((msSince % (1000 * 60 * 60)) / (1000 * 60));
+                    const secondsSince = Math.floor((msSince % (1000 * 60)) / 1000);
+
+                    const timeSinceEl = document.getElementById('time-since');
+                    if (timeSinceEl) {
+                        timeSinceEl.textContent = `${hoursSince}h ${minutesSince}m ${secondsSince}s`;
+                    }
+                }
+
+                // Update Time Until
+                if (globalData.nextSpinTimestamp) {
+                    const msUntil = globalData.nextSpinTimestamp - now;
+
+                    if (msUntil > 0) {
+                        const hoursUntil = Math.floor(msUntil / (1000 * 60 * 60));
+                        const minutesUntil = Math.floor((msUntil % (1000 * 60 * 60)) / (1000 * 60));
+                        const secondsUntil = Math.floor((msUntil % (1000 * 60)) / 1000);
+
+                        const timeUntilEl = document.getElementById('time-until');
+                        if (timeUntilEl) {
+                            timeUntilEl.textContent = `${hoursUntil}h ${minutesUntil}m ${secondsUntil}s`;
+                        }
+                    } else {
+                        const timeUntilEl = document.getElementById('time-until');
+                        if (timeUntilEl) {
+                            timeUntilEl.textContent = 'Now';
+                        }
+                    }
+                }
+            }
+
+            async function loadSchedule() {
+                try {
+                    const response = await fetch(`/api/wallet-status?address=${encodeURIComponent(walletAddress)}`, {
+                        headers: { 'Accept': 'application/json' }
+                    });
+
+                    if (!response.ok) {
+                        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                    }
+
+                    const data = await response.json();
+                    globalData = data;
+
+                    // Update wallet address with ENS name if available
+                    const walletElement = document.getElementById('wallet-address');
+                    if (data.ensName) {
+                        const truncatedAddress = data.walletAddress ? `${data.walletAddress.slice(0, 6)}...${data.walletAddress.slice(-4)}` : '';
+                        walletElement.innerHTML = `<div style="font-weight: bold; font-size: 18px;">${data.ensName}</div><div style="font-size: 12px; opacity: 0.7; margin-top: 2px;">${truncatedAddress}</div>`;
+                    } else {
+                        walletElement.innerHTML = `<div style="font-weight: bold;">${data.walletAddress || walletAddress}</div>`;
+                    }
+
+                    // Detect if we're on mobile
+                    const isMobile = window.innerWidth <= 768;
+
+                    // Get user's timezone abbreviation
+                    const getTimezoneAbbr = () => {
+                        const date = new Date();
+                        const timeStr = date.toLocaleTimeString('en-US', {
+                            timeZoneName: 'short'
+                        });
+                        // Extract timezone abbreviation (e.g., "PST", "EST", etc.)
+                        return timeStr.split(' ').pop();
+                    };
+
+                    const userTimezone = getTimezoneAbbr();
+
+                    // Format timestamps in user's local timezone
+                    const formatLocalTime = (timestamp) => {
+                        if (!timestamp) return null;
+                        const date = new Date(timestamp);
+                        const dateStr = date.toLocaleDateString('en-US', {
+                            year: '2-digit',
+                            month: '2-digit',
+                            day: '2-digit'
+                        });
+                        const timeStr = date.toLocaleTimeString('en-US', {
+                            hour: '2-digit',
+                            minute: '2-digit',
+                            second: '2-digit',
+                            hour12: false
+                        });
+                        return `${dateStr}, ${timeStr} ${userTimezone}`;
+                    };
+
+                    // Format timestamps with separated date and time
+                    const formatSeparatedTime = (timestamp) => {
+                        if (!timestamp) return null;
+                        const date = new Date(timestamp);
+                        const dateStr = date.toLocaleDateString('en-US', {
+                            year: '2-digit',
+                            month: '2-digit',
+                            day: '2-digit'
+                        });
+                        const timeStr = date.toLocaleTimeString('en-US', {
+                            hour: '2-digit',
+                            minute: '2-digit',
+                            second: '2-digit',
+                            hour12: false
+                        });
+                        return {
+                            date: dateStr,
+                            time: `${timeStr} ${userTimezone}`
+                        };
+                    };
+
+                    // Format times in local timezone
+                    const lastSpinTimeLocal = data.lastSpinTimestamp ? formatLocalTime(data.lastSpinTimestamp) : data.lastSpinTime;
+                    const nextSpinTimeLocal = data.nextSpinTimestamp ? formatLocalTime(data.nextSpinTimestamp) : data.nextSpinTime;
+
+                    // Get separated date/time for Last Spin and Next Spin cards
+                    const lastSpinSeparated = data.lastSpinTimestamp ? formatSeparatedTime(data.lastSpinTimestamp) : null;
+                    const nextSpinSeparated = data.nextSpinTimestamp ? formatSeparatedTime(data.nextSpinTimestamp) : null;
+
+                    const html = `
+                        <div class="grid">
+                            <div class="card card-spin-count">
+                                <div class="card-label">
+                                    ${spinIconSVG}
+                                    Total Spins
+                                </div>
+                                <div class="card-value large">${data.currentSpinCount}</div>
+                            </div>
+
+                            <div class="card">
+                                <div class="card-label">
+                                    ${spinIconSVG}
+                                    Last Spin
+                                </div>
+                                <div class="card-value" id="last-spin-time">
+                                    ${lastSpinSeparated ?
+                                        `<div>${lastSpinSeparated.date}</div><div style="font-size: 16px; margin-top: 4px; opacity: 0.8;">${lastSpinSeparated.time}</div>` :
+                                        'Never'
+                                    }
+                                </div>
+                            </div>
+
+                            <div class="card">
+                                <div class="card-label">
+                                    ${spinIconSVG}
+                                    Time Since
+                                </div>
+                                <div class="card-value" id="time-since">${data.timeSinceLastSpin || 'N/A'}</div>
+                            </div>
+
+                            <div class="card card-can-spin">
+                                <div class="card-label">
+                                    ${spinIconSVG}
+                                    Can Spin Now
+                                </div>
+                                <div class="card-value large" style="display: flex; align-items: center; justify-content: flex-start;">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="${data.canSpinNow ? '#4ade80' : '#ff0000'}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width: 28px !important; height: 28px !important; margin-right: 12px; display: inline-block; animation: spin 3s linear infinite;">
+                                        <path d="M2 12c0-2.8 2.2-5 5-5s5 2.2 5 5 2.2 5 5 5 5-2.2 5-5"></path>
+                                        <path d="M7 20.7a1 1 0 1 1 5-8.7 1 1 0 1 0 5-8.6"></path>
+                                        <path d="M7 3.3a1 1 0 1 1 5 8.6 1 1 0 1 0 5 8.6"></path>
+                                        <circle cx="12" cy="12" r="10"></circle>
+                                    </svg>
+                                    ${data.canSpinNow ? 'Yes' : 'No'}
+                                </div>
+                            </div>
+
+                            <div class="card">
+                                <div class="card-label">
+                                    ${spinIconSVG}
+                                    Next Spin
+                                </div>
+                                <div class="card-value" id="next-spin-time">
+                                    ${nextSpinSeparated ?
+                                        `<div>${nextSpinSeparated.date}</div><div style="font-size: 16px; margin-top: 4px; opacity: 0.8;">${nextSpinSeparated.time}</div>` :
+                                        'Calculating...'
+                                    }
+                                </div>
+                            </div>
+
+                            <div class="card">
+                                <div class="card-label">
+                                    ${spinIconSVG}
+                                    Time Until
+                                </div>
+                                <div class="card-value" id="time-until">${data.timeUntilSpin || 'Calculating...'}</div>
+                            </div>
+
+                            <div class="card description">
+                                <div><strong style="font-weight: 900;">Read-Only View</strong> - Viewing on-chain data for this wallet address</div>
+                                <div style="margin-top: 8px; font-size: 14px; opacity: 0.7;">Text Notification not available in wallet preview. <a href="https://github.com/jmsaavedra/shape-spin-notification" target="_blank" style="color: white; text-decoration: underline;">Deploy your own here!</a></div>
+                            </div>
+
+                            ${data.raffleStatus ? `
+                            <div class="card raffle-status" style="grid-column: 1 / -1;">
+                                <div class="card-label">⚫ Black Medal Raffle</div>
+                                <div style="margin-top: 16px;">
+                                    <div class="raffle-info-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; margin-bottom: 16px;">
+                                        <div style="background: rgba(255, 255, 255, 0.05); padding: 12px; border-radius: 8px;">
+                                            <div style="font-size: 12px; color: #999; margin-bottom: 4px;">
+                                                Current: Round #${data.raffleStatus.currentRound}
+                                            </div>
+                                            <div style="display: flex; align-items: center; gap: 8px;">
+                                                <div style="width: 8px; height: 8px; border-radius: 50%; background: ${data.raffleStatus.isEntered ? '#4ade80' : data.raffleStatus.isEligible ? '#f59e0b' : '#666'};"></div>
+                                                <span style="font-size: 16px; font-weight: bold; color: ${data.raffleStatus.isEntered ? '#4ade80' : data.raffleStatus.isEligible ? '#f59e0b' : '#999'};">
+                                                    ${data.raffleStatus.isEntered ? 'Entered' : data.raffleStatus.isEligible ? 'Eligible' : 'Not Yet Eligible'}
+                                                </span>
+                                            </div>
+                                            <div style="font-size: 11px; color: #666; margin-top: 4px;">${data.raffleStatus.participantCount} participants</div>
+                                        </div>
+                                        <div style="background: rgba(255, 255, 255, 0.05); padding: 12px; border-radius: 8px;">
+                                            <div style="font-size: 12px; color: #999; margin-bottom: 4px;">
+                                                ${data.raffleStatus.isEntered ? `Round #${data.raffleStatus.currentRound + 1} Streak` : 'Streak Progress'}
+                                            </div>
+                                            <div style="display: flex; align-items: center; gap: 8px;">
+                                                <div style="font-size: 16px; font-weight: bold; color: ${data.raffleStatus.isEligible ? '#4ade80' : '#f59e0b'};">
+                                                    ${data.raffleStatus.currentStreak} days
+                                                </div>
+                                                <div style="flex: 1; height: 6px; background: rgba(255, 255, 255, 0.1); border-radius: 3px; overflow: hidden;">
+                                                    <div style="height: 100%; background: linear-gradient(90deg, #f59e0b, #4ade80); width: ${Math.round(data.raffleStatus.streakProgress * 100)}%; transition: width 0.3s ease;"></div>
+                                                </div>
+                                            </div>
+                                            ${data.raffleStatus.isEntered ? `
+                                                <div style="font-size: 11px; color: #999; margin-top: 4px;">Building for Round #${data.raffleStatus.currentRound + 1}</div>
+                                            ` : ''}
+                                        </div>
+                                    </div>
+                                    ${data.raffleHistory && data.raffleHistory.length > 0 ? `
+                                        <div style="margin-top: 16px;">
+                                            <div style="font-size: 14px; color: #ccc; margin-bottom: 8px;">Recent Winners</div>
+                                            <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+                                                ${data.raffleHistory.slice(0, 3).map(round => `
+                                                    <div style="background: rgba(255, 255, 255, 0.05); padding: 8px 12px; border-radius: 6px; font-size: 12px;">
+                                                        <div style="color: #999;">Round #${round.round}</div>
+                                                        <div style="color: #ccc; font-family: monospace;">${round.winner.slice(0, 6)}...${round.winner.slice(-4)}</div>
+                                                    </div>
+                                                `).join('')}
+                                            </div>
+                                        </div>
+                                    ` : ''}
+                                </div>
+                            </div>
+                            ` : ''}
+
+                            ${data.medalStats ? `
+                            <div class="card medal-stats" style="grid-column: 1 / -1;">
+                                <div class="card-label">Spin Medal Statistics</div>
+                                <div class="medal-stats-grid" style="margin-top: 16px; display: flex; gap: 15px; flex-wrap: wrap; align-items: center;">
+                                    ${(() => {
+                                        // Calculate percentages based only on bronze, silver, gold (excluding black)
+                                        const spinMedalTotal = data.medalStats.bronze + data.medalStats.silver + data.medalStats.gold;
+                                        const bronzePercent = spinMedalTotal > 0 ? Math.round((data.medalStats.bronze / spinMedalTotal) * 100) : 0;
+                                        const silverPercent = spinMedalTotal > 0 ? Math.round((data.medalStats.silver / spinMedalTotal) * 100) : 0;
+                                        const goldPercent = spinMedalTotal > 0 ? Math.round((data.medalStats.gold / spinMedalTotal) * 100) : 0;
+
+                                        return `
+                                            <div class="medal-stat-item" style="display: flex; align-items: center; gap: 8px;">
+                                                <span class="medal-dot bronze"></span>
+                                                <div style="color: #fff; font-size: 14px;">
+                                                    <div>${data.medalStats.bronze} <span style="color: #999;">(${bronzePercent}%)</span></div>
+                                                </div>
+                                            </div>
+                                            <div class="medal-stat-item" style="display: flex; align-items: center; gap: 8px;">
+                                                <span class="medal-dot silver"></span>
+                                                <div style="color: #fff; font-size: 14px;">
+                                                    <div>${data.medalStats.silver} <span style="color: #999;">(${silverPercent}%)</span></div>
+                                                </div>
+                                            </div>
+                                            <div class="medal-stat-item" style="display: flex; align-items: center; gap: 8px;">
+                                                <span class="medal-dot gold"></span>
+                                                <div style="color: #fff; font-size: 14px;">
+                                                    <div>${data.medalStats.gold} <span style="color: #999;">(${goldPercent}%)</span></div>
+                                                </div>
+                                            </div>
+                                            <div class="medal-stat-item" style="display: flex; align-items: center; gap: 8px;">
+                                                <span class="medal-dot obsidian"></span>
+                                                <div style="color: #fff; font-size: 14px;">
+                                                    <div>${data.medalStats.black}</div>
+                                                </div>
+                                            </div>
+                                        `;
+                                    })()}
+                                </div>
+                            </div>
+                            ` : ''}
+
+                            ${data.spinHistory && data.spinHistory.length > 0 ? `
+                            <div class="card spin-history" style="grid-column: 1 / -1;">
+                                <div class="card-label">Spin History</div>
+                                <div style="margin-top: 16px;">
+                                    ${data.spinHistory.map((spin, i) => {
+                                        const medal = spin.medal;
+                                        let medalBadge = '';
+                                        if (medal) {
+                                            if (medal.tier === 'Cheater') {
+                                                // Special handling for cheater medals - link to explanation
+                                                medalBadge = `<a href="https://x.com/josdotph/status/1965448593655181342" target="_blank" rel="noopener" style="text-decoration: none;"><span class="medal-badge cheater" style="background: #dc2626; color: white; cursor: pointer;">Cheater</span></a>`;
+                                            } else {
+                                                const tierClass = medal.tier.toLowerCase().replace('/', '');
+                                                const badgeText = isMobile ?
+                                                    (medal.tier === 'Black/Obsidian' ? 'Bl' : medal.tier.substring(0, 2)) :
+                                                    (medal.tier === 'Black/Obsidian' ? 'Black' : medal.tier);
+                                                medalBadge = `<span class="medal-badge ${tierClass}">${badgeText}</span>`;
+                                            }
+                                        } else {
+                                            medalBadge = `<span class="medal-badge none">${isMobile ? 'No' : 'No Medal'}</span>`;
+                                        }
+
+                                        const date = spin.timestamp ? new Date(spin.timestamp) : null;
+                                        const dateStr = date ? date.toLocaleDateString('en-US', {
+                                            year: 'numeric',
+                                            month: 'numeric',
+                                            day: 'numeric'
+                                        }) : '';
+                                        const timeStr = date ? date.toLocaleTimeString('en-US', {
+                                            hour: '2-digit',
+                                            minute: '2-digit',
+                                            second: '2-digit',
+                                            hour12: false
+                                        }) : '';
+
+                                        // Handle both spins and raffle wins
+                                        const isRaffle = spin.spinNumber === 'RAFFLE WINNER';
+                                        const displayNumber = isRaffle ? 'RAFFLE WINNER' : `Spin #${spin.spinNumber}`;
+                                        const iconColor = isRaffle ? '#f59e0b' : 'currentColor'; // Orange for raffle
+                                        const raffleIcon = isRaffle ?
+                                            `<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="${iconColor}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width: 14px; height: 14px;">
+                                                <path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"></path>
+                                                <path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"></path>
+                                                <path d="M4 22h16"></path>
+                                                <path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22"></path>
+                                                <path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22"></path>
+                                                <path d="M18 2H6v7a6 6 0 0 0 12 0V2Z"></path>
+                                            </svg>` :
+                                            spinIconSmallSVG;
+
+                                        // Always show date and gap, hide time on mobile via CSS
+                                        return `
+                                        <div class="spin-history-row ${isRaffle ? 'raffle-row' : ''}">
+                                            ${raffleIcon}
+                                            <span style="color: ${isRaffle ? '#f59e0b' : '#fff'}; font-weight: 600; ${isRaffle ? 'font-size: 11px;' : ''}">${displayNumber}</span>
+                                            <span style="color: #fff; text-align: center; display: block;">•</span>
+                                            <span class="date-col" style="font-size: 13px; color: #fff;">${dateStr}</span>
+                                            <span class="time-col" style="font-size: 13px; color: #fff;">${timeStr}</span>
+                                            <span class="time-gap" style="color: ${(() => {
+                                                if (!spin.gap) return '#d8b4fe'; // First! - purple
+                                                // Parse gap to check if over 48 hours
+                                                const gapMatch = spin.gap.match(/(\d+)h/);
+                                                if (gapMatch) {
+                                                    const hours = parseInt(gapMatch[1]);
+                                                    return hours > 48 ? '#ef4444' : '#4ade80'; // red if > 48h, green otherwise
+                                                }
+                                                return '#4ade80'; // default green
+                                            })()}; font-size: 12px; font-weight: 600;">${spin.gap || 'First!'}</span>
+                                            <span></span>
+                                            ${medalBadge}
+                                        </div>
+                                        `;
+                                    }).join('')}
+                                    ${(() => {
+                                        // Calculate average time between spins
+                                        if (data.spinHistory && data.spinHistory.length > 1) {
+                                            const spinTimestamps = data.spinHistory
+                                                .filter(spin => spin.spinNumber !== 'RAFFLE WINNER' && spin.timestamp)
+                                                .map(spin => spin.timestamp)
+                                                .sort((a, b) => a - b);
+
+                                            if (spinTimestamps.length > 1) {
+                                                let totalGapMs = 0;
+                                                for (let i = 1; i < spinTimestamps.length; i++) {
+                                                    totalGapMs += spinTimestamps[i] - spinTimestamps[i - 1];
+                                                }
+                                                const avgGapMs = totalGapMs / (spinTimestamps.length - 1);
+                                                const avgGapHours = Math.floor(avgGapMs / (1000 * 60 * 60));
+                                                const avgGapMinutes = Math.round((avgGapMs % (1000 * 60 * 60)) / (1000 * 60));
+
+                                                return `
+                                                    <div style="margin-top: 16px; padding-top: 16px; border-top: 1px solid #333;">
+                                                        <div style="font-size: 12px; color: #999; margin-bottom: 4px;">Average time between spins</div>
+                                                        <div style="font-size: 14px; color: #ccc;">+${avgGapHours}h ${avgGapMinutes}m</div>
+                                                    </div>
+                                                `;
+                                            }
+                                        }
+                                        return '';
+                                    })()}
+                                </div>
+                            </div>
+                            ` : data.currentSpinCount === 0 ? `
+                            <div class="card" style="grid-column: 1 / -1; text-align: center; padding: 40px;">
+                                <div style="font-size: 18px; color: #999; margin-bottom: 10px;">No Spins Found</div>
+                                <div style="font-size: 14px; color: #666;">This wallet has not performed any medal spins on Shape Network yet.</div>
+                            </div>
+                            ` : ''}
+                        </div>
+                    `;
+
+                    document.getElementById('content').innerHTML = html;
+                    document.getElementById('content').classList.remove('loading');
+
+                    // Start the timer for live updates
+                    if (updateInterval) clearInterval(updateInterval);
+                    updateInterval = setInterval(updateTimers, 1000);
+                    updateTimers(); // Run immediately
+
+                } catch (error) {
+                    console.error('Error loading wallet data:', error);
+                    document.getElementById('content').innerHTML = `<div class="error">Error loading wallet data: ${error.message}</div>`;
+                    document.getElementById('wallet-address').textContent = 'Error loading';
+                }
+            }
+
+            // Smart polling system
+            let pollInterval = null;
+            let lastSpinCount = null;
+            let checkInterval = 60000; // 1 minute for wallet view (less frequent than main dashboard)
+
+            async function checkForUpdates() {
+                try {
+                    // Simple reload every minute for wallet view
+                    await loadSchedule();
+                } catch (error) {
+                    console.error('Error checking for updates:', error);
+                }
+            }
+
+            // Initial load
+            loadSchedule().then(() => {
+                lastSpinCount = globalData?.currentSpinCount;
+                // Start polling
+                pollInterval = setInterval(checkForUpdates, checkInterval);
+            });
+        }
+    </script>
+</body>
+</html>
