@@ -225,15 +225,20 @@
             .card.description {
                 order: 7;
             }
-            
-            /* Medal stats comes after description */
-            .card.medal-stats {
+
+            /* Raffle status comes before medal stats on mobile */
+            .card.raffle-status {
                 order: 8;
             }
-            
+
+            /* Medal stats comes after raffle status */
+            .card.medal-stats {
+                order: 9;
+            }
+
             /* Spin history comes after medal stats */
             .card.spin-history {
-                order: 9;
+                order: 10;
             }
             
             /* Slightly smaller padding on mobile */
@@ -520,7 +525,7 @@
             Let's go <a href="https://shape.network/token" target="_blank" style="color: #667eea;">$SHAPE</a>!
         </div>
         <div class="monitoring-address">
-            <div class="label">Monitoring Wallet</div>
+            <div class="card-label">Spin Stats and Notifications for</div>
             <div class="address" id="wallet-address">Loading...</div>
         </div>
         <div id="content" class="loading">Loading...</div>
@@ -528,7 +533,7 @@
     <footer class="footer">
         <div class="footer-content">
             <div class="footer-row">
-                <span>An open-source tool by <a href="https://x.com/josdotph" target="_blank" rel="noopener">@josdotph</a></span>
+                <span>a Shape Community tool by <a href="https://x.com/josdotph" target="_blank" rel="noopener">@josdotph</a></span>
             </div>
             <div class="footer-row">
                 <a href="https://github.com/jmsaavedra/shape-spin-notification" target="_blank" rel="noopener" class="github-link">
@@ -616,10 +621,13 @@
                 globalData = data;
                 
                 // Update wallet address with ENS name if available
-                const walletDisplay = data.ensName 
-                    ? `${data.ensName} (${data.walletAddress.slice(0, 6)}...${data.walletAddress.slice(-4)})`
-                    : data.walletAddress;
-                document.getElementById('wallet-address').textContent = walletDisplay || 'Not configured';
+                const walletElement = document.getElementById('wallet-address');
+                if (data.ensName) {
+                    const truncatedAddress = data.walletAddress ? `${data.walletAddress.slice(0, 6)}...${data.walletAddress.slice(-4)}` : '';
+                    walletElement.innerHTML = `<div style="font-weight: bold; font-size: 18px;">${data.ensName}</div><div style="font-size: 12px; opacity: 0.7; margin-top: 2px;">${truncatedAddress}</div>`;
+                } else {
+                    walletElement.innerHTML = `<div style="font-weight: bold;">${data.walletAddress || 'Not configured'}</div>`;
+                }
                 
                 // Detect if we're on mobile
                 const isMobile = window.innerWidth <= 768;
@@ -654,6 +662,27 @@
                     return `${dateStr}, ${timeStr} ${userTimezone}`;
                 };
 
+                // Format timestamps with separated date and time
+                const formatSeparatedTime = (timestamp) => {
+                    if (!timestamp) return null;
+                    const date = new Date(timestamp);
+                    const dateStr = date.toLocaleDateString('en-US', {
+                        year: '2-digit',
+                        month: '2-digit',
+                        day: '2-digit'
+                    });
+                    const timeStr = date.toLocaleTimeString('en-US', {
+                        hour: '2-digit',
+                        minute: '2-digit',
+                        second: '2-digit',
+                        hour12: false
+                    });
+                    return {
+                        date: dateStr,
+                        time: `${timeStr} ${userTimezone}`
+                    };
+                };
+
                 const formatNotificationTime = (timestamp) => {
                     if (!timestamp) return null;
                     const date = new Date(timestamp);
@@ -678,6 +707,10 @@
                 // Format times in local timezone
                 const lastSpinTimeLocal = data.lastSpinTimestamp ? formatLocalTime(data.lastSpinTimestamp) : data.lastSpinTime;
                 const nextSpinTimeLocal = data.nextSpinTimestamp ? formatLocalTime(data.nextSpinTimestamp) : data.nextSpinTime;
+
+                // Get separated date/time for Last Spin and Next Spin cards
+                const lastSpinSeparated = data.lastSpinTimestamp ? formatSeparatedTime(data.lastSpinTimestamp) : null;
+                const nextSpinSeparated = data.nextSpinTimestamp ? formatSeparatedTime(data.nextSpinTimestamp) : null;
                 const notificationTimeLocal = data.notificationTimestamp ? formatNotificationTime(data.notificationTimestamp) : data.notificationTime;
                 const notificationDateLocal = data.notificationTimestamp ? formatNotificationDate(data.notificationTimestamp) : data.notificationDate;
 
@@ -703,7 +736,7 @@
                         <div class="card card-spin-count">
                             <div class="card-label">
                                 ${spinIconSVG}
-                                Spin Count
+                                Total Spins
                             </div>
                             <div class="card-value large">${data.currentSpinCount}</div>
                         </div>
@@ -713,7 +746,12 @@
                                 ${spinIconSVG}
                                 Last Spin
                             </div>
-                            <div class="card-value" id="last-spin-time">${lastSpinTimeLocal || 'Never'}</div>
+                            <div class="card-value" id="last-spin-time">
+                                ${lastSpinSeparated ?
+                                    `<div>${lastSpinSeparated.date}</div><div style="font-size: 16px; margin-top: 4px; opacity: 0.8;">${lastSpinSeparated.time}</div>` :
+                                    'Never'
+                                }
+                            </div>
                         </div>
                         
                         <div class="card">
@@ -745,7 +783,12 @@
                                 ${spinIconSVG}
                                 Next Spin
                             </div>
-                            <div class="card-value" id="next-spin-time">${nextSpinTimeLocal || 'Calculating...'}</div>
+                            <div class="card-value" id="next-spin-time">
+                                ${nextSpinSeparated ?
+                                    `<div>${nextSpinSeparated.date}</div><div style="font-size: 16px; margin-top: 4px; opacity: 0.8;">${nextSpinSeparated.time}</div>` :
+                                    'Calculating...'
+                                }
+                            </div>
                         </div>
                         
                         <div class="card">
@@ -761,6 +804,81 @@
                             ${data.notificationStatus ? `<div style="margin-top: 8px; font-size: 12px; opacity: 0.6;">${data.notificationStatus}</div>` : ''}
                         </div>
                         
+                        ${data.raffleStatus ? `
+                        <div class="card raffle-status" style="grid-column: 1 / -1;">
+                            <div class="card-label">Black Medal Raffle</div>
+                            <div style="margin-top: 16px;">
+                                <div class="raffle-info-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; margin-bottom: 16px;">
+                                    <div style="background: rgba(255, 255, 255, 0.05); padding: 12px; border-radius: 8px;">
+                                        <div style="font-size: 12px; color: #999; margin-bottom: 4px;">
+                                            Current: Round #${data.raffleStatus.currentRound}
+                                        </div>
+                                        <div style="display: flex; align-items: center; gap: 8px;">
+                                            <div style="width: 8px; height: 8px; border-radius: 50%; background: ${data.raffleStatus.isEntered ? '#4ade80' : data.raffleStatus.isEligible ? '#f59e0b' : '#666'};"></div>
+                                            <span style="font-size: 16px; font-weight: bold; color: ${data.raffleStatus.isEntered ? '#4ade80' : data.raffleStatus.isEligible ? '#f59e0b' : '#999'};">
+                                                ${data.raffleStatus.isEntered ? 'Entered' : data.raffleStatus.isEligible ? 'Eligible' : 'Not Eligible'}
+                                            </span>
+                                        </div>
+                                        <div style="font-size: 11px; color: #666; margin-top: 4px;">${data.raffleStatus.participantCount} participants</div>
+                                    </div>
+                                    <div style="background: rgba(255, 255, 255, 0.05); padding: 12px; border-radius: 8px;">
+                                        <div style="font-size: 12px; color: #999; margin-bottom: 4px;">
+                                            ${data.raffleStatus.isEntered ? `Round #${data.raffleStatus.currentRound + 1} Streak` : 'Streak Progress'}
+                                        </div>
+                                        <div style="display: flex; align-items: center; gap: 8px;">
+                                            <div style="font-size: 16px; font-weight: bold; color: ${data.raffleStatus.isEligible ? '#4ade80' : '#f59e0b'};">
+                                                ${data.raffleStatus.currentStreak}/${data.raffleStatus.minimumStreakRequired} days
+                                            </div>
+                                            <div style="flex: 1; height: 6px; background: rgba(255, 255, 255, 0.1); border-radius: 3px; overflow: hidden;">
+                                                <div style="height: 100%; background: linear-gradient(90deg, #f59e0b, #4ade80); width: ${Math.round(data.raffleStatus.streakProgress * 100)}%; transition: width 0.3s ease;"></div>
+                                            </div>
+                                        </div>
+                                        ${data.raffleStatus.isEntered ? `
+                                            <div style="font-size: 11px; color: #999; margin-top: 4px;">Building for Round #${data.raffleStatus.currentRound + 1}</div>
+                                        ` : ''}
+                                    </div>
+                                    <div style="background: rgba(255, 255, 255, 0.05); padding: 12px; border-radius: 8px;">
+                                        <div style="font-size: 12px; color: #999; margin-bottom: 4px;">
+                                            Round #${data.raffleStatus.currentRound + 1} Window
+                                        </div>
+                                        <div style="font-size: 16px; font-weight: bold; color: ${data.raffleStatus.isEligible ? '#4ade80' : '#f59e0b'};">
+                                            ${data.raffleStatus.isEligible ? 'Ready' : `${data.raffleStatus.daysToEligibility} days left`}
+                                        </div>
+                                        <div style="font-size: 11px; color: #666; margin-top: 4px;">
+                                            ${data.raffleStatus.isEligible ? 'Eligible for future rounds' : 'Keep daily streak going'}
+                                        </div>
+                                    </div>
+                                </div>
+                                ${data.raffleStatus.canEnter ? `
+                                    <div style="background: rgba(255, 255, 255, 0.03); padding: 12px; border-radius: 8px; border-left: 3px solid #4ade80;">
+                                        <a href="https://stack.shape.network/medal-spin" target="_blank" style="display: inline-flex; align-items: center; gap: 6px; background: linear-gradient(135deg, #667eea, #764ba2); color: white; text-decoration: none; padding: 8px 12px; border-radius: 6px; font-size: 12px; font-weight: 500; transition: transform 0.2s ease;" onmouseover="this.style.transform='scale(1.02)'" onmouseout="this.style.transform='scale(1)'">
+                                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                                <path d="M2 12c0-2.8 2.2-5 5-5s5 2.2 5 5 2.2 5 5 5 5-2.2 5-5"></path>
+                                                <path d="M7 20.7a1 1 0 1 1 5-8.7 1 1 0 1 0 5-8.6"></path>
+                                                <path d="M7 3.3a1 1 0 1 1 5 8.6 1 1 0 1 0 5 8.6"></path>
+                                                <circle cx="12" cy="12" r="10"></circle>
+                                            </svg>
+                                            Enter Black Medal Raffle
+                                        </a>
+                                    </div>
+                                ` : ''}
+                                ${data.raffleHistory && data.raffleHistory.length > 0 ? `
+                                    <div style="margin-top: 16px;">
+                                        <div style="font-size: 14px; color: #ccc; margin-bottom: 8px;">Recent Winners</div>
+                                        <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+                                            ${data.raffleHistory.slice(0, 3).map(round => `
+                                                <div style="background: rgba(255, 255, 255, 0.05); padding: 8px 12px; border-radius: 6px; font-size: 12px;">
+                                                    <div style="color: #999;">Round #${round.round}</div>
+                                                    <div style="color: #ccc; font-family: monospace;">${round.winner.slice(0, 6)}...${round.winner.slice(-4)}</div>
+                                                </div>
+                                            `).join('')}
+                                        </div>
+                                    </div>
+                                ` : ''}
+                            </div>
+                        </div>
+                        ` : ''}
+
                         ${data.medalStats ? `
                         <div class="card medal-stats" style="grid-column: 1 / -1;">
                             <div class="card-label">Spin Medal Statistics</div>
@@ -784,7 +902,7 @@
                             </div>
                         </div>
                         ` : ''}
-                        
+
                         ${data.spinHistory && data.spinHistory.length > 0 ? `
                         <div class="card spin-history" style="grid-column: 1 / -1;">
                             <div class="card-label">Spin History</div>
@@ -823,7 +941,7 @@
                                         <span style="color: #fff; text-align: center; display: block;">•</span>
                                         <span class="date-col" style="font-size: 13px; color: #fff;">${dateStr}</span>
                                         <span class="time-col" style="font-size: 13px; color: #fff;">${timeStr}</span>
-                                        <span class="time-gap" style="color: ${spin.gap ? '#4ade80' : '#a7f3d0'}; font-size: 12px; font-weight: 600;">${spin.gap || 'First!'}</span>
+                                        <span class="time-gap" style="color: ${spin.gap ? '#4ade80' : '#d8b4fe'}; font-size: 12px; font-weight: 600;">${spin.gap || 'First!'}</span>
                                         <span></span>
                                         ${medalBadge}
                                     </div>
