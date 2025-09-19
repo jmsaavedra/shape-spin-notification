@@ -36,17 +36,6 @@ module.exports = async (req, res) => {
       return res.status(500).json({ error: "PUBLIC_ADDRESS not configured" });
     }
 
-    // TEMP: Clear ALL cache to force fresh calculation
-    console.log(`DEBUG: publicAddress=${publicAddress}, toLowerCase=${publicAddress.toLowerCase()}`);
-    const tempSpinsCacheKey = `spins:${publicAddress.toLowerCase()}`;
-    const tempMedalsCacheKey = `medalSpin:${publicAddress.toLowerCase()}`;
-    const tempLastFetchKey = `medalSpinFetch:${publicAddress.toLowerCase()}`;
-    const tempLastMedalFetchKey = `lastMedalFetch:${publicAddress.toLowerCase()}`;
-    caches.spins.set(tempSpinsCacheKey, null);
-    caches.spins.set(tempMedalsCacheKey, null);
-    caches.spins.set(tempLastFetchKey, null);
-    caches.spins.set(tempLastMedalFetchKey, null);
-    console.log('TEMP: Cleared ALL cache to force fresh calculation');
 
     // Try to resolve ENS name with caching
     let ensName = null;
@@ -559,20 +548,12 @@ module.exports = async (req, res) => {
     let raffleStatus = null;
     let raffleHistory = [];
 
-    console.log(`DEBUG: globalRaffleData available: ${!!globalRaffleData}`);
     if (globalRaffleData) {
       // Calculate streak using existing spin data (no additional contract calls!)
-      // TEMP: Force require cache invalidation for testing
-      delete require.cache[require.resolve("../lib/black-medal-raffle")];
       const { calculateConsecutiveStreak } = require("../lib/black-medal-raffle");
       const currentStreak = calculateConsecutiveStreak(spins);
       const minimumStreak = globalRaffleData.minimumStreakLength;
 
-      // TEMP: Debug logging for streak calculation
-      console.log(`DEBUG STREAK: spins.length=${spins.length}, currentStreak=${currentStreak}, minimumStreak=${minimumStreak}, isFrozen=${globalRaffleData.isFrozen}`);
-      if (spins.length > 0) {
-        console.log(`DEBUG STREAK: Recent spins:`, spins.slice(-7).map(s => new Date(Number(s.timestamp) * 1000).toISOString().split('T')[0]));
-      }
 
       // Determine eligibility and status
       const isEligible = currentStreak >= minimumStreak && !globalRaffleData.isFrozen;
