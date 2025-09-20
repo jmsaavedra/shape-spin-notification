@@ -67,7 +67,19 @@ module.exports = async (req, res) => {
     const spins = freshSpins;
     caches.spins.set(spinsCacheKey, spins);
     
-    const spinCount = spins.length;
+    let spinCount = spins.length;
+
+    // Special case: Adjust count for cheater spin for homepage wallet
+    // This wallet had a contract spin that nullified a medal, so we adjust the count
+    if (publicAddress.toLowerCase() === '0x56bde1e5efc80b1e2b958f2d311f4176945ae77f') {
+      // Check if we have the cheater spin (spin #4 at timestamp 1757361651)
+      const hasCheaterSpin = spins.some(spin => Number(spin.timestamp) === 1757361651);
+      if (hasCheaterSpin) {
+        spinCount = spins.length - 1; // Subtract 1 to account for the cheater spin
+        console.log(`Adjusted spin count for cheater spin: ${spins.length} -> ${spinCount}`);
+      }
+    }
+
     console.log(`Current spin count: ${spinCount}, Can spin: ${canSpinNow} (via multicall)`);
     
     let lastSpinTimestamp = null;

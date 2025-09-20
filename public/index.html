@@ -197,27 +197,27 @@
                 order: 2;
             }
             
-            /* Last Spin full width, third position */
+            /* Last Spin half width, third position (Row 1, Column 1) */
             .card:nth-child(2) {
-                grid-column: span 2;
+                grid-column: span 1;
                 order: 3;
             }
-            
-            /* Time Since full width, fourth position */
-            .card:nth-child(3) {
-                grid-column: span 2;
+
+            /* Next Spin half width, fourth position (Row 1, Column 2) */
+            .card:nth-child(5) {
+                grid-column: span 1;
                 order: 4;
             }
-            
-            /* Next Spin full width, fifth position */
-            .card:nth-child(5) {
-                grid-column: span 2;
+
+            /* Time Since half width, fifth position (Row 2, Column 1) */
+            .card:nth-child(3) {
+                grid-column: span 1;
                 order: 5;
             }
-            
-            /* Time Until full width, sixth position */
+
+            /* Time Until half width, sixth position (Row 2, Column 2) */
             .card:nth-child(6) {
-                grid-column: span 2;
+                grid-column: span 1;
                 order: 6;
             }
             
@@ -244,6 +244,11 @@
             /* Slightly smaller padding on mobile */
             .card {
                 padding: 15px;
+            }
+
+            /* Reduce spinner margin on mobile */
+            .spin-icon {
+                margin-right: 4px !important;
             }
         }
         
@@ -882,9 +887,6 @@
                                                 <div style="height: 100%; background: linear-gradient(90deg, #f59e0b, #4ade80); width: ${Math.round(data.raffleStatus.streakProgress * 100)}%; transition: width 0.3s ease;"></div>
                                             </div>
                                         </div>
-                                        ${data.raffleStatus.isEntered ? `
-                                            <div style="font-size: 11px; color: #999; margin-top: 4px;">Building for Round #${data.raffleStatus.currentRound + 1}</div>
-                                        ` : ''}
                                     </div>
                                 </div>
                                 ${data.raffleStatus.canEnter ? `
@@ -902,7 +904,7 @@
                                 ` : ''}
                                 ${data.raffleHistory && data.raffleHistory.length > 0 ? `
                                     <div style="margin-top: 16px;">
-                                        <div style="font-size: 14px; color: #ccc; margin-bottom: 8px;">Recent Winners</div>
+                                        <div class="card-label">Recent Winners</div>
                                         <div style="display: flex; gap: 8px; flex-wrap: wrap;">
                                             ${data.raffleHistory.slice(0, 3).map(round => `
                                                 <div style="background: rgba(255, 255, 255, 0.05); padding: 8px 12px; border-radius: 6px; font-size: 12px;">
@@ -917,9 +919,11 @@
                         </div>
                         ` : ''}
 
-                        ${data.medalStats ? `
-                        <div class="card medal-stats" style="grid-column: 1 / -1;">
-                            <div class="card-label">Spin Medal Statistics</div>
+                        ${(data.medalStats || (data.spinHistory && data.spinHistory.length > 0)) ? `
+                        <div class="card medal-stats spin-history" style="grid-column: 1 / -1;">
+                            <div class="card-label">Spin Medal History & Stats</div>
+
+                            ${data.medalStats ? `
                             <div class="medal-stats-grid" style="margin-top: 16px; display: flex; gap: 15px; flex-wrap: wrap; align-items: center;">
                                 ${(() => {
                                     // Calculate percentages based only on bronze, silver, gold (excluding black)
@@ -956,13 +960,10 @@
                                     `;
                                 })()}
                             </div>
-                        </div>
-                        ` : ''}
+                            ` : ''}
 
-                        ${data.spinHistory && data.spinHistory.length > 0 ? `
-                        <div class="card spin-history" style="grid-column: 1 / -1;">
-                            <div class="card-label">Spin History</div>
-                            <div style="margin-top: 16px;">
+                            ${data.spinHistory && data.spinHistory.length > 0 ? `
+                            <div style="margin-top: ${data.medalStats ? '24px' : '16px'};">
                                 ${data.spinHistory.map((spin, i) => {
                                     const medal = spin.medal;
                                     let medalBadge = '';
@@ -980,9 +981,9 @@
                                     } else {
                                         medalBadge = `<span class="medal-badge none">${isMobile ? 'No' : 'No Medal'}</span>`;
                                     }
-                                    
+
                                     const date = spin.timestamp ? new Date(spin.timestamp) : null;
-                                    const dateStr = date ? date.toLocaleDateString('en-US', { 
+                                    const dateStr = date ? date.toLocaleDateString('en-US', {
                                         year: 'numeric',
                                         month: 'numeric',
                                         day: 'numeric'
@@ -993,7 +994,7 @@
                                         second: '2-digit',
                                         hour12: false
                                     }) : '';
-                                    
+
                                     // Handle both spins and raffle wins
                                     const isRaffle = spin.spinNumber === 'RAFFLE WINNER';
                                     const displayNumber = isRaffle ? 'RAFFLE WINNER' : `Spin #${spin.spinNumber}`;
@@ -1060,6 +1061,7 @@
                                     return '';
                                 })()}
                             </div>
+                            ` : ''}
                         </div>
                         ` : ''}
                     </div>
