@@ -807,6 +807,7 @@ module.exports = async (req, res) => {
         lastSpinTimestamp: lastSpinTimestamp
       }).catch(error => {
         // Don't let tracking errors affect the response
+        console.error('Wallet tracking error:', error);
       });
     }
 

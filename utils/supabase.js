@@ -150,15 +150,15 @@ function getDefaultMedalStats() {
  * Track wallet submission for analytics with visit counting
  */
 async function trackWalletSubmission(submissionData) {
-  if (!supabase) {
-    console.warn('Supabase not configured, wallet submission tracking disabled');
+  if (!supabaseAdmin) {
+    console.warn('Supabase admin client not configured, wallet submission tracking disabled');
     return false;
   }
 
   try {
     const now = new Date().toISOString();
 
-    const { error } = await supabase
+    const { error } = await supabaseAdmin
       .from('wallet_submissions')
       .upsert({
         wallet_address: submissionData.walletAddress,
@@ -186,10 +186,10 @@ async function trackWalletSubmission(submissionData) {
     }
 
     // Increment visit count for existing records
-    const { error: updateError } = await supabase
+    const { error: updateError } = await supabaseAdmin
       .from('wallet_submissions')
       .update({
-        visit_count: supabase.raw('visit_count + 1'),
+        visit_count: supabaseAdmin.raw('visit_count + 1'),
         updated_at: now
       })
       .eq('wallet_address', submissionData.walletAddress);
