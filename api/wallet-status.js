@@ -49,7 +49,6 @@ module.exports = async (req, res) => {
   try {
     // Get wallet address from query parameter
     const walletAddress = req.query.address;
-    console.log(`=== API wallet-status called for address: ${walletAddress} ===`);
 
     if (!walletAddress) {
       return res.status(400).json({ error: "Wallet address parameter 'address' is required" });
@@ -79,7 +78,6 @@ module.exports = async (req, res) => {
 
         ensName = walletAddress; // Store the original ENS name
       } catch (error) {
-        console.log('ENS resolution error:', error.message);
         return res.status(500).json({ error: "Failed to resolve ENS name" });
       }
     } else {
@@ -106,9 +104,7 @@ module.exports = async (req, res) => {
 
           // Cache the result for 30 days
           caches.ens.set(ensCacheKey, ensName, TTL.ENS);
-          console.log(`ENS lookup cached for ${publicAddress}: ${ensName || 'none'}`);
         } catch (error) {
-          console.log('ENS lookup error:', error.message);
           caches.ens.set(ensCacheKey, null, TTL.CONTRACT);
         }
       }
@@ -183,7 +179,6 @@ module.exports = async (req, res) => {
 
       // Cache spins with shorter TTL for wallet views (1 hour)
       caches.spins.set(spinsCacheKey, spins, 3600);
-      console.log(`Fetched ${spins.length} spins, canSpin (${canSpinNow}), Stack ID (${stackId}), and raffle data for wallet ${publicAddress}`);
     } else {
       // Spins are cached, fetch canSpin, stackId, and raffle data
       const [
@@ -216,7 +211,6 @@ module.exports = async (req, res) => {
         isFrozen
       };
 
-      console.log(`Using cached ${spins.length} spins for wallet ${publicAddress}, fetched canSpin, stackId, and raffle data`);
     }
 
     // Note: spinCount will be updated after filtering out Black medal claims
@@ -229,7 +223,6 @@ module.exports = async (req, res) => {
       const hasCheaterSpin = spins.some(spin => Number(spin.timestamp) === 1757361651);
       if (hasCheaterSpin) {
         spinCount = spins.length - 1; // Subtract 1 to account for the cheater spin
-        console.log(`Adjusted spin count for cheater spin: ${spins.length} -> ${spinCount}`);
       }
     }
 
@@ -310,12 +303,10 @@ module.exports = async (req, res) => {
           console.error('Error fetching allMedals for raffle processing:', error);
         }
       }
-      console.log(`Using fully cached MEDAL-SPIN data for wallet ${publicAddress}: ${medalSpinMedals.length} medals`);
     } else if (stackId !== "0" && stackId) {
       // Fetch medals if we have a valid Stack ID and they're not cached
       try {
         allMedals = await stackContract.getStackMedals(stackId);
-        console.log(`Fetched ${allMedals.length} medals for wallet ${publicAddress} Stack ID ${stackId}, processing MEDAL-SPIN medals...`);
 
         // Process medals to find MEDAL-SPIN ones
         try {
@@ -369,7 +360,6 @@ module.exports = async (req, res) => {
             // Find medals newer than our last fetch
             const newMedals = medalSpinMedals.filter(m => m.timestamp > lastFetchTimestamp);
             if (newMedals.length > 0) {
-              console.log(`Found ${newMedals.length} new MEDAL-SPIN medals since last fetch`);
               // Merge new medals with cached ones
               const existingTimestamps = new Set(cachedMedalSpinData.medals.map(m => m.timestamp));
               newMedals.forEach(medal => {
@@ -379,7 +369,6 @@ module.exports = async (req, res) => {
               });
               medalSpinMedals = cachedMedalSpinData.medals;
             } else {
-              console.log(`No new MEDAL-SPIN medals since last fetch`);
               medalSpinMedals = cachedMedalSpinData.medals;
             }
           }
@@ -448,14 +437,11 @@ module.exports = async (req, res) => {
             const cacheData = { medals: medalSpinMedals, stats: medalStats };
             caches.spins.set(medalsCacheKey, cacheData, 3600);
             caches.spins.set(lastFetchKey, currentTime, 3600);
-            console.log(`Cached ${medalSpinMedals.length} MEDAL-SPIN medals for wallet ${publicAddress}`);
           }
         } catch (error) {
           // If medal processing fails, just continue without medals
-          console.log('Could not process medals:', error.message);
         }
       } catch (error) {
-        console.log('Error fetching medals:', error.message);
       }
     }
 
@@ -525,7 +511,6 @@ module.exports = async (req, res) => {
 
           if (candidateSpins.length > 0) {
             const suspectSpinIndex = candidateSpins[0].index;
-            console.log(`Removing suspected Black medal claim "spin" at index ${suspectSpinIndex}`);
             filteredSpins = filteredSpins.filter((_, index) => index !== suspectSpinIndex);
           }
         });
@@ -743,7 +728,6 @@ module.exports = async (req, res) => {
         canEnter: isEligible && !isEntered && !globalRaffleData.isFrozen
       };
 
-      console.log(`Generated raffle status for wallet ${publicAddress}: eligible=${isEligible}, entered=${isEntered}, streak=${currentStreak}`);
 
       // Get raffle history (cached for 1 hour)
       const historyKey = 'raffleHistory';
@@ -753,10 +737,8 @@ module.exports = async (req, res) => {
         const { getRaffleHistory } = require("../lib/black-medal-raffle");
         raffleHistory = await getRaffleHistory(provider, 3);
         caches.spins.set(historyKey, raffleHistory, 3600); // 1 hour
-        console.log(`Fetched Black Medal Raffle history: ${raffleHistory.length} recent rounds`);
       }
     } else {
-      console.log('No raffle data available for wallet');
       raffleStatus = {
         isEligible: false,
         isEntered: false,
@@ -797,7 +779,6 @@ module.exports = async (req, res) => {
         });
         globalMedalStats = globalStatsResponse.globalMedalStats;
       } catch (error) {
-        console.log('Error fetching global medal stats:', error.message);
         // Fallback values
         globalMedalStats = {
           bronze: 0,
@@ -826,7 +807,6 @@ module.exports = async (req, res) => {
         lastSpinTimestamp: lastSpinTimestamp
       }).catch(error => {
         // Don't let tracking errors affect the response
-        console.log('Wallet submission tracking failed:', error.message);
       });
     }
 

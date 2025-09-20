@@ -35,7 +35,6 @@ async function getGlobalMedalStats() {
     if (error) {
       if (error.code === 'PGRST116') {
         // No data found, return default stats
-        console.log('No medal stats found in Supabase, returning default');
         return getDefaultMedalStats();
       }
       throw error;
@@ -81,7 +80,6 @@ async function saveGlobalMedalStats(stats) {
 
     if (error) throw error;
 
-    console.log('✅ Medal stats saved to Supabase');
     return true;
 
   } catch (error) {
@@ -103,7 +101,6 @@ async function loadMedalStatsFromFile() {
     const data = await fs.readFile(dataFile, 'utf8');
     return JSON.parse(data);
   } catch (error) {
-    console.log('No local medal stats file found, returning default');
     return getDefaultMedalStats();
   }
 }
@@ -122,7 +119,6 @@ async function saveMedalStatsToFile(stats) {
     await fs.mkdir(dataDir, { recursive: true });
 
     await fs.writeFile(dataFile, JSON.stringify(stats, null, 2));
-    console.log('✅ Medal stats saved to local file (fallback)');
     return true;
   } catch (error) {
     console.error('Error saving medal stats to file:', error);
@@ -203,7 +199,6 @@ async function trackWalletSubmission(submissionData) {
       // Don't return false here, the main tracking still succeeded
     }
 
-    console.log(`✅ Tracked wallet submission: ${submissionData.walletAddress}`);
     return true;
 
   } catch (error) {

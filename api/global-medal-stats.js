@@ -6,10 +6,15 @@ const { getGlobalMedalStats } = require("../utils/supabase");
 
 async function runIncrementalUpdate() {
   try {
-    console.log('Running incremental medal stats update...');
-    const { main } = require('../scripts/update-medal-stats');
-    await main();
-    console.log('Incremental update completed');
+    // Import the runIncrementalUpdate function from the update API
+    const updateModule = require('./update-global-medals');
+    // Call the internal runIncrementalUpdate function by making a mock request
+    const mockReq = { headers: { authorization: `Bearer ${process.env.CRON_SECRET}` } };
+    const mockRes = {
+      status: () => ({ json: () => {} }),
+      json: () => {}
+    };
+    await updateModule(mockReq, mockRes);
   } catch (error) {
     console.error('Error running incremental update:', error.message);
   }
@@ -33,18 +38,15 @@ module.exports = async (_req, res) => {
     const cachedStats = caches.spins.get(cacheKey);
 
     if (cachedStats !== null) {
-      console.log('Returning cached global medal stats');
       return res.status(200).json(cachedStats);
     }
 
-    console.log('Loading global medal stats from Supabase...');
 
     // Load data from Supabase
     let medalData = await getGlobalMedalStats();
 
     // Check if we should run incremental update
     if (await shouldRunUpdate(medalData.lastUpdated)) {
-      console.log('Data is stale, running incremental update...');
       await runIncrementalUpdate();
 
       // Reload data after update
@@ -61,7 +63,6 @@ module.exports = async (_req, res) => {
 
     // Cache for 1 hour
     caches.spins.set(cacheKey, stats, 3600000);
-    console.log(`Loaded global medal stats: ${medalData.globalMedalStats.total} total medals (last updated: ${medalData.lastUpdated})`);
 
     res.status(200).json(stats);
 

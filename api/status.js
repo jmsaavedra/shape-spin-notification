@@ -69,14 +69,11 @@ module.exports = async (req, res) => {
         
         // Cache the result (even if null) for 30 days
         caches.ens.set(ensCacheKey, ensName, TTL.ENS);
-        console.log(`ENS lookup cached for ${publicAddress}: ${ensName || 'none'}`);
       } catch (error) {
-        console.log('ENS lookup error:', error.message);
         // Cache null for shorter time on error (1 hour)
         caches.ens.set(ensCacheKey, null, TTL.CONTRACT);
       }
     } else {
-      console.log(`ENS lookup from cache for ${publicAddress}: ${ensName || 'none'}`);
     }
 
     // Since we're only reading, we don't need a wallet with private key
@@ -88,7 +85,6 @@ module.exports = async (req, res) => {
 
     // Special case: bypass cache for homepage wallet to ensure spin numbering fix works
     if (publicAddress.toLowerCase() === '0x56bde1e5efc80b1e2b958f2d311f4176945ae77f') {
-      console.log('🔧 Homepage wallet detected - bypassing cache for spin numbering fix');
       caches.spins.set(spinsCacheKey, null);
     }
 
@@ -155,7 +151,6 @@ module.exports = async (req, res) => {
 
       // Cache spins permanently - will be invalidated when new spin detected
       caches.spins.set(spinsCacheKey, spins);
-      console.log(`Fetched ${spins.length} spins, canSpin (${canSpinNow}), Stack ID (${stackId}), and raffle data via single multicall`);
     } else {
       // Spins are cached, fetch canSpin, stackId, and raffle data
       const [
@@ -188,7 +183,6 @@ module.exports = async (req, res) => {
         isFrozen
       };
 
-      console.log(`Using cached ${spins.length} spins, fetched canSpin, stackId, and raffle data via single multicall`);
     }
     
     spinCount = spins.length;
@@ -244,7 +238,6 @@ module.exports = async (req, res) => {
         caches.spins.set(spinsCacheKey, null);
         caches.spins.set(medalsCacheKey, null);
         caches.spins.set(lastFetchKey, null);
-        console.log('User eligible for new spin, cleared spins and medals cache for next refresh');
       }
     }
     
@@ -275,7 +268,6 @@ module.exports = async (req, res) => {
         cronInterval = parseInt(match[1]);
       }
     } catch (error) {
-      console.log('Could not parse vercel.json, using default interval:', error.message);
     }
     const notificationTime = new Date(nextSpinDate);
     const minutes = notificationTime.getMinutes();
@@ -330,12 +322,10 @@ module.exports = async (req, res) => {
     if (shouldUseCachedMedals) {
       medalSpinMedals = cachedMedalSpinData.medals;
       medalStats = cachedMedalSpinData.stats;
-      console.log(`Using fully cached MEDAL-SPIN data (can't spin, data is current): ${medalSpinMedals.length} medals`);
     } else if (stackId !== "0" && stackId) {
       // Fetch medals if we have a valid Stack ID and they're not cached
       try {
         allMedals = await stackContract.getStackMedals(stackId);
-        console.log(`Fetched ${allMedals.length} medals for Stack ID ${stackId}, processing MEDAL-SPIN medals...`);
         
         // Process medals to find MEDAL-SPIN ones
         try {
@@ -389,7 +379,6 @@ module.exports = async (req, res) => {
             // Find medals newer than our last fetch
             const newMedals = medalSpinMedals.filter(m => m.timestamp > lastFetchTimestamp);
             if (newMedals.length > 0) {
-              console.log(`Found ${newMedals.length} new MEDAL-SPIN medals since last fetch`);
               // Merge new medals with cached ones
               const existingTimestamps = new Set(cachedMedalSpinData.medals.map(m => m.timestamp));
               newMedals.forEach(medal => {
@@ -399,7 +388,6 @@ module.exports = async (req, res) => {
               });
               medalSpinMedals = cachedMedalSpinData.medals;
             } else {
-              console.log(`No new MEDAL-SPIN medals since last fetch`);
               // Still update our last fetch time since we checked
               medalSpinMedals = cachedMedalSpinData.medals;
             }
@@ -455,19 +443,15 @@ module.exports = async (req, res) => {
             caches.spins.set(medalsCacheKey, cacheData);
             // Store the timestamp of this fetch
             caches.spins.set(lastFetchKey, currentTime);
-            console.log(`Cached ${medalSpinMedals.length} MEDAL-SPIN medals with fetch timestamp ${currentTime}`);
           }
         } catch (error) {
           // If medal processing fails, just continue without medals
-          console.log('Could not process medals:', error.message);
         }
       } catch (error) {
-        console.log('Error fetching medals:', error.message);
       }
     }
     
     // Format spin history with timestamps, gaps, and medals
-    console.log(`🧪 Formatting ${spins.length} spins for address ${publicAddress}`);
     const spinHistory = spins.map((spin, index) => {
       const timestamp = Number(spin.timestamp) * 1000; // Convert to milliseconds
       let gap = null;
@@ -525,7 +509,6 @@ module.exports = async (req, res) => {
         const spinNumberMap = [1,2,3,4,4,5,6,7,8,9,10,11,12,13,14]; // index 0-14 maps to these spin numbers
         if (index < spinNumberMap.length) {
           legitimateSpinNumber = spinNumberMap[index];
-          console.log(`🔧 Cheater fix: index ${index} → spin #${legitimateSpinNumber}`);
         }
       }
 
@@ -586,7 +569,6 @@ module.exports = async (req, res) => {
       if (publicAddress.toLowerCase() === '0x56bde1e5efc80b1e2b958f2d311f4176945ae77f') {
         // Filter out the cheater spin (timestamp 1757361651000) for streak calculation
         spinsForStreak = spins.filter(spin => Number(spin.timestamp) !== 1757361651);
-        console.log(`🔧 Cheater fix: Filtering out cheater spin for streak calculation. ${spins.length} → ${spinsForStreak.length} spins`);
       }
 
       const currentStreak = calculateConsecutiveStreak(spinsForStreak);
@@ -611,7 +593,6 @@ module.exports = async (req, res) => {
         canEnter: isEligible && !isEntered && !globalRaffleData.isFrozen
       };
 
-      console.log(`Generated raffle status from multicall data: eligible=${isEligible}, entered=${isEntered}, streak=${currentStreak}`);
 
       // Get raffle history (cached for 1 hour)
       const historyKey = 'raffleHistory';
@@ -621,10 +602,8 @@ module.exports = async (req, res) => {
         const { getRaffleHistory } = require("../lib/black-medal-raffle");
         raffleHistory = await getRaffleHistory(provider, 3);
         caches.spins.set(historyKey, raffleHistory, 3600); // 1 hour
-        console.log(`Fetched Black Medal Raffle history: ${raffleHistory.length} recent rounds`);
       }
     } else {
-      console.log('No raffle data available');
       raffleStatus = {
         isEligible: false,
         isEntered: false,
@@ -665,7 +644,6 @@ module.exports = async (req, res) => {
         });
         globalMedalStats = globalStatsResponse.globalMedalStats;
       } catch (error) {
-        console.log('Error fetching global medal stats:', error.message);
         // Fallback values
         globalMedalStats = {
           bronze: 0,

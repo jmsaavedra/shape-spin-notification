@@ -80,12 +80,9 @@ async function runIncrementalUpdate() {
   try {
     // Get current medal stats from Supabase
     const currentStats = await getGlobalMedalStats();
-    console.log(`📊 Current stats: ${currentStats.globalMedalStats.total} total medals`);
-    console.log(`📍 Last indexed block: ${currentStats.lastIndexedBlock}`);
 
     // Get current blockchain block
     const currentBlock = await provider.getBlockNumber();
-    console.log(`🔗 Current block: ${currentBlock}`);
 
     const fromBlock = currentStats.lastIndexedBlock + 1;
     const chunkSize = 9000; // Stay under Alchemy 10k limit
@@ -108,7 +105,6 @@ async function runIncrementalUpdate() {
     for (let scanFromBlock = fromBlock; scanFromBlock <= currentBlock; scanFromBlock += chunkSize) {
       const scanToBlock = Math.min(scanFromBlock + chunkSize - 1, currentBlock);
 
-      console.log(`📦 Scanning blocks ${scanFromBlock}-${scanToBlock}...`);
 
       const logs = await provider.getLogs({
         address: STACK_NFT_CONTRACT,
@@ -117,7 +113,6 @@ async function runIncrementalUpdate() {
         toBlock: scanToBlock
       });
 
-      console.log(`   Found ${logs.length} events`);
       totalNewEvents += logs.length;
 
       // Process each event
@@ -135,7 +130,6 @@ async function runIncrementalUpdate() {
           }
           medalCounts.total++;
 
-          console.log(`   🏆 Found ${medal.tierName} medal (total: ${medalCounts.total})`);
         }
       }
 
@@ -158,9 +152,8 @@ async function runIncrementalUpdate() {
     await saveGlobalMedalStats(updatedStats);
 
     console.log('✅ Incremental update completed');
-    console.log(`📈 Scanned ${currentBlock - fromBlock + 1} new blocks`);
     console.log(`🏆 Found ${totalNewMedals} new medals`);
-    console.log(`📊 New totals: Bronze=${medalCounts.bronze}, Silver=${medalCounts.silver}, Gold=${medalCounts.gold}, Black=${medalCounts.black}, Total=${medalCounts.total}`);
+    console.log(`📈 New totals: Bronze=${medalCounts.bronze}, Silver=${medalCounts.silver}, Gold=${medalCounts.gold}, Black=${medalCounts.black}, Total=${medalCounts.total}`);
 
     return {
       success: true,
