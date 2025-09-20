@@ -77,10 +77,10 @@
                 </a>
             </div>
             <div class="medal-dots">
-                <span class="medal-dot bronze"></span>
-                <span class="medal-dot silver"></span>
-                <span class="medal-dot gold"></span>
-                <span class="medal-dot obsidian"></span>
+                <span class="medal-dot footer-medal bronze"></span>
+                <span class="medal-dot footer-medal silver"></span>
+                <span class="medal-dot footer-medal gold"></span>
+                <span class="medal-dot footer-medal obsidian"></span>
             </div>
         </div>
     </footer>
@@ -376,10 +376,10 @@
 
                             ${(data.medalStats || (data.spinHistory && data.spinHistory.length > 0)) ? `
                             <div class="card medal-stats spin-history" style="grid-column: 1 / -1;">
-                                <div style="display: flex; justify-content: space-between; align-items: center;">
+                                <div class="card-header" style="display: flex; justify-content: space-between; align-items: center;">
                                     <div class="card-label">Spin Medal History & Stats</div>
                                     ${data.medalStats ? `
-                                    <div style="color: #999; font-size: 12px;">
+                                    <div class="medal-total-count" style="color: #999; font-size: 12px; text-align: right;">
                                         Total: ${(data.medalStats.bronze + data.medalStats.silver + data.medalStats.gold).toLocaleString()} medals claimed
                                     </div>
                                     ` : ''}
@@ -539,9 +539,9 @@
                             <!-- Global Spin Medal Stats -->
                             ${data.globalMedalStats ? `
                             <div class="card medal-stats global-stats" style="grid-column: 1 / -1; margin-top: 20px;">
-                                <div style="display: flex; justify-content: space-between; align-items: center;">
+                                <div class="card-header" style="display: flex; justify-content: space-between; align-items: center;">
                                     <div class="card-label">Global Spin Medal Stats</div>
-                                    <div style="color: #999; font-size: 12px;">
+                                    <div class="medal-total-count" style="color: #999; font-size: 12px; text-align: right;">
                                         Total: ${data.globalMedalStats.total.toLocaleString()} medals claimed
                                     </div>
                                 </div>
