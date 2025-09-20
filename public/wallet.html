@@ -254,7 +254,7 @@
 
                     const html = `
                         <div class="grid">
-                            <div class="card card-spin-count">
+                            <div class="card card-spin-count card-total-spins">
                                 <div class="card-label">
                                     ${spinIconSVG}
                                     Total Spins
@@ -262,7 +262,7 @@
                                 <div class="card-value large">${data.currentSpinCount}</div>
                             </div>
 
-                            <div class="card">
+                            <div class="card card-last-spin">
                                 <div class="card-label">
                                     ${spinIconSVG}
                                     Last Spin
@@ -275,7 +275,7 @@
                                 </div>
                             </div>
 
-                            <div class="card">
+                            <div class="card card-time-since">
                                 <div class="card-label">
                                     ${spinIconSVG}
                                     Time Since
@@ -299,7 +299,7 @@
                                 </div>
                             </div>
 
-                            <div class="card">
+                            <div class="card card-next-spin">
                                 <div class="card-label">
                                     ${spinIconSVG}
                                     Next Spin
@@ -312,7 +312,7 @@
                                 </div>
                             </div>
 
-                            <div class="card">
+                            <div class="card card-time-until">
                                 <div class="card-label">
                                     ${spinIconSVG}
                                     Time Until
