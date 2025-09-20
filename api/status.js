@@ -472,9 +472,9 @@ module.exports = async (req, res) => {
         } else {
           // Under 48 hours - days gray, time green
           if (days > 0) {
-            gap = `+<span style="color: #6b7280;">${days}d</span> <span style="color: #10b981;">${hours}h ${minutes}m</span>`;
+            gap = `<span style="color: #6b7280;">+${days}d</span> <span style="color: #10b981;">${hours}h ${minutes}m</span>`;
           } else {
-            gap = `+<span style="color: #10b981;">${hours}h ${minutes}m</span>`;
+            gap = `<span style="color: #10b981;">+${hours}h ${minutes}m</span>`;
           }
         }
       }
