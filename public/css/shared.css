@@ -319,9 +319,13 @@ body {
     }
 
     .grid {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
+        display: flex;
+        flex-wrap: wrap;
         gap: 15px;
+    }
+
+    .grid .card {
+        flex: 1 1 calc(50% - 7.5px);
     }
 
     .card {
