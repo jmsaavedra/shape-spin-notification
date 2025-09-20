@@ -166,6 +166,10 @@ async function getCachedEnsName(address) {
         // No data found
         return null;
       }
+      if (error.code === 'PGRST205') {
+        // Table doesn't exist - return null and don't log error
+        return null;
+      }
       throw error;
     }
 
@@ -177,7 +181,10 @@ async function getCachedEnsName(address) {
     return data.ens_name;
 
   } catch (error) {
-    console.error('Error fetching cached ENS name:', error);
+    // Only log error if it's not a table missing error
+    if (error.code !== 'PGRST205') {
+      console.error('Error fetching cached ENS name:', error);
+    }
     return null;
   }
 }
@@ -205,14 +212,20 @@ async function cacheEnsName(address, ensName, ttlSeconds = 2592000) { // 30 days
       });
 
     if (error) {
-      console.error('Error caching ENS name:', error);
+      // Don't log error if table doesn't exist
+      if (error.code !== 'PGRST205') {
+        console.error('Error caching ENS name:', error);
+      }
       return false;
     }
 
     return true;
 
   } catch (error) {
-    console.error('Error caching ENS name:', error);
+    // Don't log error if table doesn't exist
+    if (error.code !== 'PGRST205') {
+      console.error('Error caching ENS name:', error);
+    }
     return false;
   }
 }
