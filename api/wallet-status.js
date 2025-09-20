@@ -609,9 +609,23 @@ module.exports = async (req, res) => {
       if (index > 0) {
         const prevTimestamp = allActivities[index - 1].timestamp;
         const gapMs = timestamp - prevTimestamp;
-        const hours = Math.floor(gapMs / (1000 * 60 * 60));
+        const totalHours = Math.floor(gapMs / (1000 * 60 * 60));
+        const days = Math.floor(totalHours / 24);
+        const hours = totalHours % 24;
         const minutes = Math.floor((gapMs % (1000 * 60 * 60)) / (1000 * 60));
-        gap = `+${hours}h ${minutes}m`;
+
+        // Format with color coding
+        if (totalHours >= 48) {
+          // 48+ hours (2+ days) - all red
+          gap = `<span style="color: #dc2626;">+${days}d ${hours}h ${minutes}m</span>`;
+        } else {
+          // Under 48 hours - days gray, time green
+          if (days > 0) {
+            gap = `+<span style="color: #6b7280;">${days}d</span> <span style="color: #10b981;">${hours}h ${minutes}m</span>`;
+          } else {
+            gap = `+<span style="color: #10b981;">${hours}h ${minutes}m</span>`;
+          }
+        }
       }
 
       if (activity.type === 'raffle') {

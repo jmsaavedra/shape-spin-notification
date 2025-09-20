@@ -477,16 +477,7 @@
                                             <span style="color: #fff; text-align: center; display: block;">•</span>
                                             <span class="date-col" style="font-size: 13px; color: #fff;">${dateStr}</span>
                                             <span class="time-col" style="font-size: 13px; color: #fff;">${timeStr}</span>
-                                            <span class="time-gap" style="color: ${(() => {
-                                                if (!spin.gap) return '#d8b4fe'; // First! - purple
-                                                // Parse gap to check if over 48 hours
-                                                const gapMatch = spin.gap.match(/(\d+)h/);
-                                                if (gapMatch) {
-                                                    const hours = parseInt(gapMatch[1]);
-                                                    return hours > 48 ? '#ef4444' : '#4ade80'; // red if > 48h, green otherwise
-                                                }
-                                                return '#4ade80'; // default green
-                                            })()}; font-size: 12px; font-weight: 600;">${spin.gap || 'First!'}</span>
+                                            <span class="time-gap" style="color: ${!spin.gap ? '#d8b4fe' : '#fff'}; font-size: 12px; font-weight: 600;">${spin.gap ? spin.gap : '<span style="color: #d8b4fe;">First!</span>'}</span>
                                             <span></span>
                                             ${medalBadge}
                                         </div>
