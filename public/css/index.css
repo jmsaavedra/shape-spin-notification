@@ -1,0 +1,126 @@
+/* Index Page Specific Styles */
+
+/* Description Card with Animations (index.html specific) */
+.description {
+    grid-column: 1 / -1;
+    text-align: center;
+    font-size: 18px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background-size: 200% 200%;
+    border: 2px solid #667eea;
+    padding: 24px 32px;
+    font-weight: 500;
+    animation: pulse-glow 3s ease-in-out infinite, gradient-shift 4s ease infinite;
+}
+
+@keyframes pulse-glow {
+    0%, 100% {
+        box-shadow: 0 0 20px rgba(102, 126, 234, 0.4);
+    }
+    50% {
+        box-shadow: 0 0 40px rgba(102, 126, 234, 0.6);
+    }
+}
+
+@keyframes gradient-shift {
+    0% {
+        background-position: 0% 50%;
+    }
+    50% {
+        background-position: 100% 50%;
+    }
+    100% {
+        background-position: 0% 50%;
+    }
+}
+
+/* Spin Button */
+.spin-button-available {
+    background: linear-gradient(135deg, #22c55e 0%, #10b981 100%);
+    color: white;
+    padding: 20px;
+    border-radius: 12px;
+    text-align: center;
+    text-decoration: none;
+    font-size: 18px;
+    font-weight: 600;
+    transition: transform 0.2s, box-shadow 0.2s;
+    display: block;
+    margin-bottom: 20px;
+    border: 2px solid #22c55e;
+    animation: pulse-glow-green 2s ease-in-out infinite;
+}
+
+.spin-button-available:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 30px rgba(34, 197, 94, 0.4);
+    background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+}
+
+@keyframes pulse-glow-green {
+    0%, 100% {
+        box-shadow: 0 0 20px rgba(34, 197, 94, 0.4);
+    }
+    50% {
+        box-shadow: 0 0 40px rgba(34, 197, 94, 0.6);
+    }
+}
+
+/* Mobile Layout Specific to Index Page */
+@media (max-width: 768px) {
+    /* Spin Count stays first and half width */
+    .card-spin-count {
+        grid-column: span 1;
+        order: 1;
+    }
+
+    /* Can Spin Now moves to second position and half width */
+    .card-can-spin {
+        grid-column: span 1;
+        order: 2;
+    }
+
+    /* Last Spin half width, third position (Row 1, Column 1) */
+    .card:nth-child(2) {
+        grid-column: span 1;
+        order: 3;
+    }
+
+    /* Next Spin half width, fourth position (Row 1, Column 2) */
+    .card:nth-child(5) {
+        grid-column: span 1;
+        order: 4;
+    }
+
+    /* Time Since half width, fifth position (Row 2, Column 1) */
+    .card:nth-child(3) {
+        grid-column: span 1;
+        order: 5;
+    }
+
+    /* Time Until half width, sixth position (Row 2, Column 2) */
+    .card:nth-child(6) {
+        grid-column: span 1;
+        order: 6;
+    }
+
+    /* Description card comes after schedule cards */
+    .card.description {
+        order: 7;
+    }
+
+    /* Raffle status comes before medal stats on mobile */
+    .card.raffle-status {
+        order: 8;
+    }
+
+    /* Medal stats comes after raffle status */
+    .card.medal-stats {
+        order: 9;
+    }
+
+    /* Spin history comes after medal stats */
+    .card.spin-history {
+        order: 10;
+    }
+}
