@@ -397,7 +397,7 @@
                                     </div>
                                     <div style="background: rgba(255, 255, 255, 0.05); padding: 12px; border-radius: 8px;">
                                         <div style="font-size: 12px; color: #999; margin-bottom: 4px;">
-                                            ${data.raffleStatus.isEntered ? `Round #${data.raffleStatus.currentRound + 1} Streak` : 'Streak Progress'}
+                                            ${data.raffleStatus.isEntered ? 'Current Spin Streak' : 'Streak Progress'}
                                         </div>
                                         <div style="display: flex; align-items: center; gap: 8px;">
                                             <div style="font-size: 16px; font-weight: bold; color: ${data.raffleStatus.isEligible ? '#4ade80' : '#f59e0b'};">
@@ -407,6 +407,7 @@
                                                 <div style="height: 100%; background: linear-gradient(90deg, #f59e0b, #4ade80); width: ${Math.round(data.raffleStatus.streakProgress * 100)}%; transition: width 0.3s ease;"></div>
                                             </div>
                                         </div>
+                                        <div style="font-size: 11px; color: #666; margin-top: 4px;">of 7 required to qualify</div>
                                     </div>
                                 </div>
                                 ${data.raffleStatus.canEnter ? `
@@ -521,6 +522,7 @@
 
                                     // Handle both spins and raffle wins
                                     const isRaffle = spin.spinNumber === 'RAFFLE WINNER';
+                                    const isCheater = spin.timestamp === 1757361651000; // The specific cheater spin
                                     const displayNumber = isRaffle ? 'RAFFLE WINNER' : `Spin #${spin.spinNumber}`;
                                     const iconColor = isRaffle ? '#f59e0b' : 'currentColor'; // Orange for raffle
                                     const raffleIcon = isRaffle ?
@@ -536,12 +538,12 @@
 
                                     // Always show date and gap, hide time on mobile via CSS
                                     return `
-                                    <div class="spin-history-row ${isRaffle ? 'raffle-row' : ''}">
+                                    <div class="spin-history-row ${isRaffle ? 'raffle-row' : ''} ${isCheater ? 'cheater-row' : ''}">
                                         ${raffleIcon}
-                                        <span style="color: ${isRaffle ? '#f59e0b' : '#fff'}; font-weight: 600; ${isRaffle ? 'font-size: 11px;' : ''}">${displayNumber}</span>
+                                        <span style="color: ${isRaffle ? '#f59e0b' : '#fff'}; font-weight: 600; ${isRaffle ? 'font-size: 11px;' : ''} ${isCheater ? 'text-decoration: line-through; opacity: 0.6;' : ''}">${displayNumber}</span>
                                         <span style="color: #fff; text-align: center; display: block;">•</span>
-                                        <span class="date-col" style="font-size: 13px; color: #fff;">${dateStr}</span>
-                                        <span class="time-col" style="font-size: 13px; color: #fff;">${timeStr}</span>
+                                        <span class="date-col" style="font-size: 13px; color: #fff; ${isCheater ? 'text-decoration: line-through; opacity: 0.6;' : ''}">${dateStr}</span>
+                                        <span class="time-col" style="font-size: 13px; color: #fff; ${isCheater ? 'text-decoration: line-through; opacity: 0.6;' : ''}">${timeStr}</span>
                                         <span class="time-gap" style="color: ${(() => {
                                             if (!spin.gap) return '#d8b4fe'; // First! - purple
                                             // Parse gap to check if over 48 hours
@@ -551,7 +553,7 @@
                                                 return hours > 48 ? '#ef4444' : '#4ade80'; // red if > 48h, green otherwise
                                             }
                                             return '#4ade80'; // default green
-                                        })()}; font-size: 12px; font-weight: 600;">${spin.gap || 'First!'}</span>
+                                        })()}; font-size: 12px; font-weight: 600; ${isCheater ? 'text-decoration: line-through; opacity: 0.6;' : ''}">${spin.gap || 'First!'}</span>
                                         <span></span>
                                         ${medalBadge}
                                     </div>

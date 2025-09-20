@@ -222,6 +222,17 @@ module.exports = async (req, res) => {
     // Note: spinCount will be updated after filtering out Black medal claims
     spinCount = spins.length;
 
+    // Special case: Adjust count for cheater spin for homepage wallet
+    // This wallet had a contract spin that nullified a medal, so we adjust the count
+    if (publicAddress.toLowerCase() === '0x56bde1e5efc80b1e2b958f2d311f4176945ae77f') {
+      // Check if we have the cheater spin (spin #4 at timestamp 1757361651)
+      const hasCheaterSpin = spins.some(spin => Number(spin.timestamp) === 1757361651);
+      if (hasCheaterSpin) {
+        spinCount = spins.length - 1; // Subtract 1 to account for the cheater spin
+        console.log(`Adjusted spin count for cheater spin: ${spins.length} -> ${spinCount}`);
+      }
+    }
+
     let lastSpinTime = null;
     let lastSpinTimestamp = null;
     let timeSinceLastSpin = null;
@@ -648,14 +659,30 @@ module.exports = async (req, res) => {
         spinIndex++;
         let medal = null;
 
-        // Assign medals sequentially to spins only (not raffle wins)
-        if (medalSpinMedals && medalSpinMedals.length > 0) {
+        // Special case: Mark specific cheater spin for homepage wallet
+        const isCheaterSpin = publicAddress.toLowerCase() === '0x56bde1e5efc80b1e2b958f2d311f4176945ae77f' &&
+            spinIndex === 4 && // Spin #4
+            activity.timestamp === 1757361651000; // Exact timestamp match
+
+        if (isCheaterSpin) {
+          medal = {
+            tier: "Cheater",
+            name: "Contract Spin",
+            isCheat: true
+          };
+        } else if (medalSpinMedals && medalSpinMedals.length > 0) {
           // Sort medals by timestamp to ensure chronological order
           const sortedMedals = [...medalSpinMedals].sort((a, b) => a.timestamp - b.timestamp);
 
+          // For homepage wallet, adjust medal assignment to account for cheater spin
+          let medalIndex = spinIndex - 1;
+          if (publicAddress.toLowerCase() === '0x56bde1e5efc80b1e2b958f2d311f4176945ae77f' && spinIndex > 4) {
+            medalIndex = spinIndex - 2; // Skip the cheater spin when assigning medals
+          }
+
           // Assign the medal corresponding to this spin's index (if it exists)
-          if (sortedMedals[spinIndex - 1]) {
-            const assignedMedal = sortedMedals[spinIndex - 1];
+          if (sortedMedals[medalIndex]) {
+            const assignedMedal = sortedMedals[medalIndex];
             medal = {
               tier: assignedMedal.tierName,
               name: assignedMedal.name
