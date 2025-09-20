@@ -38,3 +38,11 @@
     padding: 24px 32px;
     font-weight: 500;
 }
+
+/* Mobile Layout for Wallet Page */
+@media (max-width: 768px) {
+    /* Global medal stats comes last on mobile */
+    .card.global-stats {
+        order: 999;
+    }
+}

@@ -60,7 +60,6 @@ module.exports = async (req, res) => {
     
     // If we have cached spins and the count changed, user completed a spin
     if (cachedSpins && freshSpins.length > cachedSpins.length) {
-      console.log(`New spin detected! Count increased from ${cachedSpins.length} to ${freshSpins.length}`);
     }
     
     // Update cache with fresh data
@@ -76,11 +75,9 @@ module.exports = async (req, res) => {
       const hasCheaterSpin = spins.some(spin => Number(spin.timestamp) === 1757361651);
       if (hasCheaterSpin) {
         spinCount = spins.length - 1; // Subtract 1 to account for the cheater spin
-        console.log(`Adjusted spin count for cheater spin: ${spins.length} -> ${spinCount}`);
       }
     }
 
-    console.log(`Current spin count: ${spinCount}, Can spin: ${canSpinNow} (via multicall)`);
     
     let lastSpinTimestamp = null;
     if (spins.length > 0) {
@@ -88,7 +85,6 @@ module.exports = async (req, res) => {
       lastSpinTimestamp = Number(lastSpinTs) * 1000; // Convert to milliseconds
     }
     
-    console.log(`Current spin count: ${spinCount}, Can spin: ${canSpinNow}`);
     
     // Check current spin status and send appropriate notification
     if (notificationsEnabled) {
@@ -111,7 +107,8 @@ module.exports = async (req, res) => {
             nextSpinTime,
             dashboardUrl
           );
-          
+
+          console.log(`✅ Notification sent for spin #${spinCount + 1}`);
           lastNotifiedSpinCount = spinCount;
           
           return res.status(200).json({
@@ -122,7 +119,7 @@ module.exports = async (req, res) => {
             nextSpinTime: nextSpinTime
           });
         } catch (notifyError) {
-          console.error("Failed to send LoopMessage notification:", notifyError);
+          console.error("❌ Failed to send LoopMessage notification:", notifyError);
           return res.status(200).json({
             message: "Spin available - notification failed",
             spinNumber: spinCount + 1,
@@ -136,6 +133,7 @@ module.exports = async (req, res) => {
       else if (!canSpinNow && spinCount > lastNotifiedSpinCount) {
         console.log(`User already completed spin #${spinCount}. Updating count without notification.`);
         lastNotifiedSpinCount = spinCount; // Update to current spin count
+        console.log(`✅ Tracking updated for completed spin #${spinCount}`);
         
         const nextSpinDate = scheduleState.calculateNextSpinTime(lastSpinTimestamp);
         const nextSpinDateFormatted = nextSpinDate.toLocaleString('en-US', {
@@ -178,7 +176,7 @@ module.exports = async (req, res) => {
     });
     
   } catch (error) {
-    console.error("Error checking spin availability:", error);
+    console.error("❌ Cron job error:", error);
     res.status(500).json({ error: error.message });
   }
 };

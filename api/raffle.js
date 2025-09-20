@@ -26,9 +26,7 @@ module.exports = async (req, res) => {
     if (raffleStatus === null) {
       raffleStatus = await getRaffleStatus(publicAddress, provider);
       caches.spins.set(raffleCacheKey, raffleStatus, 300); // 5 minutes
-      console.log(`Fetched Black Medal Raffle status: eligible=${raffleStatus.isEligible}, entered=${raffleStatus.isEntered}, streak=${raffleStatus.currentStreak}`);
     } else {
-      console.log(`Using cached Black Medal Raffle status`);
     }
 
     // Get raffle history (cached for 1 hour)
@@ -38,7 +36,6 @@ module.exports = async (req, res) => {
     if (raffleHistory === null) {
       raffleHistory = await getRaffleHistory(provider, 5);
       caches.spins.set(historyKey, raffleHistory, 3600); // 1 hour
-      console.log(`Fetched Black Medal Raffle history: ${raffleHistory.length} recent rounds`);
     }
 
     // Get draw timing information

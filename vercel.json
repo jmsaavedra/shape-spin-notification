@@ -2,12 +2,19 @@
   "functions": {
     "api/cron.js": {
       "maxDuration": 30
+    },
+    "api/update-global-medals.js": {
+      "maxDuration": 60
     }
   },
   "crons": [
     {
       "path": "/api/cron",
       "schedule": "*/5 * * * *"
+    },
+    {
+      "path": "/api/update-global-medals",
+      "schedule": "0 * * * *"
     }
   ],
   "rewrites": [

@@ -123,4 +123,9 @@
     .card.spin-history {
         order: 10;
     }
+
+    /* Global medal stats comes last on mobile */
+    .card.global-stats {
+        order: 11;
+    }
 }
