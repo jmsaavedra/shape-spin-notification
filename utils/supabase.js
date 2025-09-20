@@ -147,6 +147,77 @@ function getDefaultMedalStats() {
 }
 
 /**
+ * Get cached ENS name from Supabase
+ */
+async function getCachedEnsName(address) {
+  if (!supabase) {
+    return null;
+  }
+
+  try {
+    const { data, error } = await supabase
+      .from('ens_cache')
+      .select('ens_name, expires_at')
+      .eq('address', address.toLowerCase())
+      .single();
+
+    if (error) {
+      if (error.code === 'PGRST116') {
+        // No data found
+        return null;
+      }
+      throw error;
+    }
+
+    // Check if cached entry has expired
+    if (new Date(data.expires_at) < new Date()) {
+      return null;
+    }
+
+    return data.ens_name;
+
+  } catch (error) {
+    console.error('Error fetching cached ENS name:', error);
+    return null;
+  }
+}
+
+/**
+ * Cache ENS name in Supabase
+ */
+async function cacheEnsName(address, ensName, ttlSeconds = 2592000) { // 30 days default
+  if (!supabaseAdmin) {
+    return false;
+  }
+
+  try {
+    const expiresAt = new Date(Date.now() + (ttlSeconds * 1000)).toISOString();
+
+    const { error } = await supabaseAdmin
+      .from('ens_cache')
+      .upsert({
+        address: address.toLowerCase(),
+        ens_name: ensName,
+        expires_at: expiresAt,
+        updated_at: new Date().toISOString()
+      }, {
+        onConflict: 'address'
+      });
+
+    if (error) {
+      console.error('Error caching ENS name:', error);
+      return false;
+    }
+
+    return true;
+
+  } catch (error) {
+    console.error('Error caching ENS name:', error);
+    return false;
+  }
+}
+
+/**
  * Track wallet submission for analytics with visit counting
  */
 async function trackWalletSubmission(submissionData) {
@@ -212,5 +283,7 @@ module.exports = {
   getGlobalMedalStats,
   saveGlobalMedalStats,
   getDefaultMedalStats,
-  trackWalletSubmission
+  trackWalletSubmission,
+  getCachedEnsName,
+  cacheEnsName
 };

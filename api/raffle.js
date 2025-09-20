@@ -34,7 +34,7 @@ module.exports = async (req, res) => {
     let raffleHistory = caches.spins.get(historyKey);
 
     if (raffleHistory === null) {
-      raffleHistory = await getRaffleHistory(provider, 5);
+      raffleHistory = await getRaffleHistory(provider, 5, alchemyApiKey);
       caches.spins.set(historyKey, raffleHistory, 3600); // 1 hour
     }
 

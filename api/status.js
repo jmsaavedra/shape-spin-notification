@@ -614,7 +614,7 @@ module.exports = async (req, res) => {
 
       if (raffleHistory === null) {
         const { getRaffleHistory } = require("../lib/black-medal-raffle");
-        raffleHistory = await getRaffleHistory(provider, 3);
+        raffleHistory = await getRaffleHistory(provider, 3, alchemyApiKey);
         caches.spins.set(historyKey, raffleHistory, 3600); // 1 hour
       }
     } else {
