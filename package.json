@@ -7,7 +7,11 @@
     "dev": "node dev-server.js",
     "dev:watch": "nodemon dev-server.js --watch api --watch public",
     "vercel-dev": "vercel dev --listen 4000",
-    "deploy": "vercel --prod"
+    "deploy": "vercel --prod",
+    "index-medals": "node scripts/index-historical-medals.js",
+    "update-medals": "node scripts/update-medal-stats.js",
+    "scan-medals": "node scripts/complete-medal-scan.js",
+    "clean-medal-data": "rm -f data/global-medal-stats.json data/scan-progress.json && echo 'Cleaned all medal data files'"
   },
   "keywords": [],
   "author": "@josdotph",
@@ -15,6 +19,7 @@
   "dependencies": {
     "dotenv": "^17.2.2",
     "ethers": "^6.15.0",
-    "express": "^5.1.0"
+    "express": "^5.1.0",
+    "@supabase/supabase-js": "^2.39.0"
   }
 }

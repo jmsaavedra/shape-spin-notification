@@ -611,6 +611,44 @@ module.exports = async (req, res) => {
       };
     }
 
+    // Get global medal statistics (cached for 1 hour)
+    let globalMedalStats = null;
+    const globalStatsCacheKey = 'globalMedalStats';
+    const cachedGlobalStats = caches.spins.get(globalStatsCacheKey);
+
+    if (cachedGlobalStats !== null) {
+      globalMedalStats = cachedGlobalStats.globalMedalStats;
+    } else {
+      // Fetch global stats if not cached
+      try {
+        const globalStatsModule = require('./global-medal-stats');
+        const mockReq = {};
+        const mockRes = {
+          status: () => ({ json: (data) => data }),
+          json: (data) => data
+        };
+        const globalStatsResponse = await new Promise((resolve) => {
+          const originalJson = mockRes.json;
+          mockRes.json = (data) => {
+            resolve(data);
+            return originalJson(data);
+          };
+          globalStatsModule(mockReq, mockRes);
+        });
+        globalMedalStats = globalStatsResponse.globalMedalStats;
+      } catch (error) {
+        console.log('Error fetching global medal stats:', error.message);
+        // Fallback values
+        globalMedalStats = {
+          bronze: 0,
+          silver: 0,
+          gold: 0,
+          black: 0,
+          total: 0
+        };
+      }
+    }
+
     // Calculate intelligent polling interval based on time until next spin
     let suggestedPollInterval;
     if (canSpinNow) {
@@ -647,6 +685,7 @@ module.exports = async (req, res) => {
       medalStats: medalStats,
       raffleStatus: raffleStatus,
       raffleHistory: raffleHistory,
+      globalMedalStats: globalMedalStats,
       suggestedPollInterval: suggestedPollInterval
     });
     

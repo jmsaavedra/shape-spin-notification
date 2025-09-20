@@ -441,40 +441,44 @@
 
                         ${(data.medalStats || (data.spinHistory && data.spinHistory.length > 0)) ? `
                         <div class="card medal-stats spin-history" style="grid-column: 1 / -1;">
-                            <div class="card-label">Spin Medal History & Stats</div>
+                            <div style="display: flex; justify-content: space-between; align-items: center;">
+                                <div class="card-label">Spin Medal History & Stats</div>
+                                ${data.medalStats ? `
+                                <div style="color: #999; font-size: 12px;">
+                                    Total: ${(data.medalStats.bronze + data.medalStats.silver + data.medalStats.gold).toLocaleString()} medals claimed
+                                </div>
+                                ` : ''}
+                            </div>
 
                             ${data.medalStats ? `
-                            <div class="medal-stats-grid" style="margin-top: 16px; display: flex; gap: 15px; flex-wrap: wrap; align-items: center;">
+                            <div class="medal-stats-grid" style="margin-top: 16px; display: flex; justify-content: space-between; align-items: center; padding: 0 40px;">
                                 ${(() => {
                                     // Calculate percentages based only on bronze, silver, gold (excluding black)
                                     const spinMedalTotal = data.medalStats.bronze + data.medalStats.silver + data.medalStats.gold;
-                                    const bronzePercent = spinMedalTotal > 0 ? Math.round((data.medalStats.bronze / spinMedalTotal) * 100) : 0;
-                                    const silverPercent = spinMedalTotal > 0 ? Math.round((data.medalStats.silver / spinMedalTotal) * 100) : 0;
-                                    const goldPercent = spinMedalTotal > 0 ? Math.round((data.medalStats.gold / spinMedalTotal) * 100) : 0;
+                                    const bronzePercent = spinMedalTotal > 0 ? ((data.medalStats.bronze / spinMedalTotal) * 100).toFixed(1) : 0;
+                                    const silverPercent = spinMedalTotal > 0 ? ((data.medalStats.silver / spinMedalTotal) * 100).toFixed(1) : 0;
+                                    const goldPercent = spinMedalTotal > 0 ? ((data.medalStats.gold / spinMedalTotal) * 100).toFixed(1) : 0;
 
                                     return `
                                         <div class="medal-stat-item" style="display: flex; align-items: center; gap: 8px;">
                                             <span class="medal-dot bronze"></span>
                                             <div style="color: #fff; font-size: 14px;">
-                                                <div>${data.medalStats.bronze} <span style="color: #999;">(${bronzePercent}%)</span></div>
+                                                <div>${data.medalStats.bronze.toLocaleString()} (${bronzePercent}%)</div>
+                                                <div style="font-size: 12px; color: #999;">Bronze</div>
                                             </div>
                                         </div>
                                         <div class="medal-stat-item" style="display: flex; align-items: center; gap: 8px;">
                                             <span class="medal-dot silver"></span>
                                             <div style="color: #fff; font-size: 14px;">
-                                                <div>${data.medalStats.silver} <span style="color: #999;">(${silverPercent}%)</span></div>
+                                                <div>${data.medalStats.silver.toLocaleString()} (${silverPercent}%)</div>
+                                                <div style="font-size: 12px; color: #999;">Silver</div>
                                             </div>
                                         </div>
                                         <div class="medal-stat-item" style="display: flex; align-items: center; gap: 8px;">
                                             <span class="medal-dot gold"></span>
                                             <div style="color: #fff; font-size: 14px;">
-                                                <div>${data.medalStats.gold} <span style="color: #999;">(${goldPercent}%)</span></div>
-                                            </div>
-                                        </div>
-                                        <div class="medal-stat-item" style="display: flex; align-items: center; gap: 8px;">
-                                            <span class="medal-dot obsidian"></span>
-                                            <div style="color: #fff; font-size: 14px;">
-                                                <div>${data.medalStats.black}</div>
+                                                <div>${data.medalStats.gold.toLocaleString()} (${goldPercent}%)</div>
+                                                <div style="font-size: 12px; color: #999;">Gold</div>
                                             </div>
                                         </div>
                                     `;
@@ -571,7 +575,7 @@
                                             const avgGapMinutes = Math.round((avgGapMs % (1000 * 60 * 60)) / (1000 * 60));
 
                                             return `
-                                                <div style="margin-top: 16px; padding-top: 16px; border-top: 1px solid #333;">
+                                                <div style="margin-top: 16px; padding-top: 16px; border-top: 1px solid #333; text-align: center;">
                                                     <div style="font-size: 12px; color: #999; margin-bottom: 4px;">Average time between spins</div>
                                                     <div style="font-size: 14px; color: #ccc;">+${avgGapHours}h ${avgGapMinutes}m</div>
                                                 </div>
@@ -582,6 +586,41 @@
                                 })()}
                             </div>
                             ` : ''}
+                        </div>
+                        ` : ''}
+
+                        <!-- Global Spin Medal Stats -->
+                        ${data.globalMedalStats ? `
+                        <div class="card medal-stats global-stats" style="grid-column: 1 / -1; margin-top: 20px;">
+                            <div style="display: flex; justify-content: space-between; align-items: center;">
+                                <div class="card-label">Global Spin Medal Stats</div>
+                                <div style="color: #999; font-size: 12px;">
+                                    Total: ${data.globalMedalStats.total.toLocaleString()} medals claimed
+                                </div>
+                            </div>
+                            <div class="medal-stats-grid" style="margin-top: 16px; display: flex; justify-content: space-between; align-items: center; padding: 0 40px;">
+                                <div class="medal-stat-item" style="display: flex; align-items: center; gap: 8px;">
+                                    <span class="medal-dot bronze"></span>
+                                    <div style="color: #fff; font-size: 14px;">
+                                        <div>${data.globalMedalStats.bronze.toLocaleString()} (${data.globalMedalStats.total > 0 ? ((data.globalMedalStats.bronze / data.globalMedalStats.total) * 100).toFixed(1) : 0}%)</div>
+                                        <div style="font-size: 12px; color: #999;">Bronze</div>
+                                    </div>
+                                </div>
+                                <div class="medal-stat-item" style="display: flex; align-items: center; gap: 8px;">
+                                    <span class="medal-dot silver"></span>
+                                    <div style="color: #fff; font-size: 14px;">
+                                        <div>${data.globalMedalStats.silver.toLocaleString()} (${data.globalMedalStats.total > 0 ? ((data.globalMedalStats.silver / data.globalMedalStats.total) * 100).toFixed(1) : 0}%)</div>
+                                        <div style="font-size: 12px; color: #999;">Silver</div>
+                                    </div>
+                                </div>
+                                <div class="medal-stat-item" style="display: flex; align-items: center; gap: 8px;">
+                                    <span class="medal-dot gold"></span>
+                                    <div style="color: #fff; font-size: 14px;">
+                                        <div>${data.globalMedalStats.gold.toLocaleString()} (${data.globalMedalStats.total > 0 ? ((data.globalMedalStats.gold / data.globalMedalStats.total) * 100).toFixed(1) : 0}%)</div>
+                                        <div style="font-size: 12px; color: #999;">Gold</div>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                         ` : ''}
                     </div>

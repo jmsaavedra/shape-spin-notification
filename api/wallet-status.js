@@ -5,6 +5,7 @@ const scheduleState = require("../lib/schedule-state");
 const { caches, TTL } = require("../lib/cache");
 const { batchContractCalls } = require("../lib/multicall");
 const { calculateConsecutiveStreak } = require("../lib/black-medal-raffle");
+const { trackWalletSubmission } = require("../utils/supabase");
 
 const abi = [
   {"inputs":[{"internalType":"address","name":"collector","type":"address"}],"name":"canSpin","outputs":[{"internalType":"bool","name":"","type":"bool"}],"stateMutability":"view","type":"function"},
@@ -743,6 +744,65 @@ module.exports = async (req, res) => {
       };
     }
 
+    // Get global medal statistics (cached for 1 hour)
+    let globalMedalStats = null;
+    const globalStatsCacheKey = 'globalMedalStats';
+    const cachedGlobalStats = caches.spins.get(globalStatsCacheKey);
+
+    if (cachedGlobalStats !== null) {
+      globalMedalStats = cachedGlobalStats.globalMedalStats;
+    } else {
+      // Fetch global stats if not cached
+      try {
+        const globalStatsModule = require('./global-medal-stats');
+        const mockReq = {};
+        const mockRes = {
+          status: () => ({ json: (data) => data }),
+          json: (data) => data
+        };
+        const globalStatsResponse = await new Promise((resolve) => {
+          const originalJson = mockRes.json;
+          mockRes.json = (data) => {
+            resolve(data);
+            return originalJson(data);
+          };
+          globalStatsModule(mockReq, mockRes);
+        });
+        globalMedalStats = globalStatsResponse.globalMedalStats;
+      } catch (error) {
+        console.log('Error fetching global medal stats:', error.message);
+        // Fallback values
+        globalMedalStats = {
+          bronze: 0,
+          silver: 0,
+          gold: 0,
+          black: 0,
+          total: 0
+        };
+      }
+    }
+
+    // Track wallet submission for analytics (non-blocking, production only)
+    if (process.env.NODE_ENV === 'production' || process.env.VERCEL_ENV === 'production') {
+      trackWalletSubmission({
+        walletAddress: publicAddress,
+        ensName: ensName,
+        userAgent: req.headers['user-agent'],
+        ipAddress: req.headers['x-forwarded-for'] || req.headers['x-real-ip'] || req.connection?.remoteAddress,
+        referrer: req.headers['referer'] || req.headers['referrer'],
+        hasSpins: filteredSpins.length > 0,
+        spinCount: filteredSpins.length,
+        hasMedals: medalStats ? medalStats.total > 0 : false,
+        medalCount: medalStats ? medalStats.total : 0,
+        stackId: stackId !== "0" ? stackId : null,
+        canSpinNow: canSpinNow,
+        lastSpinTimestamp: lastSpinTimestamp
+      }).catch(error => {
+        // Don't let tracking errors affect the response
+        console.log('Wallet submission tracking failed:', error.message);
+      });
+    }
+
     res.status(200).json({
       currentSpinCount: filteredSpins.length, // Use filtered spin count
       lastSpinTime: lastSpinTime,
@@ -758,6 +818,7 @@ module.exports = async (req, res) => {
       medalStats: medalStats,
       raffleStatus: raffleStatus,
       raffleHistory: raffleHistory,
+      globalMedalStats: globalMedalStats,
       // Wallet view specific flags
       isWalletView: true,
       // No notification data for wallet views

@@ -12,6 +12,7 @@ app.get('/api/updates', require('./api/updates'));
 app.get('/api/debug', require('./api/debug'));
 app.get('/api/cron', require('./api/cron'));
 app.get('/api/wallet-status', require('./api/wallet-status'));
+app.get('/api/global-medal-stats', require('./api/global-medal-stats'));
 
 // Wallet address routes (for local development)
 // Handle Ethereum addresses (0x + 40 hex characters)

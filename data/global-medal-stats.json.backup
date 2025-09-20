@@ -1,0 +1,1515 @@
+{
+  "lastUpdated": "2025-09-20T06:42:58.881Z",
+  "lastIndexedBlock": 18303044,
+  "dataSource": "complete_event_scan",
+  "globalMedalStats": {
+    "bronze": 1771,
+    "silver": 743,
+    "gold": 56,
+    "black": 0,
+    "total": 2572
+  },
+  "totalEvents": 7547,
+  "scanDuration": 0.3217833333333333,
+  "completionStatus": "complete",
+  "recentMedals": [
+    {
+      "blockNumber": 18278411,
+      "transactionHash": "0x2b33915d45dce455512c69f81a7e76d711ba498d5aeaa1e7205edccd9a363bbc",
+      "stackId": 115,
+      "tier": 1,
+      "tierName": "Bronze",
+      "name": "Thrill of the spin",
+      "metadata": {
+        "projectId": "MEDAL-SPIN",
+        "id": "bronze-medal-spin",
+        "name": "Thrill of the spin",
+        "description": "Earned by landing on Bronze in a daily spin",
+        "isRevokable": false
+      }
+    },
+    {
+      "blockNumber": 18278507,
+      "transactionHash": "0x8b89cdc2bbfc2e2227f80d60c76da0efc0a434c9527ffc7a2b902439e970fd7a",
+      "stackId": 44114,
+      "tier": 2,
+      "tierName": "Silver",
+      "name": "Silver spinner",
+      "metadata": {
+        "projectId": "MEDAL-SPIN",
+        "id": "silver-medal-spin",
+        "name": "Silver spinner",
+        "description": "Earned by landing on Silver in a daily spin",
+        "isRevokable": false
+      }
+    },
+    {
+      "blockNumber": 18278726,
+      "transactionHash": "0x824fa4f5f1dde86446ccf65c1fda4b231d142a753044c259b5bb32e585c66f85",
+      "stackId": 1754,
+      "tier": 2,
+      "tierName": "Silver",
+      "name": "Silver spinner",
+      "metadata": {
+        "projectId": "MEDAL-SPIN",
+        "id": "silver-medal-spin",
+        "name": "Silver spinner",
+        "description": "Earned by landing on Silver in a daily spin",
+        "isRevokable": false
+      }
+    },
+    {
+      "blockNumber": 18278747,
+      "transactionHash": "0x522d60cb88900b95c07a376030ec10fb0560fa9f957cc57128ad765efbfd1bd8",
+      "stackId": 240,
+      "tier": 2,
+      "tierName": "Silver",
+      "name": "Silver spinner",
+      "metadata": {
+        "projectId": "MEDAL-SPIN",
+        "id": "silver-medal-spin",
+        "name": "Silver spinner",
+        "description": "Earned by landing on Silver in a daily spin",
+        "isRevokable": false
+      }
+    },
+    {
+      "blockNumber": 18278791,
+      "transactionHash": "0xa00c958336fee1790fc1972ded21bc83898c31d1c12a6275cde89bc1aef8ce97",
+      "stackId": 360,
+      "tier": 1,
+      "tierName": "Bronze",
+      "name": "Thrill of the spin",
+      "metadata": {
+        "projectId": "MEDAL-SPIN",
+        "id": "bronze-medal-spin",
+        "name": "Thrill of the spin",
+        "description": "Earned by landing on Bronze in a daily spin",
+        "isRevokable": false
+      }
+    },
+    {
+      "blockNumber": 18278879,
+      "transactionHash": "0xf5e282155bc0a422162cac0f7041cf03b5634f0df7d48f03384549329cad1f4c",
+      "stackId": 1037,
+      "tier": 1,
+      "tierName": "Bronze",
+      "name": "Thrill of the spin",
+      "metadata": {
+        "projectId": "MEDAL-SPIN",
+        "id": "bronze-medal-spin",
+        "name": "Thrill of the spin",
+        "description": "Earned by landing on Bronze in a daily spin",
+        "isRevokable": false
+      }
+    },
+    {
+      "blockNumber": 18278927,
+      "transactionHash": "0x7c4d98fb9769619ca2a3e61f369e7a1d92f459b5cf5bc875e4faca4a383ca997",
+      "stackId": 2618,
+      "tier": 1,
+      "tierName": "Bronze",
+      "name": "Thrill of the spin",
+      "metadata": {
+        "projectId": "MEDAL-SPIN",
+        "id": "bronze-medal-spin",
+        "name": "Thrill of the spin",
+        "description": "Earned by landing on Bronze in a daily spin",
+        "isRevokable": false
+      }
+    },
+    {
+      "blockNumber": 18279084,
+      "transactionHash": "0xad688f83a318aefb9b63b44394cdb656814e9ce3f0419d7becea2d98f2fddc47",
+      "stackId": 31582,
+      "tier": 1,
+      "tierName": "Bronze",
+      "name": "Thrill of the spin",
+      "metadata": {
+        "projectId": "MEDAL-SPIN",
+        "id": "bronze-medal-spin",
+        "name": "Thrill of the spin",
+        "description": "Earned by landing on Bronze in a daily spin",
+        "isRevokable": false
+      }
+    },
+    {
+      "blockNumber": 18279123,
+      "transactionHash": "0x92e7d90781233378101f26547a3745f6ad4b94f3579e5029bf64bbf59160eddc",
+      "stackId": 248,
+      "tier": 1,
+      "tierName": "Bronze",
+      "name": "Thrill of the spin",
+      "metadata": {
+        "projectId": "MEDAL-SPIN",
+        "id": "bronze-medal-spin",
+        "name": "Thrill of the spin",
+        "description": "Earned by landing on Bronze in a daily spin",
+        "isRevokable": false
+      }
+    },
+    {
+      "blockNumber": 18279271,
+      "transactionHash": "0x36df5bc16e0c1f1a958ea6dae2cece0444e96b27b30ee737de9011c8f1700155",
+      "stackId": 1374,
+      "tier": 1,
+      "tierName": "Bronze",
+      "name": "Thrill of the spin",
+      "metadata": {
+        "projectId": "MEDAL-SPIN",
+        "id": "bronze-medal-spin",
+        "name": "Thrill of the spin",
+        "description": "Earned by landing on Bronze in a daily spin",
+        "isRevokable": false
+      }
+    },
+    {
+      "blockNumber": 18279314,
+      "transactionHash": "0x7edfea4daae97a376663d5f78c00e6367d0754af761bc632a5695ebda0ae9916",
+      "stackId": 18470,
+      "tier": 1,
+      "tierName": "Bronze",
+      "name": "Thrill of the spin",
+      "metadata": {
+        "projectId": "MEDAL-SPIN",
+        "id": "bronze-medal-spin",
+        "name": "Thrill of the spin",
+        "description": "Earned by landing on Bronze in a daily spin",
+        "isRevokable": false
+      }
+    },
+    {
+      "blockNumber": 18279575,
+      "transactionHash": "0xda4a96dd3cc3e09f3e3b16697710e17f08f7542678af4a396efc297adf18b3a2",
+      "stackId": 16277,
+      "tier": 1,
+      "tierName": "Bronze",
+      "name": "Thrill of the spin",
+      "metadata": {
+        "projectId": "MEDAL-SPIN",
+        "id": "bronze-medal-spin",
+        "name": "Thrill of the spin",
+        "description": "Earned by landing on Bronze in a daily spin",
+        "isRevokable": false
+      }
+    },
+    {
+      "blockNumber": 18280406,
+      "transactionHash": "0x333937d9cee630917c33b716517d42446a512aca2dcb688ec83a7038572e2fab",
+      "stackId": 44391,
+      "tier": 1,
+      "tierName": "Bronze",
+      "name": "Thrill of the spin",
+      "metadata": {
+        "projectId": "MEDAL-SPIN",
+        "id": "bronze-medal-spin",
+        "name": "Thrill of the spin",
+        "description": "Earned by landing on Bronze in a daily spin",
+        "isRevokable": false
+      }
+    },
+    {
+      "blockNumber": 18280778,
+      "transactionHash": "0x1c34cd82c2b7f4349df4e1ef655d080ba3bce91409fc533a16301227f89c6f42",
+      "stackId": 11628,
+      "tier": 0,
+      "tierName": "Unknown",
+      "name": "unknown",
+      "metadata": {
+        "projectId": "MEDAL-SPIN",
+        "id": "unknown",
+        "isRevokable": false
+      }
+    },
+    {
+      "blockNumber": 18281362,
+      "transactionHash": "0x06341377119e14e1de1bf4ae97325ddca472740a3ce13e7577f24d2554d3b2d2",
+      "stackId": 16787,
+      "tier": 1,
+      "tierName": "Bronze",
+      "name": "Thrill of the spin",
+      "metadata": {
+        "projectId": "MEDAL-SPIN",
+        "id": "bronze-medal-spin",
+        "name": "Thrill of the spin",
+        "description": "Earned by landing on Bronze in a daily spin",
+        "isRevokable": false
+      }
+    },
+    {
+      "blockNumber": 18281521,
+      "transactionHash": "0x091df4a210786eafa2b1c57a8a058c4a4f932e7d4d75d6409cf5e099b49579c7",
+      "stackId": 13576,
+      "tier": 1,
+      "tierName": "Bronze",
+      "name": "Thrill of the spin",
+      "metadata": {
+        "projectId": "MEDAL-SPIN",
+        "id": "bronze-medal-spin",
+        "name": "Thrill of the spin",
+        "description": "Earned by landing on Bronze in a daily spin",
+        "isRevokable": false
+      }
+    },
+    {
+      "blockNumber": 18281962,
+      "transactionHash": "0x702a2635ce9121eac596b7b36952864990acfacddf06675a7cd80ce038ddc41a",
+      "stackId": 16703,
+      "tier": 1,
+      "tierName": "Bronze",
+      "name": "Thrill of the spin",
+      "metadata": {
+        "projectId": "MEDAL-SPIN",
+        "id": "bronze-medal-spin",
+        "name": "Thrill of the spin",
+        "description": "Earned by landing on Bronze in a daily spin",
+        "isRevokable": false
+      }
+    },
+    {
+      "blockNumber": 18282104,
+      "transactionHash": "0xd17f886e00639d95cbe13ba4b67899d180b0ba7788f38df41ee8a8b8e929b7f2",
+      "stackId": 16937,
+      "tier": 1,
+      "tierName": "Bronze",
+      "name": "Thrill of the spin",
+      "metadata": {
+        "projectId": "MEDAL-SPIN",
+        "id": "bronze-medal-spin",
+        "name": "Thrill of the spin",
+        "description": "Earned by landing on Bronze in a daily spin",
+        "isRevokable": false
+      }
+    },
+    {
+      "blockNumber": 18282280,
+      "transactionHash": "0xc6c993590e06015267f11a376107eb6afdebda77e6a8f566877fedad32a25f97",
+      "stackId": 16940,
+      "tier": 1,
+      "tierName": "Bronze",
+      "name": "Thrill of the spin",
+      "metadata": {
+        "projectId": "MEDAL-SPIN",
+        "id": "bronze-medal-spin",
+        "name": "Thrill of the spin",
+        "description": "Earned by landing on Bronze in a daily spin",
+        "isRevokable": false
+      }
+    },
+    {
+      "blockNumber": 18282333,
+      "transactionHash": "0x050da0dd515ed58e2a08af4e25ea45aa8954a537e3f72f77bd4c9c11036f3f4b",
+      "stackId": 5490,
+      "tier": 1,
+      "tierName": "Bronze",
+      "name": "Thrill of the spin",
+      "metadata": {
+        "projectId": "MEDAL-SPIN",
+        "id": "bronze-medal-spin",
+        "name": "Thrill of the spin",
+        "description": "Earned by landing on Bronze in a daily spin",
+        "isRevokable": false
+      }
+    },
+    {
+      "blockNumber": 18282335,
+      "transactionHash": "0xcf67951081688baf959aeed51df110c5efff09c1c4b7bb4825321ecb40207e32",
+      "stackId": 43242,
+      "tier": 3,
+      "tierName": "Gold",
+      "name": "Golden spinner",
+      "metadata": {
+        "projectId": "MEDAL-SPIN",
+        "id": "gold-medal-spin",
+        "name": "Golden spinner",
+        "description": "Earned by landing on Gold in a daily spin",
+        "isRevokable": false
+      }
+    },
+    {
+      "blockNumber": 18282403,
+      "transactionHash": "0x18465417e2dc7cca57155fd35cf6761c50df9bd343ae976f6d2b97643fc6f6b7",
+      "stackId": 90,
+      "tier": 1,
+      "tierName": "Bronze",
+      "name": "Thrill of the spin",
+      "metadata": {
+        "projectId": "MEDAL-SPIN",
+        "id": "bronze-medal-spin",
+        "name": "Thrill of the spin",
+        "description": "Earned by landing on Bronze in a daily spin",
+        "isRevokable": false
+      }
+    },
+    {
+      "blockNumber": 18282588,
+      "transactionHash": "0x89c812dec3688bd4d82cda24ade6b13dd66fb48aca9a0c31369d318f4f8a8012",
+      "stackId": 16943,
+      "tier": 1,
+      "tierName": "Bronze",
+      "name": "Thrill of the spin",
+      "metadata": {
+        "projectId": "MEDAL-SPIN",
+        "id": "bronze-medal-spin",
+        "name": "Thrill of the spin",
+        "description": "Earned by landing on Bronze in a daily spin",
+        "isRevokable": false
+      }
+    },
+    {
+      "blockNumber": 18282693,
+      "transactionHash": "0x9334631d121e86a8a9058761dc3fb961de09f384f152baf0709d9fe75faae753",
+      "stackId": 17991,
+      "tier": 2,
+      "tierName": "Silver",
+      "name": "Silver spinner",
+      "metadata": {
+        "projectId": "MEDAL-SPIN",
+        "id": "silver-medal-spin",
+        "name": "Silver spinner",
+        "description": "Earned by landing on Silver in a daily spin",
+        "isRevokable": false
+      }
+    },
+    {
+      "blockNumber": 18282722,
+      "transactionHash": "0xee3997bc587033a87e99037325d52d2647c2d159bd107dd096dad6a567340076",
+      "stackId": 38178,
+      "tier": 1,
+      "tierName": "Bronze",
+      "name": "Thrill of the spin",
+      "metadata": {
+        "projectId": "MEDAL-SPIN",
+        "id": "bronze-medal-spin",
+        "name": "Thrill of the spin",
+        "description": "Earned by landing on Bronze in a daily spin",
+        "isRevokable": false
+      }
+    },
+    {
+      "blockNumber": 18282763,
+      "transactionHash": "0x568bd8339ea86b35e5f6bf9aa619dedf382e5f9978840b06e61db2fd8fe51f3e",
+      "stackId": 660,
+      "tier": 1,
+      "tierName": "Bronze",
+      "name": "Thrill of the spin",
+      "metadata": {
+        "projectId": "MEDAL-SPIN",
+        "id": "bronze-medal-spin",
+        "name": "Thrill of the spin",
+        "description": "Earned by landing on Bronze in a daily spin",
+        "isRevokable": false
+      }
+    },
+    {
+      "blockNumber": 18282944,
+      "transactionHash": "0xb2bc84c683427aa6f59e57d91b67f729a05596b9cb8c24687eb998c8e0da7acd",
+      "stackId": 13035,
+      "tier": 2,
+      "tierName": "Silver",
+      "name": "Silver spinner",
+      "metadata": {
+        "projectId": "MEDAL-SPIN",
+        "id": "silver-medal-spin",
+        "name": "Silver spinner",
+        "description": "Earned by landing on Silver in a daily spin",
+        "isRevokable": false
+      }
+    },
+    {
+      "blockNumber": 18282945,
+      "transactionHash": "0x25bfa19dd94117226dbc929c689a57c405c016f2a36cfa0976ac1e9687710556",
+      "stackId": 42857,
+      "tier": 1,
+      "tierName": "Bronze",
+      "name": "Thrill of the spin",
+      "metadata": {
+        "projectId": "MEDAL-SPIN",
+        "id": "bronze-medal-spin",
+        "name": "Thrill of the spin",
+        "description": "Earned by landing on Bronze in a daily spin",
+        "isRevokable": false
+      }
+    },
+    {
+      "blockNumber": 18283043,
+      "transactionHash": "0x2f8689d82f8aff636150a14b338c22a56bbd109bc397780cc3c417caa17da4f1",
+      "stackId": 43881,
+      "tier": 1,
+      "tierName": "Bronze",
+      "name": "Thrill of the spin",
+      "metadata": {
+        "projectId": "MEDAL-SPIN",
+        "id": "bronze-medal-spin",
+        "name": "Thrill of the spin",
+        "description": "Earned by landing on Bronze in a daily spin",
+        "isRevokable": false
+      }
+    },
+    {
+      "blockNumber": 18283718,
+      "transactionHash": "0x05e17cfc1dfd7ace3ca7ec4a9209e00d7d360c4b98178dae77ac06480dae43d0",
+      "stackId": 16370,
+      "tier": 1,
+      "tierName": "Bronze",
+      "name": "Thrill of the spin",
+      "metadata": {
+        "projectId": "MEDAL-SPIN",
+        "id": "bronze-medal-spin",
+        "name": "Thrill of the spin",
+        "description": "Earned by landing on Bronze in a daily spin",
+        "isRevokable": false
+      }
+    },
+    {
+      "blockNumber": 18283722,
+      "transactionHash": "0x3d06ae2dda2d3c1e0c9f0fbc78f848b47574868b44bbe98d2f44616d6bccf070",
+      "stackId": 40473,
+      "tier": 1,
+      "tierName": "Bronze",
+      "name": "Thrill of the spin",
+      "metadata": {
+        "projectId": "MEDAL-SPIN",
+        "id": "bronze-medal-spin",
+        "name": "Thrill of the spin",
+        "description": "Earned by landing on Bronze in a daily spin",
+        "isRevokable": false
+      }
+    },
+    {
+      "blockNumber": 18283811,
+      "transactionHash": "0x4196635a2573f59392cf9b63cb11c7df88f50f26575a50b76a3d60e313fd2ea6",
+      "stackId": 5476,
+      "tier": 1,
+      "tierName": "Bronze",
+      "name": "Thrill of the spin",
+      "metadata": {
+        "projectId": "MEDAL-SPIN",
+        "id": "bronze-medal-spin",
+        "name": "Thrill of the spin",
+        "description": "Earned by landing on Bronze in a daily spin",
+        "isRevokable": false
+      }
+    },
+    {
+      "blockNumber": 18284215,
+      "transactionHash": "0xe7195dbf70aa3dd0be1680872872ad5da0104d5ffe98b30912c08cc69e1fce27",
+      "stackId": 532,
+      "tier": 1,
+      "tierName": "Bronze",
+      "name": "Thrill of the spin",
+      "metadata": {
+        "projectId": "MEDAL-SPIN",
+        "id": "bronze-medal-spin",
+        "name": "Thrill of the spin",
+        "description": "Earned by landing on Bronze in a daily spin",
+        "isRevokable": false
+      }
+    },
+    {
+      "blockNumber": 18284271,
+      "transactionHash": "0x0411749b217cf75717aa72f59d18e4f66153dddf05a9c76684452cb3ed1287a3",
+      "stackId": 38175,
+      "tier": 1,
+      "tierName": "Bronze",
+      "name": "Thrill of the spin",
+      "metadata": {
+        "projectId": "MEDAL-SPIN",
+        "id": "bronze-medal-spin",
+        "name": "Thrill of the spin",
+        "description": "Earned by landing on Bronze in a daily spin",
+        "isRevokable": false
+      }
+    },
+    {
+      "blockNumber": 18284355,
+      "transactionHash": "0x286029d7f912428b81036dc1ab331c4bbb1c83758fa05a61bf213d2e4398a5f1",
+      "stackId": 38181,
+      "tier": 1,
+      "tierName": "Bronze",
+      "name": "Thrill of the spin",
+      "metadata": {
+        "projectId": "MEDAL-SPIN",
+        "id": "bronze-medal-spin",
+        "name": "Thrill of the spin",
+        "description": "Earned by landing on Bronze in a daily spin",
+        "isRevokable": false
+      }
+    },
+    {
+      "blockNumber": 18284491,
+      "transactionHash": "0x42fa77bb3ffb980c2141a195b8279c9c6e08676cc1f135ec2175184e5e3a9da5",
+      "stackId": 11287,
+      "tier": 1,
+      "tierName": "Bronze",
+      "name": "Thrill of the spin",
+      "metadata": {
+        "projectId": "MEDAL-SPIN",
+        "id": "bronze-medal-spin",
+        "name": "Thrill of the spin",
+        "description": "Earned by landing on Bronze in a daily spin",
+        "isRevokable": false
+      }
+    },
+    {
+      "blockNumber": 18285021,
+      "transactionHash": "0x0449d584307535ea9c4ac90cc65c2996364d88b148d1338c270f223ed43f875b",
+      "stackId": 30725,
+      "tier": 1,
+      "tierName": "Bronze",
+      "name": "Thrill of the spin",
+      "metadata": {
+        "projectId": "MEDAL-SPIN",
+        "id": "bronze-medal-spin",
+        "name": "Thrill of the spin",
+        "description": "Earned by landing on Bronze in a daily spin",
+        "isRevokable": false
+      }
+    },
+    {
+      "blockNumber": 18285258,
+      "transactionHash": "0x48d51d6a4786b197e27bc61337c43d0ac249b3a2ceee047258bf95589b97ddc5",
+      "stackId": 38185,
+      "tier": 1,
+      "tierName": "Bronze",
+      "name": "Thrill of the spin",
+      "metadata": {
+        "projectId": "MEDAL-SPIN",
+        "id": "bronze-medal-spin",
+        "name": "Thrill of the spin",
+        "description": "Earned by landing on Bronze in a daily spin",
+        "isRevokable": false
+      }
+    },
+    {
+      "blockNumber": 18285268,
+      "transactionHash": "0x5d3da6691c8534011f35507d78c8becc207bee1c5e1239707ac0573fc513f0ad",
+      "stackId": 18569,
+      "tier": 1,
+      "tierName": "Bronze",
+      "name": "Thrill of the spin",
+      "metadata": {
+        "projectId": "MEDAL-SPIN",
+        "id": "bronze-medal-spin",
+        "name": "Thrill of the spin",
+        "description": "Earned by landing on Bronze in a daily spin",
+        "isRevokable": false
+      }
+    },
+    {
+      "blockNumber": 18285439,
+      "transactionHash": "0xcb648f5ffeab429ac3435906a7dba1016bd5181f9adf7580a0d22cde1c3ad4cf",
+      "stackId": 40673,
+      "tier": 1,
+      "tierName": "Bronze",
+      "name": "Thrill of the spin",
+      "metadata": {
+        "projectId": "MEDAL-SPIN",
+        "id": "bronze-medal-spin",
+        "name": "Thrill of the spin",
+        "description": "Earned by landing on Bronze in a daily spin",
+        "isRevokable": false
+      }
+    },
+    {
+      "blockNumber": 18285572,
+      "transactionHash": "0xe6a4cdae95bba35c753de6c5e53d0afda4106e7069db93a0b1ce4f2126b5cd1b",
+      "stackId": 16418,
+      "tier": 1,
+      "tierName": "Bronze",
+      "name": "Thrill of the spin",
+      "metadata": {
+        "projectId": "MEDAL-SPIN",
+        "id": "bronze-medal-spin",
+        "name": "Thrill of the spin",
+        "description": "Earned by landing on Bronze in a daily spin",
+        "isRevokable": false
+      }
+    },
+    {
+      "blockNumber": 18286486,
+      "transactionHash": "0xa91c61c844d9130ee85d4f71ea3a059eea4948badf7a64ddefb5b009b5fa322c",
+      "stackId": 40579,
+      "tier": 1,
+      "tierName": "Bronze",
+      "name": "Thrill of the spin",
+      "metadata": {
+        "projectId": "MEDAL-SPIN",
+        "id": "bronze-medal-spin",
+        "name": "Thrill of the spin",
+        "description": "Earned by landing on Bronze in a daily spin",
+        "isRevokable": false
+      }
+    },
+    {
+      "blockNumber": 18286601,
+      "transactionHash": "0x485e7c5b219466dacdf26827f8f3fa213b5d2bb9c4d759a8ff47e48d96a897f9",
+      "stackId": 69,
+      "tier": 1,
+      "tierName": "Bronze",
+      "name": "Thrill of the spin",
+      "metadata": {
+        "projectId": "MEDAL-SPIN",
+        "id": "bronze-medal-spin",
+        "name": "Thrill of the spin",
+        "description": "Earned by landing on Bronze in a daily spin",
+        "isRevokable": false
+      }
+    },
+    {
+      "blockNumber": 18286696,
+      "transactionHash": "0x019c36aa082f33663addfb62e31b4796606b4e5d5c5f446b8c68e5c9e0deece6",
+      "stackId": 257,
+      "tier": 1,
+      "tierName": "Bronze",
+      "name": "Thrill of the spin",
+      "metadata": {
+        "projectId": "MEDAL-SPIN",
+        "id": "bronze-medal-spin",
+        "name": "Thrill of the spin",
+        "description": "Earned by landing on Bronze in a daily spin",
+        "isRevokable": false
+      }
+    },
+    {
+      "blockNumber": 18286897,
+      "transactionHash": "0x71ed8ab37a6adeddd5e87312ca1a50f4a0df3bd43893331ea66d603fcb56b167",
+      "stackId": 1119,
+      "tier": 1,
+      "tierName": "Bronze",
+      "name": "Thrill of the spin",
+      "metadata": {
+        "projectId": "MEDAL-SPIN",
+        "id": "bronze-medal-spin",
+        "name": "Thrill of the spin",
+        "description": "Earned by landing on Bronze in a daily spin",
+        "isRevokable": false
+      }
+    },
+    {
+      "blockNumber": 18287423,
+      "transactionHash": "0x6b2d804d114fbe0ea35c1e0fa47502d169d994f84e9273c951406e63972ea93a",
+      "stackId": 730,
+      "tier": 2,
+      "tierName": "Silver",
+      "name": "Silver spinner",
+      "metadata": {
+        "projectId": "MEDAL-SPIN",
+        "id": "silver-medal-spin",
+        "name": "Silver spinner",
+        "description": "Earned by landing on Silver in a daily spin",
+        "isRevokable": false
+      }
+    },
+    {
+      "blockNumber": 18287679,
+      "transactionHash": "0x68a8c0741630f0259dd6fdfff5ff00db41b5aa4679a73cc0108ace5152d9068b",
+      "stackId": 43881,
+      "tier": 1,
+      "tierName": "Bronze",
+      "name": "Thrill of the spin",
+      "metadata": {
+        "projectId": "MEDAL-SPIN",
+        "id": "bronze-medal-spin",
+        "name": "Thrill of the spin",
+        "description": "Earned by landing on Bronze in a daily spin",
+        "isRevokable": false
+      }
+    },
+    {
+      "blockNumber": 18288224,
+      "transactionHash": "0x304fb2cd8ecc3e28ebccee16141020cd3c2cbe45f1985a95b655ea2280dd6f0c",
+      "stackId": 31860,
+      "tier": 1,
+      "tierName": "Bronze",
+      "name": "Thrill of the spin",
+      "metadata": {
+        "projectId": "MEDAL-SPIN",
+        "id": "bronze-medal-spin",
+        "name": "Thrill of the spin",
+        "description": "Earned by landing on Bronze in a daily spin",
+        "isRevokable": false
+      }
+    },
+    {
+      "blockNumber": 18288855,
+      "transactionHash": "0xa78ef42bf07aa070e1a37bf88db6c4e406e570bdd2fca99681d7997a9bb938fd",
+      "stackId": 2879,
+      "tier": 1,
+      "tierName": "Bronze",
+      "name": "Thrill of the spin",
+      "metadata": {
+        "projectId": "MEDAL-SPIN",
+        "id": "bronze-medal-spin",
+        "name": "Thrill of the spin",
+        "description": "Earned by landing on Bronze in a daily spin",
+        "isRevokable": false
+      }
+    },
+    {
+      "blockNumber": 18288958,
+      "transactionHash": "0x11f24e7dea35cb11d66e1291c961c65e8a26f0367fd9b1983cd258c2a5d76a6e",
+      "stackId": 11525,
+      "tier": 1,
+      "tierName": "Bronze",
+      "name": "Thrill of the spin",
+      "metadata": {
+        "projectId": "MEDAL-SPIN",
+        "id": "bronze-medal-spin",
+        "name": "Thrill of the spin",
+        "description": "Earned by landing on Bronze in a daily spin",
+        "isRevokable": false
+      }
+    },
+    {
+      "blockNumber": 18289161,
+      "transactionHash": "0xfd8fc8a765efb6b661bd8a9892c5b36fc3e8c9cdbc0e9134f551b14e93250f1d",
+      "stackId": 17079,
+      "tier": 2,
+      "tierName": "Silver",
+      "name": "Silver spinner",
+      "metadata": {
+        "projectId": "MEDAL-SPIN",
+        "id": "silver-medal-spin",
+        "name": "Silver spinner",
+        "description": "Earned by landing on Silver in a daily spin",
+        "isRevokable": false
+      }
+    },
+    {
+      "blockNumber": 18289798,
+      "transactionHash": "0xf7fa0cbb8ffe0aecb22e434883e80e7770b7a6b458dd6f2f5875712817c25771",
+      "stackId": 17779,
+      "tier": 2,
+      "tierName": "Silver",
+      "name": "Silver spinner",
+      "metadata": {
+        "projectId": "MEDAL-SPIN",
+        "id": "silver-medal-spin",
+        "name": "Silver spinner",
+        "description": "Earned by landing on Silver in a daily spin",
+        "isRevokable": false
+      }
+    },
+    {
+      "blockNumber": 18290127,
+      "transactionHash": "0xa35ffd7a99abe40d0974ba7934735acdcde0a3eccaa2153b3c93feb0783712be",
+      "stackId": 18381,
+      "tier": 1,
+      "tierName": "Bronze",
+      "name": "Thrill of the spin",
+      "metadata": {
+        "projectId": "MEDAL-SPIN",
+        "id": "bronze-medal-spin",
+        "name": "Thrill of the spin",
+        "description": "Earned by landing on Bronze in a daily spin",
+        "isRevokable": false
+      }
+    },
+    {
+      "blockNumber": 18291530,
+      "transactionHash": "0xaeef153abb8cfb2728fd91129b415982807d7f715b43b9bc63b95b6d28df1e5d",
+      "stackId": 9567,
+      "tier": 1,
+      "tierName": "Bronze",
+      "name": "Thrill of the spin",
+      "metadata": {
+        "projectId": "MEDAL-SPIN",
+        "id": "bronze-medal-spin",
+        "name": "Thrill of the spin",
+        "description": "Earned by landing on Bronze in a daily spin",
+        "isRevokable": false
+      }
+    },
+    {
+      "blockNumber": 18291658,
+      "transactionHash": "0x0c95362f84cd39184c89a613af72eb29e6742b5d38302bd139538591b45eafaa",
+      "stackId": 3312,
+      "tier": 1,
+      "tierName": "Bronze",
+      "name": "Thrill of the spin",
+      "metadata": {
+        "projectId": "MEDAL-SPIN",
+        "id": "bronze-medal-spin",
+        "name": "Thrill of the spin",
+        "description": "Earned by landing on Bronze in a daily spin",
+        "isRevokable": false
+      }
+    },
+    {
+      "blockNumber": 18292124,
+      "transactionHash": "0x982a10b18c96841126defde52389a7a217242cffa9b5e5185c986e092d761ff7",
+      "stackId": 13323,
+      "tier": 1,
+      "tierName": "Bronze",
+      "name": "Thrill of the spin",
+      "metadata": {
+        "projectId": "MEDAL-SPIN",
+        "id": "bronze-medal-spin",
+        "name": "Thrill of the spin",
+        "description": "Earned by landing on Bronze in a daily spin",
+        "isRevokable": false
+      }
+    },
+    {
+      "blockNumber": 18292650,
+      "transactionHash": "0x422f9632e7bf5769277becb60f056fa220507cdc0642713ef82e7382e22bbbd6",
+      "stackId": 39695,
+      "tier": 1,
+      "tierName": "Bronze",
+      "name": "Thrill of the spin",
+      "metadata": {
+        "projectId": "MEDAL-SPIN",
+        "id": "bronze-medal-spin",
+        "name": "Thrill of the spin",
+        "description": "Earned by landing on Bronze in a daily spin",
+        "isRevokable": false
+      }
+    },
+    {
+      "blockNumber": 18292694,
+      "transactionHash": "0xb7be7e06eba9e08919dc300a7b805a073e59a77f25456f64c39894578179673b",
+      "stackId": 16248,
+      "tier": 1,
+      "tierName": "Bronze",
+      "name": "Thrill of the spin",
+      "metadata": {
+        "projectId": "MEDAL-SPIN",
+        "id": "bronze-medal-spin",
+        "name": "Thrill of the spin",
+        "description": "Earned by landing on Bronze in a daily spin",
+        "isRevokable": false
+      }
+    },
+    {
+      "blockNumber": 18292744,
+      "transactionHash": "0x509fda0ffb4b8a4d2a66ed897b6b65e460b6dc749ae13a1175d837613ac32fde",
+      "stackId": 1033,
+      "tier": 1,
+      "tierName": "Bronze",
+      "name": "Thrill of the spin",
+      "metadata": {
+        "projectId": "MEDAL-SPIN",
+        "id": "bronze-medal-spin",
+        "name": "Thrill of the spin",
+        "description": "Earned by landing on Bronze in a daily spin",
+        "isRevokable": false
+      }
+    },
+    {
+      "blockNumber": 18292746,
+      "transactionHash": "0x977e8dfb863d01e9d911da17aaefead6e27826446c08209545dd80e9c482a40e",
+      "stackId": 729,
+      "tier": 2,
+      "tierName": "Silver",
+      "name": "Silver spinner",
+      "metadata": {
+        "projectId": "MEDAL-SPIN",
+        "id": "silver-medal-spin",
+        "name": "Silver spinner",
+        "description": "Earned by landing on Silver in a daily spin",
+        "isRevokable": false
+      }
+    },
+    {
+      "blockNumber": 18292962,
+      "transactionHash": "0xc1c355e00e9481d7b6b62b27c987b3a99354ebd3fbb5e4576b5b99b12b671ac4",
+      "stackId": 11257,
+      "tier": 1,
+      "tierName": "Bronze",
+      "name": "Thrill of the spin",
+      "metadata": {
+        "projectId": "MEDAL-SPIN",
+        "id": "bronze-medal-spin",
+        "name": "Thrill of the spin",
+        "description": "Earned by landing on Bronze in a daily spin",
+        "isRevokable": false
+      }
+    },
+    {
+      "blockNumber": 18293972,
+      "transactionHash": "0x737515b353373147f47f14359705ebdae161fc95f03343fa6e231793a95baf5b",
+      "stackId": 44009,
+      "tier": 2,
+      "tierName": "Silver",
+      "name": "Silver spinner",
+      "metadata": {
+        "projectId": "MEDAL-SPIN",
+        "id": "silver-medal-spin",
+        "name": "Silver spinner",
+        "description": "Earned by landing on Silver in a daily spin",
+        "isRevokable": false
+      }
+    },
+    {
+      "blockNumber": 18294788,
+      "transactionHash": "0x58f3d71dac7efd14cbb8603841d47888c242512db6c19e42c9b675a8d8f27389",
+      "stackId": 15271,
+      "tier": 2,
+      "tierName": "Silver",
+      "name": "Silver spinner",
+      "metadata": {
+        "projectId": "MEDAL-SPIN",
+        "id": "silver-medal-spin",
+        "name": "Silver spinner",
+        "description": "Earned by landing on Silver in a daily spin",
+        "isRevokable": false
+      }
+    },
+    {
+      "blockNumber": 18295438,
+      "transactionHash": "0xc2efb835ee79edf257d132ec36dc2000009a565ae08ec3544add5d07db786165",
+      "stackId": 1016,
+      "tier": 1,
+      "tierName": "Bronze",
+      "name": "Thrill of the spin",
+      "metadata": {
+        "projectId": "MEDAL-SPIN",
+        "id": "bronze-medal-spin",
+        "name": "Thrill of the spin",
+        "description": "Earned by landing on Bronze in a daily spin",
+        "isRevokable": false
+      }
+    },
+    {
+      "blockNumber": 18296110,
+      "transactionHash": "0xa27ec4d7c027fa6a0d6869a87d00c9842b18ff292744d40cde555715f7a3003b",
+      "stackId": 264,
+      "tier": 1,
+      "tierName": "Bronze",
+      "name": "Thrill of the spin",
+      "metadata": {
+        "projectId": "MEDAL-SPIN",
+        "id": "bronze-medal-spin",
+        "name": "Thrill of the spin",
+        "description": "Earned by landing on Bronze in a daily spin",
+        "isRevokable": false
+      }
+    },
+    {
+      "blockNumber": 18296800,
+      "transactionHash": "0x3f8528146f13c80cdce233f9ceb8ec9e6a840a8450ec80ea890e7edeb1017463",
+      "stackId": 13828,
+      "tier": 1,
+      "tierName": "Bronze",
+      "name": "Thrill of the spin",
+      "metadata": {
+        "projectId": "MEDAL-SPIN",
+        "id": "bronze-medal-spin",
+        "name": "Thrill of the spin",
+        "description": "Earned by landing on Bronze in a daily spin",
+        "isRevokable": false
+      }
+    },
+    {
+      "blockNumber": 18297439,
+      "transactionHash": "0x785b9af8973ee7d6a25f67feaebc0a73f1694b90ca65e9ecc382ac1703e4de7b",
+      "stackId": 27527,
+      "tier": 1,
+      "tierName": "Bronze",
+      "name": "Thrill of the spin",
+      "metadata": {
+        "projectId": "MEDAL-SPIN",
+        "id": "bronze-medal-spin",
+        "name": "Thrill of the spin",
+        "description": "Earned by landing on Bronze in a daily spin",
+        "isRevokable": false
+      }
+    },
+    {
+      "blockNumber": 18297792,
+      "transactionHash": "0xd6a62a92a584e51af61c753937784a265a418ce15edb8d954b291265e14b9c27",
+      "stackId": 1665,
+      "tier": 1,
+      "tierName": "Bronze",
+      "name": "Thrill of the spin",
+      "metadata": {
+        "projectId": "MEDAL-SPIN",
+        "id": "bronze-medal-spin",
+        "name": "Thrill of the spin",
+        "description": "Earned by landing on Bronze in a daily spin",
+        "isRevokable": false
+      }
+    },
+    {
+      "blockNumber": 18298203,
+      "transactionHash": "0x2722ad1ea1ad0cdcdbb0d766276fa41d207fca5c90f78544fe55de596458e9a3",
+      "stackId": 361,
+      "tier": 1,
+      "tierName": "Bronze",
+      "name": "Thrill of the spin",
+      "metadata": {
+        "projectId": "MEDAL-SPIN",
+        "id": "bronze-medal-spin",
+        "name": "Thrill of the spin",
+        "description": "Earned by landing on Bronze in a daily spin",
+        "isRevokable": false
+      }
+    },
+    {
+      "blockNumber": 18298694,
+      "transactionHash": "0x07a5101c20f9e26f438222685decf237a09f30caad119fb2f0da26aeb43575d4",
+      "stackId": 15575,
+      "tier": 2,
+      "tierName": "Silver",
+      "name": "Silver spinner",
+      "metadata": {
+        "projectId": "MEDAL-SPIN",
+        "id": "silver-medal-spin",
+        "name": "Silver spinner",
+        "description": "Earned by landing on Silver in a daily spin",
+        "isRevokable": false
+      }
+    },
+    {
+      "blockNumber": 18298760,
+      "transactionHash": "0xeddd5768e9f8ed7806771db20af5effe46d4de2115befacece4a3766e01018a5",
+      "stackId": 38188,
+      "tier": 1,
+      "tierName": "Bronze",
+      "name": "Thrill of the spin",
+      "metadata": {
+        "projectId": "MEDAL-SPIN",
+        "id": "bronze-medal-spin",
+        "name": "Thrill of the spin",
+        "description": "Earned by landing on Bronze in a daily spin",
+        "isRevokable": false
+      }
+    },
+    {
+      "blockNumber": 18298802,
+      "transactionHash": "0x721b116380e346ae6fe180428205c70744d2d487459b916752eaa91fbcd32d2b",
+      "stackId": 15601,
+      "tier": 1,
+      "tierName": "Bronze",
+      "name": "Thrill of the spin",
+      "metadata": {
+        "projectId": "MEDAL-SPIN",
+        "id": "bronze-medal-spin",
+        "name": "Thrill of the spin",
+        "description": "Earned by landing on Bronze in a daily spin",
+        "isRevokable": false
+      }
+    },
+    {
+      "blockNumber": 18298872,
+      "transactionHash": "0x0407c17b312695d2b7023823343fbc42918da771ec50007dab9567154895c383",
+      "stackId": 16145,
+      "tier": 1,
+      "tierName": "Bronze",
+      "name": "Thrill of the spin",
+      "metadata": {
+        "projectId": "MEDAL-SPIN",
+        "id": "bronze-medal-spin",
+        "name": "Thrill of the spin",
+        "description": "Earned by landing on Bronze in a daily spin",
+        "isRevokable": false
+      }
+    },
+    {
+      "blockNumber": 18298922,
+      "transactionHash": "0x103f87cc0ef4bbc5428f74a00e11f85029dcc4944ef2b4080bfbc3161fa2cb33",
+      "stackId": 16135,
+      "tier": 1,
+      "tierName": "Bronze",
+      "name": "Thrill of the spin",
+      "metadata": {
+        "projectId": "MEDAL-SPIN",
+        "id": "bronze-medal-spin",
+        "name": "Thrill of the spin",
+        "description": "Earned by landing on Bronze in a daily spin",
+        "isRevokable": false
+      }
+    },
+    {
+      "blockNumber": 18298926,
+      "transactionHash": "0x06aa955c407db71fa6733c8227330534deec41a3682e2d07c90596d31dad2e75",
+      "stackId": 15603,
+      "tier": 1,
+      "tierName": "Bronze",
+      "name": "Thrill of the spin",
+      "metadata": {
+        "projectId": "MEDAL-SPIN",
+        "id": "bronze-medal-spin",
+        "name": "Thrill of the spin",
+        "description": "Earned by landing on Bronze in a daily spin",
+        "isRevokable": false
+      }
+    },
+    {
+      "blockNumber": 18299063,
+      "transactionHash": "0xdb209f6f5233f4daa5b935de409b83be01d4737d8e980bbef156f756c4253b72",
+      "stackId": 16096,
+      "tier": 1,
+      "tierName": "Bronze",
+      "name": "Thrill of the spin",
+      "metadata": {
+        "projectId": "MEDAL-SPIN",
+        "id": "bronze-medal-spin",
+        "name": "Thrill of the spin",
+        "description": "Earned by landing on Bronze in a daily spin",
+        "isRevokable": false
+      }
+    },
+    {
+      "blockNumber": 18299093,
+      "transactionHash": "0x8c743f168d61a2d84f1a1e2bebd53b0984c123cf4fbd2007d758f81f42f3da5d",
+      "stackId": 16096,
+      "tier": 2,
+      "tierName": "Silver",
+      "name": "Silver spinner",
+      "metadata": {
+        "projectId": "MEDAL-SPIN",
+        "id": "silver-medal-spin",
+        "name": "Silver spinner",
+        "description": "Earned by landing on Silver in a daily spin",
+        "isRevokable": false
+      }
+    },
+    {
+      "blockNumber": 18299141,
+      "transactionHash": "0xc0228235c4714e471ac9a6e918962a78edcdbbde7c77dcc89486a87de1583894",
+      "stackId": 16129,
+      "tier": 2,
+      "tierName": "Silver",
+      "name": "Silver spinner",
+      "metadata": {
+        "projectId": "MEDAL-SPIN",
+        "id": "silver-medal-spin",
+        "name": "Silver spinner",
+        "description": "Earned by landing on Silver in a daily spin",
+        "isRevokable": false
+      }
+    },
+    {
+      "blockNumber": 18299206,
+      "transactionHash": "0xa8b8f7fe3323fae9bf3fc27c4f9baf8c953824e92a6773c3c574300e62a2c9bf",
+      "stackId": 16122,
+      "tier": 1,
+      "tierName": "Bronze",
+      "name": "Thrill of the spin",
+      "metadata": {
+        "projectId": "MEDAL-SPIN",
+        "id": "bronze-medal-spin",
+        "name": "Thrill of the spin",
+        "description": "Earned by landing on Bronze in a daily spin",
+        "isRevokable": false
+      }
+    },
+    {
+      "blockNumber": 18299382,
+      "transactionHash": "0x40d5288e073333ca8a7c1c25f784270ab618a2a4b73cd55bc6371efad7fae4d2",
+      "stackId": 15884,
+      "tier": 1,
+      "tierName": "Bronze",
+      "name": "Thrill of the spin",
+      "metadata": {
+        "projectId": "MEDAL-SPIN",
+        "id": "bronze-medal-spin",
+        "name": "Thrill of the spin",
+        "description": "Earned by landing on Bronze in a daily spin",
+        "isRevokable": false
+      }
+    },
+    {
+      "blockNumber": 18299401,
+      "transactionHash": "0x3683abd66b99a9338a56cc0a198437ef7f061321da6d20547f8a279acc374268",
+      "stackId": 7628,
+      "tier": 1,
+      "tierName": "Bronze",
+      "name": "Thrill of the spin",
+      "metadata": {
+        "projectId": "MEDAL-SPIN",
+        "id": "bronze-medal-spin",
+        "name": "Thrill of the spin",
+        "description": "Earned by landing on Bronze in a daily spin",
+        "isRevokable": false
+      }
+    },
+    {
+      "blockNumber": 18299411,
+      "transactionHash": "0xc4ac0ca67519fe985873a2e9fcd2f420ceeb1600cb31cda3d3d6d1697d5dc7e4",
+      "stackId": 16119,
+      "tier": 1,
+      "tierName": "Bronze",
+      "name": "Thrill of the spin",
+      "metadata": {
+        "projectId": "MEDAL-SPIN",
+        "id": "bronze-medal-spin",
+        "name": "Thrill of the spin",
+        "description": "Earned by landing on Bronze in a daily spin",
+        "isRevokable": false
+      }
+    },
+    {
+      "blockNumber": 18299473,
+      "transactionHash": "0x9713708fde5a07eb099de6f4067f8cfef4515556ce94f10264fae1bc85bf753f",
+      "stackId": 16111,
+      "tier": 1,
+      "tierName": "Bronze",
+      "name": "Thrill of the spin",
+      "metadata": {
+        "projectId": "MEDAL-SPIN",
+        "id": "bronze-medal-spin",
+        "name": "Thrill of the spin",
+        "description": "Earned by landing on Bronze in a daily spin",
+        "isRevokable": false
+      }
+    },
+    {
+      "blockNumber": 18299507,
+      "transactionHash": "0x29af8a92c8a45a5589bb3312dfa3eaff85f285d3c3555bdabecefce39c020418",
+      "stackId": 15973,
+      "tier": 2,
+      "tierName": "Silver",
+      "name": "Silver spinner",
+      "metadata": {
+        "projectId": "MEDAL-SPIN",
+        "id": "silver-medal-spin",
+        "name": "Silver spinner",
+        "description": "Earned by landing on Silver in a daily spin",
+        "isRevokable": false
+      }
+    },
+    {
+      "blockNumber": 18299554,
+      "transactionHash": "0x22b84a4aa21ffdafaeb52e0b7f2407547cf7f24c1ed454d6e41254d35c6e07c4",
+      "stackId": 15977,
+      "tier": 2,
+      "tierName": "Silver",
+      "name": "Silver spinner",
+      "metadata": {
+        "projectId": "MEDAL-SPIN",
+        "id": "silver-medal-spin",
+        "name": "Silver spinner",
+        "description": "Earned by landing on Silver in a daily spin",
+        "isRevokable": false
+      }
+    },
+    {
+      "blockNumber": 18300409,
+      "transactionHash": "0x04345260b0074e2191175fcc7d7eacb07da5fb92d5139af474824ade949bcccb",
+      "stackId": 12266,
+      "tier": 2,
+      "tierName": "Silver",
+      "name": "Silver spinner",
+      "metadata": {
+        "projectId": "MEDAL-SPIN",
+        "id": "silver-medal-spin",
+        "name": "Silver spinner",
+        "description": "Earned by landing on Silver in a daily spin",
+        "isRevokable": false
+      }
+    },
+    {
+      "blockNumber": 18300415,
+      "transactionHash": "0x370286b1b78a75b8c5512dda7e3e9b225014aa45e4b0b0481a3532a2f6f36fd8",
+      "stackId": 14832,
+      "tier": 1,
+      "tierName": "Bronze",
+      "name": "Thrill of the spin",
+      "metadata": {
+        "projectId": "MEDAL-SPIN",
+        "id": "bronze-medal-spin",
+        "name": "Thrill of the spin",
+        "description": "Earned by landing on Bronze in a daily spin",
+        "isRevokable": false
+      }
+    },
+    {
+      "blockNumber": 18300450,
+      "transactionHash": "0x36207ccc902b75cf3ba034185887f36ce1b288df7c8fcc42bea260d445acf36f",
+      "stackId": 14986,
+      "tier": 2,
+      "tierName": "Silver",
+      "name": "Silver spinner",
+      "metadata": {
+        "projectId": "MEDAL-SPIN",
+        "id": "silver-medal-spin",
+        "name": "Silver spinner",
+        "description": "Earned by landing on Silver in a daily spin",
+        "isRevokable": false
+      }
+    },
+    {
+      "blockNumber": 18300510,
+      "transactionHash": "0x1662921065997d7202d1ffa33eaaabfa1ddce30a41e3cb115d479f8cabcc98fd",
+      "stackId": 14318,
+      "tier": 1,
+      "tierName": "Bronze",
+      "name": "Thrill of the spin",
+      "metadata": {
+        "projectId": "MEDAL-SPIN",
+        "id": "bronze-medal-spin",
+        "name": "Thrill of the spin",
+        "description": "Earned by landing on Bronze in a daily spin",
+        "isRevokable": false
+      }
+    },
+    {
+      "blockNumber": 18300549,
+      "transactionHash": "0x438fff78d781e1cb50597e44e262babdd4ad8486f78ffe86f50290833b161ffe",
+      "stackId": 14831,
+      "tier": 1,
+      "tierName": "Bronze",
+      "name": "Thrill of the spin",
+      "metadata": {
+        "projectId": "MEDAL-SPIN",
+        "id": "bronze-medal-spin",
+        "name": "Thrill of the spin",
+        "description": "Earned by landing on Bronze in a daily spin",
+        "isRevokable": false
+      }
+    },
+    {
+      "blockNumber": 18300748,
+      "transactionHash": "0xf09366c08bd709849df87d2988ac5c17e6a71aaac5511dc653cd8d68913d3d16",
+      "stackId": 157,
+      "tier": 1,
+      "tierName": "Bronze",
+      "name": "Thrill of the spin",
+      "metadata": {
+        "projectId": "MEDAL-SPIN",
+        "id": "bronze-medal-spin",
+        "name": "Thrill of the spin",
+        "description": "Earned by landing on Bronze in a daily spin",
+        "isRevokable": false
+      }
+    },
+    {
+      "blockNumber": 18300787,
+      "transactionHash": "0x09d5a382345ac8522c2175112598c0519e33c9ef06e7b5548331cb6ca071a9c5",
+      "stackId": 30684,
+      "tier": 2,
+      "tierName": "Silver",
+      "name": "Silver spinner",
+      "metadata": {
+        "projectId": "MEDAL-SPIN",
+        "id": "silver-medal-spin",
+        "name": "Silver spinner",
+        "description": "Earned by landing on Silver in a daily spin",
+        "isRevokable": false
+      }
+    },
+    {
+      "blockNumber": 18301152,
+      "transactionHash": "0x82ea28eaf742a85a598b94856bfa9930f94a1f46aee720a1607ace32e101bd81",
+      "stackId": 16600,
+      "tier": 2,
+      "tierName": "Silver",
+      "name": "Silver spinner",
+      "metadata": {
+        "projectId": "MEDAL-SPIN",
+        "id": "silver-medal-spin",
+        "name": "Silver spinner",
+        "description": "Earned by landing on Silver in a daily spin",
+        "isRevokable": false
+      }
+    },
+    {
+      "blockNumber": 18301596,
+      "transactionHash": "0x23a6f1c064f02d85e2e41c269a347a0b99d0b56bb65000d86b2c3ed2e6aa6e17",
+      "stackId": 10866,
+      "tier": 1,
+      "tierName": "Bronze",
+      "name": "Thrill of the spin",
+      "metadata": {
+        "projectId": "MEDAL-SPIN",
+        "id": "bronze-medal-spin",
+        "name": "Thrill of the spin",
+        "description": "Earned by landing on Bronze in a daily spin",
+        "isRevokable": false
+      }
+    },
+    {
+      "blockNumber": 18302193,
+      "transactionHash": "0xf8ad39ab436ed650c3ec4918288731892b707b202a410e25f48e455449b53316",
+      "stackId": 1428,
+      "tier": 1,
+      "tierName": "Bronze",
+      "name": "Thrill of the spin",
+      "metadata": {
+        "projectId": "MEDAL-SPIN",
+        "id": "bronze-medal-spin",
+        "name": "Thrill of the spin",
+        "description": "Earned by landing on Bronze in a daily spin",
+        "isRevokable": false
+      }
+    },
+    {
+      "blockNumber": 18302815,
+      "transactionHash": "0xa8834d1bc669682b010bea5fb03266a0a813e2de259c0a677edfcaed71e09217",
+      "stackId": 26263,
+      "tier": 2,
+      "tierName": "Silver",
+      "name": "Silver spinner",
+      "metadata": {
+        "projectId": "MEDAL-SPIN",
+        "id": "silver-medal-spin",
+        "name": "Silver spinner",
+        "description": "Earned by landing on Silver in a daily spin",
+        "isRevokable": false
+      }
+    },
+    {
+      "blockNumber": 18302942,
+      "transactionHash": "0x8eb21b1d27373814992aed1f7607f5fdb0c151c8008af3525c12cbdc0db7acb7",
+      "stackId": 15825,
+      "tier": 1,
+      "tierName": "Bronze",
+      "name": "Thrill of the spin",
+      "metadata": {
+        "projectId": "MEDAL-SPIN",
+        "id": "bronze-medal-spin",
+        "name": "Thrill of the spin",
+        "description": "Earned by landing on Bronze in a daily spin",
+        "isRevokable": false
+      }
+    },
+    {
+      "blockNumber": 18302943,
+      "transactionHash": "0x68b6a9c78b51ff373020a657ad8aebb40abff697ac3fc62d98043971dfa5a9aa",
+      "stackId": 15740,
+      "tier": 1,
+      "tierName": "Bronze",
+      "name": "Thrill of the spin",
+      "metadata": {
+        "projectId": "MEDAL-SPIN",
+        "id": "bronze-medal-spin",
+        "name": "Thrill of the spin",
+        "description": "Earned by landing on Bronze in a daily spin",
+        "isRevokable": false
+      }
+    },
+    {
+      "blockNumber": 18302975,
+      "transactionHash": "0x4675c23d2eb49e6dd9cab91a8ed68762e9b00845852babd26753fc5908419b97",
+      "stackId": 15737,
+      "tier": 1,
+      "tierName": "Bronze",
+      "name": "Thrill of the spin",
+      "metadata": {
+        "projectId": "MEDAL-SPIN",
+        "id": "bronze-medal-spin",
+        "name": "Thrill of the spin",
+        "description": "Earned by landing on Bronze in a daily spin",
+        "isRevokable": false
+      }
+    },
+    {
+      "blockNumber": 18303031,
+      "transactionHash": "0xacabd1f1b46a6441bd0b7269a638dd77cd0e028b434dd1c309952c72b142a850",
+      "stackId": 16132,
+      "tier": 1,
+      "tierName": "Bronze",
+      "name": "Thrill of the spin",
+      "metadata": {
+        "projectId": "MEDAL-SPIN",
+        "id": "bronze-medal-spin",
+        "name": "Thrill of the spin",
+        "description": "Earned by landing on Bronze in a daily spin",
+        "isRevokable": false
+      }
+    }
+  ]
+}
