@@ -36,14 +36,14 @@ body {
 .medal-dots {
     display: flex;
     justify-content: center;
-    gap: 16px;
+    gap: 12px;
     margin-top: 10px;
     margin-bottom: 0;
 }
 
 .medal-dot {
-    width: 24px;
-    height: 24px;
+    width: 16px;
+    height: 16px;
     border-radius: 50%;
     display: inline-block;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
