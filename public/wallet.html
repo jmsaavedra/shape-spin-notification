@@ -477,7 +477,7 @@
                                             <span style="color: #fff; text-align: center; display: block;">•</span>
                                             <span class="date-col" style="font-size: 13px; color: #fff;">${dateStr}</span>
                                             <span class="time-col" style="font-size: 13px; color: #fff;">${timeStr}</span>
-                                            <span class="time-gap" style="color: ${!spin.gap ? '#d8b4fe' : '#fff'}; font-size: 12px; font-weight: 600;">${spin.gap ? spin.gap : '<span style="color: #d8b4fe;">First!</span>'}</span>
+                                            <span class="time-gap" style="color: ${!spin.gap ? '#d8b4fe' : '#fff'}; font-size: 12px; font-weight: 600; white-space: nowrap;">${spin.gap ? spin.gap : '<span style="color: #d8b4fe;">First!</span>'}</span>
                                             <span></span>
                                             ${medalBadge}
                                         </div>
@@ -497,13 +497,29 @@
                                                     totalGapMs += spinTimestamps[i] - spinTimestamps[i - 1];
                                                 }
                                                 const avgGapMs = totalGapMs / (spinTimestamps.length - 1);
-                                                const avgGapHours = Math.floor(avgGapMs / (1000 * 60 * 60));
-                                                const avgGapMinutes = Math.round((avgGapMs % (1000 * 60 * 60)) / (1000 * 60));
+                                                const totalHours = Math.floor(avgGapMs / (1000 * 60 * 60));
+                                                const days = Math.floor(totalHours / 24);
+                                                const hours = totalHours % 24;
+                                                const minutes = Math.round((avgGapMs % (1000 * 60 * 60)) / (1000 * 60));
+
+                                                // Format with color coding
+                                                let avgGapDisplay;
+                                                if (totalHours >= 48) {
+                                                    // 48+ hours (2+ days) - all red
+                                                    avgGapDisplay = `<span style="color: #dc2626;">+${days}d ${hours}h ${minutes}m</span>`;
+                                                } else {
+                                                    // Under 48 hours - days gray, time green
+                                                    if (days > 0) {
+                                                        avgGapDisplay = `+<span style="color: #6b7280;">${days}d</span> <span style="color: #10b981;">${hours}h ${minutes}m</span>`;
+                                                    } else {
+                                                        avgGapDisplay = `+<span style="color: #10b981;">${hours}h ${minutes}m</span>`;
+                                                    }
+                                                }
 
                                                 return `
                                                     <div style="margin-top: 16px; padding-top: 16px; border-top: 1px solid #333; text-align: center;">
                                                         <div style="font-size: 12px; color: #999; margin-bottom: 4px;">Average time between spins</div>
-                                                        <div style="font-size: 14px; color: #ccc;">+${avgGapHours}h ${avgGapMinutes}m</div>
+                                                        <div style="font-size: 14px; white-space: nowrap;">${avgGapDisplay}</div>
                                                     </div>
                                                 `;
                                             }
