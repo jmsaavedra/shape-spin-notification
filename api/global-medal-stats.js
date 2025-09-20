@@ -47,10 +47,12 @@ module.exports = async (_req, res) => {
 
     // Check if we should run incremental update
     if (await shouldRunUpdate(medalData.lastUpdated)) {
-      await runIncrementalUpdate();
+      // Don't await - let update run in background to prevent blocking the response
+      runIncrementalUpdate().catch(error => {
+        console.error('Background medal update failed:', error);
+      });
 
-      // Reload data after update
-      medalData = await getGlobalMedalStats();
+      // Return current data immediately, don't wait for update
     }
 
     const stats = {

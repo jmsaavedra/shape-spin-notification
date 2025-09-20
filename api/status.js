@@ -626,7 +626,7 @@ module.exports = async (req, res) => {
     if (cachedGlobalStats !== null) {
       globalMedalStats = cachedGlobalStats.globalMedalStats;
     } else {
-      // Fetch global stats if not cached
+      // Trigger global stats fetch in background, don't wait for it
       try {
         const globalStatsModule = require('./global-medal-stats');
         const mockReq = {};
@@ -634,25 +634,22 @@ module.exports = async (req, res) => {
           status: () => ({ json: (data) => data }),
           json: (data) => data
         };
-        const globalStatsResponse = await new Promise((resolve) => {
-          const originalJson = mockRes.json;
-          mockRes.json = (data) => {
-            resolve(data);
-            return originalJson(data);
-          };
-          globalStatsModule(mockReq, mockRes);
+        // Don't await - let it run in background
+        globalStatsModule(mockReq, mockRes).catch(error => {
+          console.error('Background global stats fetch failed:', error);
         });
-        globalMedalStats = globalStatsResponse.globalMedalStats;
       } catch (error) {
-        // Fallback values
-        globalMedalStats = {
-          bronze: 0,
-          silver: 0,
-          gold: 0,
-          black: 0,
-          total: 0
-        };
+        console.error('Error starting background global stats fetch:', error);
       }
+
+      // Use fallback values immediately instead of waiting
+      globalMedalStats = {
+        bronze: 0,
+        silver: 0,
+        gold: 0,
+        black: 0,
+        total: 0
+      };
     }
 
     // Calculate intelligent polling interval based on time until next spin
