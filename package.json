@@ -11,6 +11,7 @@
     "index-medals": "node scripts/index-historical-medals.js",
     "update-medals": "node scripts/update-medal-stats.js",
     "scan-medals": "node scripts/complete-medal-scan.js",
+    "fetch-raffles": "node scripts/fetch-all-raffles.js",
     "clean-medal-data": "rm -f data/global-medal-stats.json data/scan-progress.json && echo 'Cleaned all medal data files'"
   },
   "keywords": [],

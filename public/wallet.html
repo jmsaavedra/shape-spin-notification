@@ -58,7 +58,7 @@
             Let's go <a href="https://shape.network/token" target="_blank" style="color: #667eea;">$SHAPE</a>!
         </div>
         <div class="monitoring-address">
-            <div class="card-label">Viewing Spin Stats for</div>
+            <div class="card-label">Spin Stats and Notifications for</div>
             <div class="address" id="wallet-address">Loading...</div>
         </div>
         <div id="content" class="loading">Loading...</div>
@@ -364,8 +364,10 @@
                                                 ${data.raffleHistory.map(round => `
                                                     <div style="background: rgba(255, 255, 255, 0.05); padding: 8px 12px; border-radius: 6px; font-size: 12px;">
                                                         <div style="color: #999;">Round #${round.round}</div>
-                                                        <div style="color: #ccc; font-family: ${round.ensName ? 'system-ui, -apple-system, sans-serif' : 'monospace'};">
-                                                            ${round.ensName || `${round.winner.slice(0, 6)}...${round.winner.slice(-4)}`}
+                                                        <div style="font-family: ${round.ensName ? 'system-ui, -apple-system, sans-serif' : 'monospace'};">
+                                                            <a href="/${round.winner}" style="color: #b19cd9; text-decoration: none; transition: color 0.2s ease;" onmouseover="this.style.color='#d4b3ff'" onmouseout="this.style.color='#b19cd9'">
+                                                                ${round.ensName || `${round.winner.slice(0, 6)}...${round.winner.slice(-4)}`}
+                                                            </a>
                                                         </div>
                                                     </div>
                                                 `).join('')}
@@ -519,8 +521,8 @@
                                                 }
 
                                                 return `
-                                                    <div style="margin-top: 16px; padding-top: 16px; border-top: 1px solid #333; text-align: center;">
-                                                        <div style="font-size: 12px; color: #999; margin-bottom: 4px;">Average time between spins</div>
+                                                    <div style="margin-top: 16px; padding: 16px; border: 1px solid #333; border-radius: 6px; text-align: center;">
+                                                        <div class="card-label">Average time between spins</div>
                                                         <div style="font-size: 14px; white-space: nowrap;">${avgGapDisplay}</div>
                                                     </div>
                                                 `;
