@@ -223,27 +223,27 @@
                 order: 2;
             }
 
-            /* Last Spin full width, third position */
+            /* Last Spin half width, third position (Row 1, Column 1) */
             .card:nth-child(2) {
-                grid-column: span 2;
+                grid-column: span 1;
                 order: 3;
             }
 
-            /* Time Since full width, fourth position */
-            .card:nth-child(3) {
-                grid-column: span 2;
+            /* Next Spin half width, fourth position (Row 1, Column 2) */
+            .card:nth-child(5) {
+                grid-column: span 1;
                 order: 4;
             }
 
-            /* Next Spin full width, fifth position */
-            .card:nth-child(5) {
-                grid-column: span 2;
+            /* Time Since half width, fifth position (Row 2, Column 1) */
+            .card:nth-child(3) {
+                grid-column: span 1;
                 order: 5;
             }
 
-            /* Time Until full width, sixth position */
+            /* Time Until half width, sixth position (Row 2, Column 2) */
             .card:nth-child(6) {
-                grid-column: span 2;
+                grid-column: span 1;
                 order: 6;
             }
 
@@ -270,6 +270,11 @@
             /* Slightly smaller padding on mobile */
             .card {
                 padding: 15px;
+            }
+
+            /* Reduce spinner margin on mobile */
+            .spin-icon {
+                margin-right: 4px !important;
             }
         }
 
@@ -501,7 +506,9 @@
 <body>
     <div class="container">
         <div class="header-logo">
-            <img src="/assets/SPIN-logo-header.png" alt="SPIN for SHAPE" />
+            <a href="/" style="text-decoration: none;">
+                <img src="/assets/SPIN-logo-header.png" alt="SPIN for SHAPE" />
+            </a>
         </div>
 
         <div class="wallet-view-notice">
@@ -777,7 +784,7 @@
                             </div>
 
                             <div class="card description">
-                                <div><strong style="font-weight: 900;">Read-Only View</strong> - Viewing on-chain data for this wallet address</div>
+                                <div><strong style="font-weight: 900;">Wallet Preview Mode</strong>: Viewing on-chain data only.</div>
                                 <div style="margin-top: 8px; font-size: 14px; opacity: 0.7;">Text Notification not available in wallet preview. <a href="https://github.com/jmsaavedra/shape-spin-notification" target="_blank" style="color: white; text-decoration: underline;">Deploy your own here!</a></div>
                             </div>
 
@@ -800,7 +807,7 @@
                                         </div>
                                         <div style="background: rgba(255, 255, 255, 0.05); padding: 12px; border-radius: 8px;">
                                             <div style="font-size: 12px; color: #999; margin-bottom: 4px;">
-                                                ${data.raffleStatus.isEntered ? `Round #${data.raffleStatus.currentRound + 1} Streak` : 'Streak Progress'}
+                                                Current Spin Streak
                                             </div>
                                             <div style="display: flex; align-items: center; gap: 8px;">
                                                 <div style="font-size: 16px; font-weight: bold; color: ${data.raffleStatus.isEligible ? '#4ade80' : '#f59e0b'};">
@@ -810,14 +817,11 @@
                                                     <div style="height: 100%; background: linear-gradient(90deg, #f59e0b, #4ade80); width: ${Math.round(data.raffleStatus.streakProgress * 100)}%; transition: width 0.3s ease;"></div>
                                                 </div>
                                             </div>
-                                            ${data.raffleStatus.isEntered ? `
-                                                <div style="font-size: 11px; color: #999; margin-top: 4px;">Building for Round #${data.raffleStatus.currentRound + 1}</div>
-                                            ` : ''}
                                         </div>
                                     </div>
                                     ${data.raffleHistory && data.raffleHistory.length > 0 ? `
                                         <div style="margin-top: 16px;">
-                                            <div style="font-size: 14px; color: #ccc; margin-bottom: 8px;">Recent Winners</div>
+                                            <div class="card-label">Recent Winners</div>
                                             <div style="display: flex; gap: 8px; flex-wrap: wrap;">
                                                 ${data.raffleHistory.slice(0, 3).map(round => `
                                                     <div style="background: rgba(255, 255, 255, 0.05); padding: 8px 12px; border-radius: 6px; font-size: 12px;">
@@ -832,9 +836,11 @@
                             </div>
                             ` : ''}
 
-                            ${data.medalStats ? `
-                            <div class="card medal-stats" style="grid-column: 1 / -1;">
-                                <div class="card-label">Spin Medal Statistics</div>
+                            ${(data.medalStats || (data.spinHistory && data.spinHistory.length > 0)) ? `
+                            <div class="card medal-stats spin-history" style="grid-column: 1 / -1;">
+                                <div class="card-label">Spin Medal History & Stats</div>
+
+                                ${data.medalStats ? `
                                 <div class="medal-stats-grid" style="margin-top: 16px; display: flex; gap: 15px; flex-wrap: wrap; align-items: center;">
                                     ${(() => {
                                         // Calculate percentages based only on bronze, silver, gold (excluding black)
@@ -871,13 +877,10 @@
                                         `;
                                     })()}
                                 </div>
-                            </div>
-                            ` : ''}
+                                ` : ''}
 
-                            ${data.spinHistory && data.spinHistory.length > 0 ? `
-                            <div class="card spin-history" style="grid-column: 1 / -1;">
-                                <div class="card-label">Spin History</div>
-                                <div style="margin-top: 16px;">
+                                ${data.spinHistory && data.spinHistory.length > 0 ? `
+                                <div style="margin-top: ${data.medalStats ? '24px' : '16px'};">
                                     ${data.spinHistory.map((spin, i) => {
                                         const medal = spin.medal;
                                         let medalBadge = '';
@@ -975,6 +978,7 @@
                                         return '';
                                     })()}
                                 </div>
+                                ` : ''}
                             </div>
                             ` : data.currentSpinCount === 0 ? `
                             <div class="card" style="grid-column: 1 / -1; text-align: center; padding: 40px;">
