@@ -307,15 +307,15 @@
                 const html = `
                     ${spinButton}
                     <div class="grid">
-                        <div class="card card-spin-count">
+                        <div class="card card-spin-count card-total-spins">
                             <div class="card-label">
                                 ${spinIconSVG}
                                 Total Spins
                             </div>
                             <div class="card-value large">${data.currentSpinCount}</div>
                         </div>
-                        
-                        <div class="card">
+
+                        <div class="card card-last-spin">
                             <div class="card-label">
                                 ${spinIconSVG}
                                 Last Spin
@@ -327,15 +327,15 @@
                                 }
                             </div>
                         </div>
-                        
-                        <div class="card">
+
+                        <div class="card card-time-since">
                             <div class="card-label">
                                 ${spinIconSVG}
                                 Time Since
                             </div>
                             <div class="card-value" id="time-since">${data.timeSinceLastSpin || 'N/A'}</div>
                         </div>
-                        
+
                         <div class="card card-can-spin">
                             <div class="card-label">
                                 ${spinIconSVG}
@@ -351,8 +351,8 @@
                                 ${data.canSpinNow ? 'Yes' : 'No'}
                             </div>
                         </div>
-                        
-                        <div class="card">
+
+                        <div class="card card-next-spin">
                             <div class="card-label">
                                 ${spinIconSVG}
                                 Next Spin
@@ -364,8 +364,8 @@
                                 }
                             </div>
                         </div>
-                        
-                        <div class="card">
+
+                        <div class="card card-time-until">
                             <div class="card-label">
                                 ${spinIconSVG}
                                 Time Until
