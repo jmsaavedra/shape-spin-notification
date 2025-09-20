@@ -775,30 +775,28 @@ module.exports = async (req, res) => {
     if (cachedGlobalStats !== null) {
       globalMedalStats = cachedGlobalStats.globalMedalStats;
     } else {
-      // Trigger global stats fetch in background, don't wait for it
+      // Try to get global stats from Supabase directly
       try {
-        const globalStatsModule = require('./global-medal-stats');
-        const mockReq = {};
-        const mockRes = {
-          status: () => ({ json: (data) => data }),
-          json: (data) => data
-        };
-        // Don't await - let it run in background
-        globalStatsModule(mockReq, mockRes).catch(error => {
-          console.error('Background global stats fetch failed:', error);
-        });
+        const { getGlobalMedalStats } = require('../utils/supabase');
+        const globalStats = await getGlobalMedalStats();
+        if (globalStats && globalStats.globalMedalStats) {
+          globalMedalStats = globalStats.globalMedalStats;
+          // Cache it for future use
+          caches.spins.set(globalStatsCacheKey, globalStats, 3600000); // 1 hour
+        } else {
+          throw new Error('No global stats returned');
+        }
       } catch (error) {
-        console.error('Error starting background global stats fetch:', error);
+        console.error('Error fetching global stats:', error);
+        // Use fallback values if direct fetch fails
+        globalMedalStats = {
+          bronze: 0,
+          silver: 0,
+          gold: 0,
+          black: 0,
+          total: 0
+        };
       }
-
-      // Use fallback values immediately instead of waiting
-      globalMedalStats = {
-        bronze: 0,
-        silver: 0,
-        gold: 0,
-        black: 0,
-        total: 0
-      };
     }
 
     // Track wallet submission for analytics (non-blocking, production only)
