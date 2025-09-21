@@ -267,7 +267,7 @@ async function trackWalletSubmission(submissionData) {
     const { data: existingData } = await supabaseAdmin
       .from('wallets')
       .select('ens_name, ens_expires_at')
-      .eq('wallet_address', submissionData.walletAddress)
+      .eq('wallet_address', submissionData.walletAddress.toLowerCase())
       .single();
 
     // Prepare ENS data - only update if we have new data or existing is expired
@@ -291,7 +291,7 @@ async function trackWalletSubmission(submissionData) {
     const { error } = await supabaseAdmin
       .from('wallets')
       .upsert({
-        wallet_address: submissionData.walletAddress,
+        wallet_address: submissionData.walletAddress.toLowerCase(),
         ens_name: ensName,
         ens_expires_at: ensExpiresAt,
         last_visit: now,
@@ -320,7 +320,7 @@ async function trackWalletSubmission(submissionData) {
     const { data: existingRecord, error: fetchError } = await supabaseAdmin
       .from('wallets')
       .select('visit_count')
-      .eq('wallet_address', submissionData.walletAddress)
+      .eq('wallet_address', submissionData.walletAddress.toLowerCase())
       .single();
 
     if (!fetchError && existingRecord) {
@@ -331,7 +331,7 @@ async function trackWalletSubmission(submissionData) {
           visit_count: (existingRecord.visit_count || 0) + 1,
           updated_at: now
         })
-        .eq('wallet_address', submissionData.walletAddress);
+        .eq('wallet_address', submissionData.walletAddress.toLowerCase());
 
       if (updateError) {
         console.error('Error updating visit count:', updateError);
