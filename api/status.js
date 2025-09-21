@@ -186,16 +186,6 @@ module.exports = async (req, res) => {
     }
     
     spinCount = spins.length;
-
-    // Special case: Adjust count for cheater spin for homepage wallet
-    // This wallet had a contract spin that nullified a medal, so we adjust the count
-    if (publicAddress.toLowerCase() === '0x56bde1e5efc80b1e2b958f2d311f4176945ae77f') {
-      // Check if we have the cheater spin (spin #4 at timestamp 1757361651)
-      const hasCheaterSpin = spins.some(spin => Number(spin.timestamp) === 1757361651);
-      if (hasCheaterSpin) {
-        spinCount = spins.length - 1; // Subtract 1 to account for the cheater spin
-      }
-    }
     
     let lastSpinTime = null;
     let lastSpinTimestamp = null;
@@ -499,16 +489,9 @@ module.exports = async (req, res) => {
         // Sort medals by timestamp to ensure chronological order
         const sortedMedals = [...medalSpinMedals].sort((a, b) => a.timestamp - b.timestamp);
 
-        // For homepage wallet, adjust medal assignment to account for cheater spin
-        let medalIndex = index;
-        if (publicAddress.toLowerCase() === '0x56bde1e5efc80b1e2b958f2d311f4176945ae77f' && index > 3) {
-          // Spins after the cheater spin (index 3) need to use one less medal index
-          medalIndex = index - 1;
-        }
-
-        // Assign the medal corresponding to this spin's adjusted index (if it exists)
-        if (sortedMedals[medalIndex]) {
-          const assignedMedal = sortedMedals[medalIndex];
+        // Assign medals in chronological order
+        if (sortedMedals[index]) {
+          const assignedMedal = sortedMedals[index];
           medal = {
             tier: assignedMedal.tierName,
             name: assignedMedal.name
@@ -516,18 +499,8 @@ module.exports = async (req, res) => {
         }
       }
 
-      // Calculate legitimate spin number (hardcoded fix for homepage wallet only)
-      let legitimateSpinNumber = index + 1;
-      if (publicAddress.toLowerCase() === '0x56bde1e5efc80b1e2b958f2d311f4176945ae77f') {
-        // Hardcoded mapping for this specific wallet to handle cheater spin
-        const spinNumberMap = [1,2,3,4,4,5,6,7,8,9,10,11,12,13,14]; // index 0-14 maps to these spin numbers
-        if (index < spinNumberMap.length) {
-          legitimateSpinNumber = spinNumberMap[index];
-        }
-      }
-
       return {
-        spinNumber: legitimateSpinNumber,
+        spinNumber: index + 1,
         timestamp: timestamp,
         date: (() => {
           const d = new Date(timestamp);
@@ -578,14 +551,7 @@ module.exports = async (req, res) => {
       // Calculate streak using existing spin data (no additional contract calls!)
       const { calculateConsecutiveStreak } = require("../lib/black-medal-raffle");
 
-      // Special case: for homepage wallet, exclude cheater spin from streak calculation
-      let spinsForStreak = spins;
-      if (publicAddress.toLowerCase() === '0x56bde1e5efc80b1e2b958f2d311f4176945ae77f') {
-        // Filter out the cheater spin (timestamp 1757361651000) for streak calculation
-        spinsForStreak = spins.filter(spin => Number(spin.timestamp) !== 1757361651);
-      }
-
-      const currentStreak = calculateConsecutiveStreak(spinsForStreak);
+      const currentStreak = calculateConsecutiveStreak(spins);
       const minimumStreak = globalRaffleData.minimumStreakLength;
 
 
