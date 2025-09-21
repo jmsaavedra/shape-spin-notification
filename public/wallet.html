@@ -437,8 +437,8 @@
                                             } else {
                                                 const tierClass = medal.tier.toLowerCase().replace('/', '');
                                                 const badgeText = isMobile ?
-                                                    (medal.tier === 'Black/Obsidian' ? 'Bl' : medal.tier.substring(0, 2)) :
-                                                    (medal.tier === 'Black/Obsidian' ? 'Black' : medal.tier);
+                                                    (medal.tier === 'Black/Obsidian' ? 'BL' : medal.tier.substring(0, 2).toUpperCase()) :
+                                                    (medal.tier === 'Black/Obsidian' ? 'BLACK' : medal.tier.toUpperCase());
                                                 medalBadge = `<span class="medal-badge ${tierClass}">${badgeText}</span>`;
                                             }
                                         } else {
