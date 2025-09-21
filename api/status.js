@@ -83,10 +83,6 @@ module.exports = async (req, res) => {
     // Get spins with smart caching
     const spinsCacheKey = `spins:${publicAddress.toLowerCase()}`;
 
-    // Special case: bypass cache for homepage wallet to ensure spin numbering fix works
-    if (publicAddress.toLowerCase() === '0x56bde1e5efc80b1e2b958f2d311f4176945ae77f') {
-      caches.spins.set(spinsCacheKey, null);
-    }
 
     let spins = caches.spins.get(spinsCacheKey);
     let canSpinNow;
