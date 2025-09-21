@@ -244,6 +244,7 @@ body {
 .medal-badge.black {
     background: linear-gradient(135deg, #2a2a2a, #1a1a1a);
     color: white;
+    border: 1px solid #666;
 }
 
 .medal-badge.none {
