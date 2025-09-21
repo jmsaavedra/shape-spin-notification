@@ -92,15 +92,17 @@ module.exports = async (req, res) => {
       if (lastNotifiedSpinCount === null) {
         lastNotifiedSpinCount = spinCount - 1; // Assume we've notified for all previous spins
       }
-      
+
+      console.log(`🔍 Notification check: canSpinNow=${canSpinNow}, spinCount=${spinCount}, lastNotified=${lastNotifiedSpinCount}`);
+
       // If can spin now and haven't notified for this spin number
       if (canSpinNow && spinCount >= lastNotifiedSpinCount + 1) {
         console.log(`New spin available! Sending LoopMessage notification for spin #${spinCount + 1}`);
-        
+
         const notifier = new LoopMessageNotifier(loopAuthKey, loopSecretKey, notificationNumber, senderName);
         const nextSpinTime = scheduleState.getNextSpinTimeString(lastSpinTimestamp);
         const dashboardUrl = 'https://spin-shape.vercel.app/api/status';
-        
+
         try {
           await notifier.sendSpinAvailableNotification(
             spinCount + 1,
