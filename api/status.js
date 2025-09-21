@@ -5,6 +5,7 @@ const scheduleState = require("../lib/schedule-state");
 const { caches, TTL } = require("../lib/cache");
 const { batchContractCalls } = require("../lib/multicall");
 const { getRaffleStatus, getRaffleHistory } = require("../lib/black-medal-raffle");
+const { trackWalletSubmission } = require("../utils/supabase");
 
 const abi = [
   {"inputs":[{"internalType":"address","name":"collector","type":"address"}],"name":"canSpin","outputs":[{"internalType":"bool","name":"","type":"bool"}],"stateMutability":"view","type":"function"},
@@ -658,7 +659,27 @@ module.exports = async (req, res) => {
     } else {
       suggestedPollInterval = 600000; // 10 minutes when spin is over 1 hour away
     }
-    
+
+    // Track wallet data for analytics and ENS caching (non-blocking, production only)
+    if (process.env.NODE_ENV === 'production' || process.env.VERCEL_ENV === 'production') {
+      trackWalletSubmission({
+        walletAddress: publicAddress,
+        ensName: ensName,
+        userAgent: req.headers['user-agent'],
+        ipAddress: req.headers['x-forwarded-for'] || req.headers['x-real-ip'] || req.connection?.remoteAddress,
+        referrer: req.headers['referer'] || req.headers['referrer'],
+        hasSpins: spinCount > 0,
+        spinCount: spinCount,
+        hasMedals: medalStats ? medalStats.total > 0 : false,
+        medalCount: medalStats ? medalStats.total : 0,
+        canSpinNow: canSpinNow,
+        lastSpinTimestamp: lastSpinTimestamp
+      }).catch(error => {
+        // Don't let tracking errors affect the response
+        console.error('Homepage wallet tracking error:', error);
+      });
+    }
+
     res.status(200).json({
       currentSpinCount: spinCount,
       lastSpinTime: lastSpinTime,
