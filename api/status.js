@@ -486,8 +486,14 @@ module.exports = async (req, res) => {
         const sortedMedals = [...medalSpinMedals].sort((a, b) => a.timestamp - b.timestamp);
 
         // Assign medals in chronological order
-        if (sortedMedals[index]) {
-          const assignedMedal = sortedMedals[index];
+        // For homepage wallet, adjust medal index to account for cheater spin
+        let medalIndex = index;
+        if (publicAddress.toLowerCase() === '0x56bde1e5efc80b1e2b958f2d311f4176945ae77f' && index > 3) {
+          medalIndex = index - 1; // Skip one medal index after the cheater spin
+        }
+
+        if (sortedMedals[medalIndex]) {
+          const assignedMedal = sortedMedals[medalIndex];
           medal = {
             tier: assignedMedal.tierName,
             name: assignedMedal.name
