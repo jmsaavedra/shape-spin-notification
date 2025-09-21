@@ -9,7 +9,7 @@
     <meta name="description" content="View daily spins and medals for any wallet on Shape Network">
     <meta name="keywords" content="shape, network, blockchain, medal, spin, daily, crypto, web3">
     <meta name="author" content="quietloops">
-    <meta name="robots" content="noindex, nofollow">
+    <meta name="robots" content="index, follow">
     <meta name="language" content="English">
 
     <!-- Open Graph / Social Media -->
@@ -39,6 +39,32 @@
     <link rel="apple-touch-icon" href="/assets/favicon/apple-touch-icon.png">
     <link rel="stylesheet" href="/css/shared.css">
     <link rel="stylesheet" href="/css/wallet.css">
+
+    <!-- Structured Data -->
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "WebPage",
+        "name": "Spin for SHAPE - Wallet View",
+        "description": "View daily spins and medals for any wallet on Shape Network",
+        "url": "https://spin-shape.vercel.app/",
+        "mainEntity": {
+            "@type": "DigitalDocument",
+            "name": "Wallet Analytics",
+            "description": "Detailed spin history and medal statistics for blockchain wallet"
+        },
+        "author": {
+            "@type": "Person",
+            "name": "quietloops",
+            "url": "https://twitter.com/quietloops"
+        },
+        "provider": {
+            "@type": "Organization",
+            "name": "Shape Network",
+            "url": "https://shape.network/"
+        }
+    }
+    </script>
 </head>
 <body>
     <div class="container">
@@ -106,6 +132,14 @@
 
         // Initialize wallet address from URL
         walletAddress = getWalletFromPath();
+
+        // Update canonical URL for this wallet page
+        if (walletAddress) {
+            const canonicalLink = document.querySelector('link[rel="canonical"]');
+            if (canonicalLink) {
+                canonicalLink.href = `https://spin-shape.vercel.app/${walletAddress}`;
+            }
+        }
 
         if (!walletAddress) {
             document.getElementById('content').innerHTML = '<div class="error">Invalid wallet address. Please provide a valid Ethereum address or ENS name.</div>';
