@@ -60,6 +60,12 @@ async function getGlobalMedalStats() {
  * Save global medal statistics to Supabase
  */
 async function saveGlobalMedalStats(stats) {
+  // Only save in production to prevent dev database writes
+  if (process.env.NODE_ENV !== 'production' && process.env.VERCEL_ENV !== 'production') {
+    console.warn('Development mode: using local file instead of database');
+    return await saveMedalStatsToFile(stats);
+  }
+
   if (!supabaseAdmin) {
     console.warn('Supabase admin client not configured, falling back to local file');
     return await saveMedalStatsToFile(stats);
@@ -193,6 +199,11 @@ async function getCachedEnsName(address) {
  * Cache ENS name in wallets table
  */
 async function cacheEnsName(address, ensName, ttlSeconds = 2592000) { // 30 days default
+  // Only cache in production to prevent dev database writes
+  if (process.env.NODE_ENV !== 'production' && process.env.VERCEL_ENV !== 'production') {
+    return false;
+  }
+
   if (!supabaseAdmin) {
     return false;
   }
@@ -239,6 +250,11 @@ async function cacheEnsName(address, ensName, ttlSeconds = 2592000) { // 30 days
  * Track wallet submission for analytics with visit counting
  */
 async function trackWalletSubmission(submissionData) {
+  // Only track in production to prevent dev database writes
+  if (process.env.NODE_ENV !== 'production' && process.env.VERCEL_ENV !== 'production') {
+    return false;
+  }
+
   if (!supabaseAdmin) {
     console.warn('Supabase admin client not configured, wallet submission tracking disabled');
     return false;
