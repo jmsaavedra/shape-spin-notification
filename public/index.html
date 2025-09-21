@@ -499,7 +499,7 @@
                                     if (medal) {
                                         if (medal.tier === 'Cheater') {
                                             // Special handling for cheater medals - link to explanation
-                                            medalBadge = `<a href="https://x.com/josdotph/status/1965448593655181342" target="_blank" rel="noopener" style="text-decoration: none;"><span class="medal-badge cheater" style="background: #dc2626; color: white; cursor: pointer;">Cheater</span></a>`;
+                                            medalBadge = `<a href="https://x.com/josdotph/status/1965448593655181342" target="_blank" rel="noopener" style="text-decoration: none;"><span class="medal-badge cheater" style="background: #dc2626; color: white; cursor: pointer;">CHEATER</span></a>`;
                                         } else {
                                             const tierClass = medal.tier.toLowerCase().replace('/', '');
                                             const badgeText = isMobile ?
@@ -508,7 +508,7 @@
                                             medalBadge = `<span class="medal-badge ${tierClass}">${badgeText}</span>`;
                                         }
                                     } else {
-                                        medalBadge = `<span class="medal-badge none">${isMobile ? 'Unclaimed' : 'Unclaimed'}</span>`;
+                                        medalBadge = `<span class="medal-badge none">${isMobile ? 'UNCLAIMED' : 'UNCLAIMED'}</span>`;
                                     }
 
                                     const date = spin.timestamp ? new Date(spin.timestamp) : null;
