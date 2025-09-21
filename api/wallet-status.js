@@ -605,25 +605,35 @@ module.exports = async (req, res) => {
       const timestamp = activity.timestamp;
       let gap = null;
 
-      // Calculate gap from previous activity
-      if (index > 0) {
-        const prevTimestamp = allActivities[index - 1].timestamp;
-        const gapMs = timestamp - prevTimestamp;
-        const totalHours = Math.floor(gapMs / (1000 * 60 * 60));
-        const days = Math.floor(totalHours / 24);
-        const hours = totalHours % 24;
-        const minutes = Math.floor((gapMs % (1000 * 60 * 60)) / (1000 * 60));
+      // Calculate gap from previous SPIN (not previous activity)
+      if (activity.type === 'spin' && index > 0) {
+        // Find the most recent spin before this one
+        let prevSpinTimestamp = null;
+        for (let i = index - 1; i >= 0; i--) {
+          if (allActivities[i].type === 'spin') {
+            prevSpinTimestamp = allActivities[i].timestamp;
+            break;
+          }
+        }
 
-        // Format with color coding
-        if (totalHours >= 48) {
-          // 48+ hours (2+ days) - all red
-          gap = `<span style="color: #dc2626;">+${days}d ${hours}h ${minutes}m</span>`;
-        } else {
-          // Under 48 hours - days gray, time green
-          if (days > 0) {
-            gap = `<span style="color: #6b7280;">+${days}d</span> <span style="color: #10b981;">${hours}h ${minutes}m</span>`;
+        if (prevSpinTimestamp) {
+          const gapMs = timestamp - prevSpinTimestamp;
+          const totalHours = Math.floor(gapMs / (1000 * 60 * 60));
+          const days = Math.floor(totalHours / 24);
+          const hours = totalHours % 24;
+          const minutes = Math.floor((gapMs % (1000 * 60 * 60)) / (1000 * 60));
+
+          // Format with color coding
+          if (totalHours >= 48) {
+            // 48+ hours (2+ days) - all red
+            gap = `<span style="color: #dc2626;">+${days}d ${hours}h ${minutes}m</span>`;
           } else {
-            gap = `<span style="color: #10b981;">+${hours}h ${minutes}m</span>`;
+            // Under 48 hours - days gray, time green
+            if (days > 0) {
+              gap = `<span style="color: #6b7280;">+${days}d</span> <span style="color: #10b981;">${hours}h ${minutes}m</span>`;
+            } else {
+              gap = `<span style="color: #10b981;">+${hours}h ${minutes}m</span>`;
+            }
           }
         }
       }
