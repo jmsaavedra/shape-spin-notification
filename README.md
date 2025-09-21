@@ -21,7 +21,8 @@ This project monitors your wallet on the [MedalSpin contract](https://shapescan.
 - 📱 **iMessage/SMS Notifications** - Get alerted promptly when spin is available (automatic SMS fallback)
 - 🔒 **Secure** - Uses public addresses only, no private keys needed for monitoring
 - 📊 **Dashboard** - Real-time schedule tracking and spin history
-- 🏅 **Medal Tracking** - Displays your MEDAL-SPIN medals (Bronze, Silver, Gold, Diamond) with stats
+- 🏅 **Medal Tracking** - Displays your MEDAL-SPIN medals (Bronze, Silver, Gold, Black) with stats
+- 🌍 **Global Medal Statistics** - Real-time global medal distribution and leaderboard data
 - 🏆 **Black Medal Raffle** - Track your eligibility for weekly Black medal raffles (7-day streak required)
 - 🎯 **Efficient** - 90% reduction in API calls through intelligent polling
 - ⚡ **Smart Polling** - Dynamic intervals based on proximity to spin time (10s to 5min)
@@ -87,12 +88,14 @@ vercel --prod
 
 ## Routes & Endpoints
 
-### 🏠 `/` 
+### 🏠 `/`
 Main dashboard showing:
 - Live spin status and countdown timers
 - Complete spin history with timestamps
-- MEDAL-SPIN medals earned (Bronze/Silver/Gold/Diamond)
-- Medal statistics and win tracking
+- MEDAL-SPIN medals earned (Bronze/Silver/Gold/Black)
+- Global medal statistics and distribution data
+- Personal medal statistics and win tracking
+- Black medal raffle eligibility and status
 - ENS name resolution
 
 <img src="public/assets/medal_stats-history.png" alt="Medal Stats and History" width="100%">
