@@ -608,30 +608,41 @@ module.exports = async (req, res) => {
     if (cachedGlobalStats !== null) {
       globalMedalStats = cachedGlobalStats.globalMedalStats;
     } else {
-      // Trigger global stats fetch in background, don't wait for it
+      // Fetch global stats and wait for result on first load
       try {
         const globalStatsModule = require('./global-medal-stats');
         const mockReq = {};
+        let globalStatsResult = null;
         const mockRes = {
-          status: () => ({ json: (data) => data }),
-          json: (data) => data
+          status: () => ({ json: (data) => { globalStatsResult = data; return { json: () => {} }; } }),
+          json: (data) => { globalStatsResult = data; }
         };
-        // Don't await - let it run in background
-        globalStatsModule(mockReq, mockRes).catch(error => {
-          console.error('Background global stats fetch failed:', error);
-        });
-      } catch (error) {
-        console.error('Error starting background global stats fetch:', error);
-      }
+        // Await the result to ensure stats are loaded before responding
+        await globalStatsModule(mockReq, mockRes);
 
-      // Use fallback values immediately instead of waiting
-      globalMedalStats = {
-        bronze: 0,
-        silver: 0,
-        gold: 0,
-        black: 0,
-        total: 0
-      };
+        if (globalStatsResult && globalStatsResult.globalMedalStats) {
+          globalMedalStats = globalStatsResult.globalMedalStats;
+        } else {
+          // Only use fallback if the fetch actually failed
+          globalMedalStats = {
+            bronze: 0,
+            silver: 0,
+            gold: 0,
+            black: 0,
+            total: 0
+          };
+        }
+      } catch (error) {
+        console.error('Error fetching global stats:', error);
+        // Use fallback values only on error
+        globalMedalStats = {
+          bronze: 0,
+          silver: 0,
+          gold: 0,
+          black: 0,
+          total: 0
+        };
+      }
     }
 
     // Calculate intelligent polling interval based on time until next spin
