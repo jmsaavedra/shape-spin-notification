@@ -147,7 +147,7 @@ function getDefaultMedalStats() {
 }
 
 /**
- * Get cached ENS name from wallet_submissions table
+ * Get cached ENS name from wallets table
  */
 async function getCachedEnsName(address) {
   if (!supabaseAdmin) {
@@ -156,7 +156,7 @@ async function getCachedEnsName(address) {
 
   try {
     const { data, error } = await supabaseAdmin
-      .from('wallet_submissions')
+      .from('wallets')
       .select('ens_name, ens_expires_at')
       .eq('wallet_address', address.toLowerCase())
       .single();
@@ -190,7 +190,7 @@ async function getCachedEnsName(address) {
 }
 
 /**
- * Cache ENS name in wallet_submissions table
+ * Cache ENS name in wallets table
  */
 async function cacheEnsName(address, ensName, ttlSeconds = 2592000) { // 30 days default
   if (!supabaseAdmin) {
@@ -202,7 +202,7 @@ async function cacheEnsName(address, ensName, ttlSeconds = 2592000) { // 30 days
     const expiresAt = new Date(Date.now() + (ttlSeconds * 1000)).toISOString();
 
     const { error } = await supabaseAdmin
-      .from('wallet_submissions')
+      .from('wallets')
       .upsert({
         wallet_address: address.toLowerCase(),
         ens_name: ensName,
@@ -249,7 +249,7 @@ async function trackWalletSubmission(submissionData) {
 
     // First, check if we have existing ENS data that shouldn't be overwritten
     const { data: existingData } = await supabaseAdmin
-      .from('wallet_submissions')
+      .from('wallets')
       .select('ens_name, ens_expires_at')
       .eq('wallet_address', submissionData.walletAddress)
       .single();
@@ -273,7 +273,7 @@ async function trackWalletSubmission(submissionData) {
     }
 
     const { error } = await supabaseAdmin
-      .from('wallet_submissions')
+      .from('wallets')
       .upsert({
         wallet_address: submissionData.walletAddress,
         ens_name: ensName,
@@ -302,7 +302,7 @@ async function trackWalletSubmission(submissionData) {
 
     // Get current visit count and increment it
     const { data: existingRecord, error: fetchError } = await supabaseAdmin
-      .from('wallet_submissions')
+      .from('wallets')
       .select('visit_count')
       .eq('wallet_address', submissionData.walletAddress)
       .single();
@@ -310,7 +310,7 @@ async function trackWalletSubmission(submissionData) {
     if (!fetchError && existingRecord) {
       // Increment visit count for existing records
       const { error: updateError } = await supabaseAdmin
-        .from('wallet_submissions')
+        .from('wallets')
         .update({
           visit_count: (existingRecord.visit_count || 0) + 1,
           updated_at: now
