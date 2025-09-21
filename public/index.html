@@ -508,7 +508,7 @@
                                             medalBadge = `<span class="medal-badge ${tierClass}">${badgeText}</span>`;
                                         }
                                     } else {
-                                        medalBadge = `<span class="medal-badge none">${isMobile ? 'No' : 'No Medal'}</span>`;
+                                        medalBadge = `<span class="medal-badge none">${isMobile ? 'Unclaimed' : 'Unclaimed'}</span>`;
                                     }
 
                                     const date = spin.timestamp ? new Date(spin.timestamp) : null;
