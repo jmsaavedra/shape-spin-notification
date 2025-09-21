@@ -147,18 +147,18 @@ function getDefaultMedalStats() {
 }
 
 /**
- * Get cached ENS name from Supabase
+ * Get cached ENS name from wallet_submissions table
  */
 async function getCachedEnsName(address) {
-  if (!supabase) {
+  if (!supabaseAdmin) {
     return null;
   }
 
   try {
-    const { data, error } = await supabase
-      .from('ens_cache')
-      .select('ens_name, expires_at')
-      .eq('address', address.toLowerCase())
+    const { data, error } = await supabaseAdmin
+      .from('wallet_submissions')
+      .select('ens_name, ens_expires_at')
+      .eq('wallet_address', address.toLowerCase())
       .single();
 
     if (error) {
@@ -173,8 +173,8 @@ async function getCachedEnsName(address) {
       throw error;
     }
 
-    // Check if cached entry has expired
-    if (new Date(data.expires_at) < new Date()) {
+    // Check if cached entry has expired (if ens_expires_at is set)
+    if (data.ens_expires_at && new Date(data.ens_expires_at) < new Date()) {
       return null;
     }
 
@@ -190,7 +190,7 @@ async function getCachedEnsName(address) {
 }
 
 /**
- * Cache ENS name in Supabase
+ * Cache ENS name in wallet_submissions table
  */
 async function cacheEnsName(address, ensName, ttlSeconds = 2592000) { // 30 days default
   if (!supabaseAdmin) {
@@ -198,17 +198,22 @@ async function cacheEnsName(address, ensName, ttlSeconds = 2592000) { // 30 days
   }
 
   try {
+    const now = new Date().toISOString();
     const expiresAt = new Date(Date.now() + (ttlSeconds * 1000)).toISOString();
 
     const { error } = await supabaseAdmin
-      .from('ens_cache')
+      .from('wallet_submissions')
       .upsert({
-        address: address.toLowerCase(),
+        wallet_address: address.toLowerCase(),
         ens_name: ensName,
-        expires_at: expiresAt,
-        updated_at: new Date().toISOString()
+        ens_expires_at: expiresAt,
+        first_visit: now,
+        last_visit: now,
+        visit_count: 1,
+        created_at: now,
+        updated_at: now
       }, {
-        onConflict: 'address'
+        onConflict: 'wallet_address'
       });
 
     if (error) {
@@ -242,11 +247,37 @@ async function trackWalletSubmission(submissionData) {
   try {
     const now = new Date().toISOString();
 
+    // First, check if we have existing ENS data that shouldn't be overwritten
+    const { data: existingData } = await supabaseAdmin
+      .from('wallet_submissions')
+      .select('ens_name, ens_expires_at')
+      .eq('wallet_address', submissionData.walletAddress)
+      .single();
+
+    // Prepare ENS data - only update if we have new data or existing is expired
+    let ensName = submissionData.ensName || null;
+    let ensExpiresAt = null;
+
+    if (existingData && existingData.ens_name && existingData.ens_expires_at) {
+      // Check if existing ENS data is still valid
+      if (new Date(existingData.ens_expires_at) > new Date()) {
+        // Keep existing valid ENS data
+        ensName = existingData.ens_name;
+        ensExpiresAt = existingData.ens_expires_at;
+      }
+    }
+
+    // If we have new ENS data, set expiration to 30 days
+    if (submissionData.ensName && (!existingData || !existingData.ens_expires_at || new Date(existingData.ens_expires_at) <= new Date())) {
+      ensExpiresAt = new Date(Date.now() + (30 * 24 * 60 * 60 * 1000)).toISOString(); // 30 days
+    }
+
     const { error } = await supabaseAdmin
       .from('wallet_submissions')
       .upsert({
         wallet_address: submissionData.walletAddress,
-        ens_name: submissionData.ensName || null,
+        ens_name: ensName,
+        ens_expires_at: ensExpiresAt,
         last_visit: now,
         user_agent: submissionData.userAgent || null,
         ip_address: submissionData.ipAddress || null,
