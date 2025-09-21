@@ -228,7 +228,7 @@
                 const walletElement = document.getElementById('wallet-address');
                 if (data.ensName) {
                     const truncatedAddress = data.walletAddress ? `${data.walletAddress.slice(0, 6)}...${data.walletAddress.slice(-4)}` : '';
-                    walletElement.innerHTML = `<div style="font-weight: bold; font-size: 18px;">${data.ensName}</div><div style="font-size: 12px; opacity: 0.7; margin-top: 2px;">${truncatedAddress}</div>`;
+                    walletElement.innerHTML = `<div style="font-weight: 600; font-size: 26px; letter-spacing: 1px; background: linear-gradient(90deg, #e9d5ff, #c4b5fd, #a78bfa, #e9d5ff); background-size: 300% 100%; -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; animation: gradientShift 5s ease-in-out infinite;">${data.ensName}</div><div style="font-size: 12px; opacity: 0.7; margin-top: 4px;">${truncatedAddress}</div>`;
                 } else {
                     walletElement.innerHTML = `<div style="font-weight: bold;">${data.walletAddress || 'Not configured'}</div>`;
                 }
@@ -455,17 +455,17 @@
                                 ` : ''}
                                 ${data.raffleHistory && data.raffleHistory.length > 0 ? `
                                     <div style="margin-top: 16px;">
-                                        <div class="card-label">Recent Winners</div>
+                                        <div class="card-label">Raffle Winners</div>
                                         <div style="display: flex; gap: 8px; flex-wrap: wrap;">
                                             ${data.raffleHistory.slice(0, 3).map(round => `
-                                                <div style="background: rgba(255, 255, 255, 0.05); padding: 8px 12px; border-radius: 6px; font-size: 12px;">
-                                                    <div style="color: #999;">Round #${round.round}</div>
-                                                    <div style="font-family: ${round.ensName ? 'system-ui, -apple-system, sans-serif' : 'monospace'};">
-                                                        <a href="/${round.winner}" style="color: #b19cd9; text-decoration: none; transition: color 0.2s ease;" onmouseover="this.style.color='#d4b3ff'" onmouseout="this.style.color='#b19cd9'">
+                                                <a href="/${round.ensName || round.winner}" style="color: inherit; text-decoration: none; display: block;">
+                                                    <div style="background: rgba(255, 255, 255, 0.05); padding: 8px 12px; border-radius: 6px; font-size: 12px; cursor: pointer; transition: background-color 0.2s ease;" onmouseover="this.style.backgroundColor='rgba(255, 255, 255, 0.08)'" onmouseout="this.style.backgroundColor='rgba(255, 255, 255, 0.05)'">
+                                                        <div style="color: #999;">Round #${round.round}</div>
+                                                        <div style="font-family: ${round.ensName ? 'system-ui, -apple-system, sans-serif' : 'monospace'}; color: #d8b4fe; font-size: 14px;">
                                                             ${round.ensName || `${round.winner.slice(0, 6)}...${round.winner.slice(-4)}`}
-                                                        </a>
+                                                        </div>
                                                     </div>
-                                                </div>
+                                                </a>
                                             `).join('')}
                                         </div>
                                     </div>
@@ -486,7 +486,7 @@
                             </div>
 
                             ${data.medalStats ? `
-                            <div class="medal-stats-grid" style="margin-top: 16px; display: flex; justify-content: space-between; align-items: center; padding: 0 40px;">
+                            <div class="medal-stats-grid" style="margin-top: 16px; display: flex; justify-content: center; align-items: center; gap: 90px; padding: 0;">
                                 ${(() => {
                                     // Calculate percentages based only on bronze, silver, gold (excluding black)
                                     const spinMedalTotal = data.medalStats.bronze + data.medalStats.silver + data.medalStats.gold;
@@ -578,7 +578,7 @@
                                         <span style="color: #fff; text-align: center; display: block;">•</span>
                                         <span class="date-col" style="font-size: 13px; color: #fff; ${isCheater ? 'text-decoration: line-through; opacity: 0.6;' : ''}">${dateStr}</span>
                                         <span class="time-col" style="font-size: 13px; color: #fff; ${isCheater ? 'text-decoration: line-through; opacity: 0.6;' : ''}">${timeStr}</span>
-                                        <span class="time-gap" style="color: ${!spin.gap ? '#d8b4fe' : '#fff'}; font-size: 12px; font-weight: 600; white-space: nowrap; ${isCheater ? 'text-decoration: line-through; opacity: 0.6;' : ''}">${spin.gap ? spin.gap : (spin.spinNumber === 1 ? '<span style="color: #d8b4fe;">First!</span>' : '')}</span>
+                                        <span class="time-gap" style="color: ${!spin.gap ? '#d8b4fe' : '#fff'}; font-size: 12px; font-weight: 600; white-space: nowrap; ${isCheater ? 'text-decoration: line-through; opacity: 0.6;' : ''}">${spin.gap ? spin.gap : (spin.spinNumber === 1 ? '<span style="color: #d8b4fe;">1st Spin!</span>' : '')}</span>
                                         <span></span>
                                         ${medalBadge}
                                     </div>
@@ -611,16 +611,16 @@
                                             } else {
                                                 // Under 48 hours - days gray, time green
                                                 if (days > 0) {
-                                                    avgGapDisplay = `<span style="color: #6b7280;">+${days}d</span> <span style="color: #10b981;">${hours}h ${minutes}m</span>`;
+                                                    avgGapDisplay = `<span style="color: #6b7280;">+${days}d</span> <span style="color: #d8b4fe;">${hours}h ${minutes}m</span>`;
                                                 } else {
-                                                    avgGapDisplay = `<span style="color: #10b981;">+${hours}h ${minutes}m</span>`;
+                                                    avgGapDisplay = `<span style="color: #d8b4fe;">+${hours}h ${minutes}m</span>`;
                                                 }
                                             }
 
                                             return `
                                                 <div style="margin-top: 16px; padding: 16px; border: 1px solid #333; border-radius: 6px; text-align: center;">
                                                     <div class="card-label">Average time between spins</div>
-                                                    <div style="font-size: 14px; white-space: nowrap;">${avgGapDisplay}</div>
+                                                    <div style="font-size: 24px; font-weight: 500; color: #d8b4fe; white-space: nowrap;">${avgGapDisplay}</div>
                                                 </div>
                                             `;
                                         }
@@ -641,7 +641,7 @@
                                     Total: ${data.globalMedalStats.total.toLocaleString()} medals claimed
                                 </div>
                             </div>
-                            <div class="medal-stats-grid" style="margin-top: 16px; display: flex; justify-content: space-between; align-items: center; padding: 0 40px;">
+                            <div class="medal-stats-grid" style="margin-top: 16px; display: flex; justify-content: center; align-items: center; gap: 90px; padding: 0;">
                                 <div class="medal-stat-item" style="display: flex; align-items: center; gap: 8px;">
                                     <span class="medal-dot bronze"></span>
                                     <div style="color: #fff; font-size: 14px;">

@@ -42,8 +42,8 @@ body {
 }
 
 .medal-dot {
-    width: 24px;
-    height: 24px;
+    width: 28px;
+    height: 28px;
     border-radius: 50%;
     display: inline-block;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
@@ -85,7 +85,6 @@ body {
     background: #111;
     border: 1px solid #222;
     border-radius: 8px;
-    font-family: monospace;
     font-size: 14px;
     opacity: 0.8;
 }
@@ -137,9 +136,10 @@ body {
 
 .card-label {
     font-size: 12px;
+    font-weight: normal;
     text-transform: uppercase;
     letter-spacing: 1px;
-    opacity: 0.5;
+    opacity: 0.8;
     margin-bottom: 8px;
 }
 
@@ -298,7 +298,7 @@ body {
 }
 
 .footer-row a {
-    color: #9f7aea;
+    color: #d8b4fe;
     text-decoration: none;
     transition: opacity 0.2s;
 }
@@ -306,6 +306,19 @@ body {
 .footer-row a:hover {
     opacity: 1;
     text-decoration: underline;
+}
+
+/* Gradient animation for ENS names */
+@keyframes gradientShift {
+    0% {
+        background-position: 0% 50%;
+    }
+    50% {
+        background-position: 100% 50%;
+    }
+    100% {
+        background-position: 0% 50%;
+    }
 }
 
 .github-link {

@@ -1,12 +1,7 @@
 -- Fix wallet address case sensitivity issues
 -- This removes duplicates and ensures all addresses are lowercase
 
--- Step 1: Update all existing addresses to lowercase
-UPDATE wallets
-SET wallet_address = LOWER(wallet_address)
-WHERE wallet_address != LOWER(wallet_address);
-
--- Step 2: Remove duplicate entries (keep the one with more data/higher visit count)
+-- Step 1: Remove duplicate entries FIRST (before normalizing case)
 -- This handles cases where both uppercase and lowercase versions exist
 DO $$
 DECLARE
@@ -50,7 +45,15 @@ BEGIN
     END LOOP;
 END $$;
 
+-- Step 2: Now update all remaining addresses to lowercase (safe after removing duplicates)
+UPDATE wallets
+SET wallet_address = LOWER(wallet_address)
+WHERE wallet_address != LOWER(wallet_address);
+
 -- Step 3: Ensure unique constraint works with lowercase addresses
 -- (The existing unique constraint should now work properly since all addresses are lowercase)
 
-RAISE NOTICE 'Wallet address case sensitivity fix completed';
+DO $$
+BEGIN
+    RAISE NOTICE 'Wallet address case sensitivity fix completed';
+END $$;
