@@ -269,18 +269,27 @@ async function trackWalletSubmission(submissionData) {
       return false;
     }
 
-    // Increment visit count for existing records
-    const { error: updateError } = await supabaseAdmin
+    // Get current visit count and increment it
+    const { data: existingRecord, error: fetchError } = await supabaseAdmin
       .from('wallet_submissions')
-      .update({
-        visit_count: supabaseAdmin.raw('visit_count + 1'),
-        updated_at: now
-      })
-      .eq('wallet_address', submissionData.walletAddress);
+      .select('visit_count')
+      .eq('wallet_address', submissionData.walletAddress)
+      .single();
 
-    if (updateError) {
-      console.error('Error updating visit count:', updateError);
-      // Don't return false here, the main tracking still succeeded
+    if (!fetchError && existingRecord) {
+      // Increment visit count for existing records
+      const { error: updateError } = await supabaseAdmin
+        .from('wallet_submissions')
+        .update({
+          visit_count: (existingRecord.visit_count || 0) + 1,
+          updated_at: now
+        })
+        .eq('wallet_address', submissionData.walletAddress);
+
+      if (updateError) {
+        console.error('Error updating visit count:', updateError);
+        // Don't return false here, the main tracking still succeeded
+      }
     }
 
     return true;
