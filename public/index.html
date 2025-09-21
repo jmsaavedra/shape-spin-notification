@@ -548,7 +548,7 @@
                                         <span style="color: #fff; text-align: center; display: block;">•</span>
                                         <span class="date-col" style="font-size: 13px; color: #fff; ${isCheater ? 'text-decoration: line-through; opacity: 0.6;' : ''}">${dateStr}</span>
                                         <span class="time-col" style="font-size: 13px; color: #fff; ${isCheater ? 'text-decoration: line-through; opacity: 0.6;' : ''}">${timeStr}</span>
-                                        <span class="time-gap" style="color: ${!spin.gap ? '#d8b4fe' : '#fff'}; font-size: 12px; font-weight: 600; white-space: nowrap; ${isCheater ? 'text-decoration: line-through; opacity: 0.6;' : ''}">${spin.gap ? spin.gap : '<span style="color: #d8b4fe;">First!</span>'}</span>
+                                        <span class="time-gap" style="color: ${!spin.gap ? '#d8b4fe' : '#fff'}; font-size: 12px; font-weight: 600; white-space: nowrap; ${isCheater ? 'text-decoration: line-through; opacity: 0.6;' : ''}">${spin.gap ? spin.gap : (spin.spinNumber === 1 ? '<span style="color: #d8b4fe;">First!</span>' : '')}</span>
                                         <span></span>
                                         ${medalBadge}
                                     </div>
