@@ -85,8 +85,8 @@ module.exports = async (req, res) => {
 
       console.log(`🔍 Notification check: canSpinNow=${canSpinNow}, spinCount=${spinCount}, lastNotified=${lastNotifiedSpinCount}`);
 
-      // If can spin now and haven't notified for this spin number
-      if (canSpinNow && spinCount >= lastNotifiedSpinCount + 1) {
+      // If can spin now and haven't notified for the next spin opportunity
+      if (canSpinNow && spinCount + 1 > lastNotifiedSpinCount) {
         console.log(`New spin available! Sending LoopMessage notification for spin #${spinCount + 1}`);
 
         const notifier = new LoopMessageNotifier(loopAuthKey, loopSecretKey, notificationNumber, senderName);
@@ -101,7 +101,7 @@ module.exports = async (req, res) => {
           );
 
           console.log(`✅ Notification sent for spin #${spinCount + 1}`);
-          lastNotifiedSpinCount = spinCount;
+          lastNotifiedSpinCount = spinCount + 1;
           
           return res.status(200).json({
             message: "Spin available - LoopMessage notification sent",
