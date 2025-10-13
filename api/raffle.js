@@ -29,14 +29,9 @@ module.exports = async (req, res) => {
     } else {
     }
 
-    // Get raffle history (cached for 1 hour)
-    const historyKey = 'raffleHistory';
-    let raffleHistory = caches.spins.get(historyKey);
-
-    if (raffleHistory === null) {
-      raffleHistory = await getRaffleHistory(provider, 5, alchemyApiKey);
-      caches.spins.set(historyKey, raffleHistory, 3600); // 1 hour
-    }
+    // Get raffle history (all winners, cached in Supabase)
+    // This now fetches ALL winners with no quantity cap
+    const raffleHistory = await getRaffleHistory(provider, alchemyApiKey);
 
     // Get draw timing information
     const drawTiming = getDrawTiming();

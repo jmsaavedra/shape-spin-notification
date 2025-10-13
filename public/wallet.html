@@ -395,14 +395,14 @@
                                     </div>
                                     ${data.raffleHistory && data.raffleHistory.length > 0 ? `
                                         <div style="margin-top: 16px;">
-                                            <div class="card-label">Raffle Winners</div>
+                                            <div class="card-label">Raffle Winners (${data.raffleHistory.length} total)</div>
                                             <div style="display: flex; gap: 8px; flex-wrap: wrap;">
                                                 ${data.raffleHistory.map(round => `
                                                     <a href="/${round.ensName || round.winner}" style="color: inherit; text-decoration: none; display: block;">
                                                         <div style="background: rgba(255, 255, 255, 0.05); padding: 8px 12px; border-radius: 6px; font-size: 12px; cursor: pointer; transition: background-color 0.2s ease;" onmouseover="this.style.backgroundColor='rgba(255, 255, 255, 0.08)'" onmouseout="this.style.backgroundColor='rgba(255, 255, 255, 0.05)'">
                                                             <div style="color: #999;">Round #${round.round}</div>
-                                                            <div style="font-family: ${round.ensName ? 'system-ui, -apple-system, sans-serif' : 'monospace'}; color: #d8b4fe; font-size: 14px;">
-                                                                ${round.ensName || `${round.winner.slice(0, 6)}...${round.winner.slice(-4)}`}
+                                                            <div style="font-family: system-ui, -apple-system, sans-serif; color: #d8b4fe; font-size: 14px;">
+                                                                ${round.ensName || `${round.winner.slice(0, 5)}...${round.winner.slice(-3)}`}
                                                             </div>
                                                         </div>
                                                     </a>

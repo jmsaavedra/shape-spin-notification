@@ -742,14 +742,10 @@ module.exports = async (req, res) => {
 
 
       // Get raffle history (cached for 1 hour)
-      const historyKey = 'raffleHistory';
-      raffleHistory = caches.spins.get(historyKey);
-
-      if (raffleHistory === null) {
-        const { getRaffleHistory } = require("../lib/black-medal-raffle");
-        raffleHistory = await getRaffleHistory(provider, 20, alchemyApiKey);
-        caches.spins.set(historyKey, raffleHistory, 3600); // 1 hour
-      }
+      // Get raffle history (all winners, cached in Supabase)
+      // This now fetches ALL winners with no quantity cap
+      const { getRaffleHistory } = require("../lib/black-medal-raffle");
+      raffleHistory = await getRaffleHistory(provider, alchemyApiKey);
     } else {
       raffleStatus = {
         isEligible: false,

@@ -15,6 +15,8 @@ CREATE TABLE IF NOT EXISTS global_medal_stats (
   }'::jsonb,
   total_events INTEGER DEFAULT 0,
   completion_status TEXT DEFAULT 'none',
+  raffle_history JSONB DEFAULT '[]'::jsonb,
+  raffle_last_updated TIMESTAMPTZ,
   created_at TIMESTAMPTZ DEFAULT NOW(),
   updated_at TIMESTAMPTZ DEFAULT NOW()
 );

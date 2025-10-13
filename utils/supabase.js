@@ -247,6 +247,79 @@ async function cacheEnsName(address, ensName, ttlSeconds = 2592000) { // 30 days
 }
 
 /**
+ * Get cached raffle history from global_medal_stats
+ */
+async function getCachedRaffleHistory() {
+  if (!supabase) {
+    return null;
+  }
+
+  try {
+    const { data, error } = await supabase
+      .from('global_medal_stats')
+      .select('raffle_history, raffle_last_updated')
+      .eq('id', 'current')
+      .single();
+
+    if (error) {
+      if (error.code === 'PGRST116') {
+        // No data found
+        return null;
+      }
+      throw error;
+    }
+
+    // Check if cached entry exists and when it was last updated
+    if (!data.raffle_history || !data.raffle_last_updated) {
+      return null;
+    }
+
+    // Return cached raffle history with metadata
+    return {
+      history: data.raffle_history,
+      lastUpdated: data.raffle_last_updated
+    };
+
+  } catch (error) {
+    console.error('Error fetching cached raffle history:', error);
+    return null;
+  }
+}
+
+/**
+ * Cache raffle history in global_medal_stats
+ */
+async function cacheRaffleHistory(raffleHistory) {
+  // Allow writes in development for raffle history (unlike other functions)
+  // This ensures raffle history is always cached for better performance
+  if (!supabaseAdmin) {
+    console.warn('Supabase admin client not configured, cannot cache raffle history');
+    return false;
+  }
+
+  try {
+    const now = new Date().toISOString();
+
+    const { error } = await supabaseAdmin
+      .from('global_medal_stats')
+      .update({
+        raffle_history: raffleHistory,
+        raffle_last_updated: now,
+        updated_at: now
+      })
+      .eq('id', 'current');
+
+    if (error) throw error;
+
+    return true;
+
+  } catch (error) {
+    console.error('Error caching raffle history:', error);
+    return false;
+  }
+}
+
+/**
  * Track wallet submission for analytics with visit counting
  */
 async function trackWalletSubmission(submissionData) {
@@ -354,5 +427,7 @@ module.exports = {
   getDefaultMedalStats,
   trackWalletSubmission,
   getCachedEnsName,
-  cacheEnsName
+  cacheEnsName,
+  getCachedRaffleHistory,
+  cacheRaffleHistory
 };
