@@ -210,7 +210,7 @@ body {
 /* Spin History */
 .spin-history-row {
     display: grid;
-    grid-template-columns: 24px 70px 30px 75px 70px 70px 1fr 100px;
+    grid-template-columns: 24px 80px 30px 75px 70px 70px 1fr 100px;
     align-items: center;
     gap: 8px;
     padding: 10px 10px 10px 0;
