@@ -90,10 +90,11 @@ module.exports = async (req, res) => {
     if (walletAddress.endsWith('.eth')) {
       try {
         // Use Alchemy for ENS resolution (Ethereum mainnet)
+        // Don't pass network config - let ethers auto-detect for ENS support
         const mainnetProvider = new JsonRpcProvider(
-          `https://eth-mainnet.g.alchemy.com/v2/${alchemyApiKey}`,
-          { name: 'mainnet', chainId: 1 }
+          `https://eth-mainnet.g.alchemy.com/v2/${alchemyApiKey}`
         );
+        await mainnetProvider.getNetwork();
 
         publicAddress = await mainnetProvider.resolveName(walletAddress);
 
@@ -121,10 +122,11 @@ module.exports = async (req, res) => {
         } else {
           // Not in any cache, resolve from Alchemy
           try {
+            // Don't pass network config - let ethers auto-detect for ENS support
             const mainnetProvider = new JsonRpcProvider(
-              `https://eth-mainnet.g.alchemy.com/v2/${alchemyApiKey}`,
-              { name: 'mainnet', chainId: 1 }
+              `https://eth-mainnet.g.alchemy.com/v2/${alchemyApiKey}`
             );
+            await mainnetProvider.getNetwork();
 
             ensName = await mainnetProvider.lookupAddress(publicAddress);
 
