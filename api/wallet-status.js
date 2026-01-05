@@ -5,7 +5,7 @@ const scheduleState = require("../lib/schedule-state");
 const { caches, TTL, getOrSet } = require("../lib/cache");
 const { batchContractCalls } = require("../lib/multicall");
 const { calculateConsecutiveStreak } = require("../lib/black-medal-raffle");
-const { trackWalletSubmission } = require("../utils/supabase");
+const { trackWalletSubmission, getCachedEnsName, cacheEnsName } = require("../utils/supabase");
 const { checkRateLimit, rateLimitResponse } = require("../lib/rate-limit");
 const { getProvider, withFallback, SHAPE_NETWORK } = require("../lib/provider");
 
@@ -107,30 +107,43 @@ module.exports = async (req, res) => {
       }
     } else {
       // If it's an address, try to get its ENS name
+      // Check caches in order: in-memory (fast) -> Supabase (persistent) -> Alchemy (fresh)
       const ensCacheKey = `ens:${publicAddress.toLowerCase()}`;
       ensName = caches.ens.get(ensCacheKey);
 
       if (ensName === null) {
-        try {
-          const mainnetProvider = new JsonRpcProvider(
-            `https://eth-mainnet.g.alchemy.com/v2/${alchemyApiKey}`,
-            { name: 'mainnet', chainId: 1 }
-          );
+        // Check Supabase cache (persists across cold starts)
+        ensName = await getCachedEnsName(publicAddress);
 
-          ensName = await mainnetProvider.lookupAddress(publicAddress);
-
-          // Verify ENS reverse resolution
-          if (ensName) {
-            const resolvedAddress = await mainnetProvider.resolveName(ensName);
-            if (resolvedAddress?.toLowerCase() !== publicAddress.toLowerCase()) {
-              ensName = null;
-            }
-          }
-
-          // Cache the result for 30 days
+        if (ensName) {
+          // Found in Supabase, populate in-memory cache
           caches.ens.set(ensCacheKey, ensName, TTL.ENS);
-        } catch (error) {
-          caches.ens.set(ensCacheKey, null, TTL.CONTRACT);
+        } else {
+          // Not in any cache, resolve from Alchemy
+          try {
+            const mainnetProvider = new JsonRpcProvider(
+              `https://eth-mainnet.g.alchemy.com/v2/${alchemyApiKey}`,
+              { name: 'mainnet', chainId: 1 }
+            );
+
+            ensName = await mainnetProvider.lookupAddress(publicAddress);
+
+            // Verify ENS reverse resolution
+            if (ensName) {
+              const resolvedAddress = await mainnetProvider.resolveName(ensName);
+              if (resolvedAddress?.toLowerCase() !== publicAddress.toLowerCase()) {
+                ensName = null;
+              }
+            }
+
+            // Cache in both in-memory and Supabase
+            caches.ens.set(ensCacheKey, ensName, TTL.ENS);
+            if (ensName) {
+              await cacheEnsName(publicAddress, ensName);
+            }
+          } catch (error) {
+            caches.ens.set(ensCacheKey, null, TTL.CONTRACT);
+          }
         }
       }
     }

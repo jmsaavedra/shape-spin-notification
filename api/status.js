@@ -1,11 +1,11 @@
 // API endpoint to check the current schedule status without triggering a spin
 require("dotenv").config();
-const { ethers } = require("ethers");
+const { ethers, JsonRpcProvider } = require("ethers");
 const scheduleState = require("../lib/schedule-state");
 const { caches, TTL } = require("../lib/cache");
 const { batchContractCalls } = require("../lib/multicall");
 const { getRaffleStatus, getRaffleHistory } = require("../lib/black-medal-raffle");
-const { trackWalletSubmission } = require("../utils/supabase");
+const { trackWalletSubmission, getCachedEnsName, cacheEnsName } = require("../utils/supabase");
 const { getProvider } = require("../lib/provider");
 const { checkRateLimit } = require("../lib/rate-limit");
 
@@ -41,42 +41,47 @@ module.exports = async (req, res) => {
 
 
     // Try to resolve ENS name with caching
+    // Check caches in order: in-memory (fast) -> Supabase (persistent) -> Alchemy (fresh)
     let ensName = null;
     const ensCacheKey = `ens:${publicAddress.toLowerCase()}`;
-    
-    // Check cache first
+
+    // Check in-memory cache first
     ensName = caches.ens.get(ensCacheKey);
-    
+
     if (ensName === null) {
-      // Not in cache, fetch from blockchain
-      try {
-        // Create mainnet provider for ENS resolution (ENS is on Ethereum mainnet)
-        // Don't pass network config - let ethers auto-detect to get ENS support
-        const mainnetProvider = new JsonRpcProvider(
-          `https://eth-mainnet.g.alchemy.com/v2/${alchemyApiKey}`
-        );
-        
-        // Wait for network to be ready
-        await mainnetProvider.getNetwork();
-        
-        ensName = await mainnetProvider.lookupAddress(publicAddress);
-        
-        // If we got an ENS name, verify it resolves back to the same address
-        if (ensName) {
-          const resolvedAddress = await mainnetProvider.resolveName(ensName);
-          if (resolvedAddress?.toLowerCase() !== publicAddress.toLowerCase()) {
-            // ENS mismatch - reverse and forward resolution don't match
-            ensName = null;
-          }
-        }
-        
-        // Cache the result (even if null) for 30 days
+      // Check Supabase cache (persists across cold starts)
+      ensName = await getCachedEnsName(publicAddress);
+
+      if (ensName) {
+        // Found in Supabase, populate in-memory cache
         caches.ens.set(ensCacheKey, ensName, TTL.ENS);
-      } catch (error) {
-        // Cache null for shorter time on error (1 hour)
-        caches.ens.set(ensCacheKey, null, TTL.CONTRACT);
+      } else {
+        // Not in any cache, fetch from blockchain
+        try {
+          const mainnetProvider = new JsonRpcProvider(
+            `https://eth-mainnet.g.alchemy.com/v2/${alchemyApiKey}`
+          );
+
+          await mainnetProvider.getNetwork();
+          ensName = await mainnetProvider.lookupAddress(publicAddress);
+
+          // Verify ENS reverse resolution
+          if (ensName) {
+            const resolvedAddress = await mainnetProvider.resolveName(ensName);
+            if (resolvedAddress?.toLowerCase() !== publicAddress.toLowerCase()) {
+              ensName = null;
+            }
+          }
+
+          // Cache in both in-memory and Supabase
+          caches.ens.set(ensCacheKey, ensName, TTL.ENS);
+          if (ensName) {
+            await cacheEnsName(publicAddress, ensName);
+          }
+        } catch (error) {
+          caches.ens.set(ensCacheKey, null, TTL.CONTRACT);
+        }
       }
-    } else {
     }
 
     // Since we're only reading, we don't need a wallet with private key
