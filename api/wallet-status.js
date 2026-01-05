@@ -53,7 +53,8 @@ module.exports = async (req, res) => {
   // Rate limiting - protect against abuse
   // Allow 10 requests per minute per IP+wallet combo
   // Abusers get blocked for 5 minutes
-  const rateLimitResult = checkRateLimit(req, res, {
+  // Uses both in-memory (fast) and Supabase (persistent) rate limiting
+  const rateLimitResult = await checkRateLimit(req, res, {
     windowMs: 60000,      // 1 minute window
     maxRequests: 10,      // 10 requests per minute max
     blockDurationMs: 300000 // 5 minute block for repeat offenders

@@ -26,8 +26,8 @@ const STACK_NFT_CONTRACT = "0x76d6aC90A62Ca547d51D7AcAeD014167F81B9931";
 const alchemyApiKey = process.env.ALCHEMY_API_KEY || 'public';
 
 module.exports = async (req, res) => {
-  // Rate limiting
-  if (!checkRateLimit(req, res, { windowMs: 60000, maxRequests: 20 })) {
+  // Rate limiting (persistent via Supabase)
+  if (!await checkRateLimit(req, res, { windowMs: 60000, maxRequests: 20 })) {
     return res.status(429).json({ error: "Rate limit exceeded" });
   }
 

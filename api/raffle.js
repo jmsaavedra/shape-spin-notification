@@ -9,8 +9,8 @@ const { checkRateLimit } = require("../lib/rate-limit");
 const alchemyApiKey = process.env.ALCHEMY_API_KEY || 'public';
 
 module.exports = async (req, res) => {
-  // Rate limiting
-  if (!checkRateLimit(req, res, { windowMs: 60000, maxRequests: 20 })) {
+  // Rate limiting (persistent via Supabase)
+  if (!await checkRateLimit(req, res, { windowMs: 60000, maxRequests: 20 })) {
     return res.status(429).json({ error: "Rate limit exceeded" });
   }
 
