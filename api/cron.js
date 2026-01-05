@@ -1,10 +1,11 @@
 // Cron endpoint that checks if spin is available and sends LoopMessage notification
 require("dotenv").config();
-const { ethers, JsonRpcProvider } = require("ethers");
+const { ethers } = require("ethers");
 const scheduleState = require("../lib/schedule-state");
 const LoopMessageNotifier = require("../lib/loopmessage-notify");
 const { caches, TTL } = require("../lib/cache");
 const { batchContractCalls } = require("../lib/multicall");
+const { getProvider } = require("../lib/provider");
 
 const abi = [
   {"inputs":[{"internalType":"address","name":"collector","type":"address"}],"name":"canSpin","outputs":[{"internalType":"bool","name":"","type":"bool"}],"stateMutability":"view","type":"function"},
@@ -12,14 +13,6 @@ const abi = [
 ];
 
 const contractAddress = "0x99BB9Dca4F8Ed3FB04eCBE2bA9f5f378301DBaC1";
-
-const alchemyApiKey = process.env.ALCHEMY_API_KEY || 'public';
-const rpcUrl = `https://shape-mainnet.g.alchemy.com/v2/${alchemyApiKey}`;
-
-const provider = new JsonRpcProvider(rpcUrl, {
-    name: 'shape-mainnet',
-    chainId: 360
-});
 
 // Track if we've already notified for the current spin
 let lastNotifiedSpinCount = null;
@@ -43,6 +36,9 @@ module.exports = async (req, res) => {
     if (!notificationsEnabled) {
       console.log("LoopMessage notifications not configured. Set LOOPMESSAGE_AUTH_KEY, LOOPMESSAGE_SECRET_KEY, and NOTIFICATION_NUMBER to enable.");
     }
+
+    // Get provider with fallback support
+    const provider = await getProvider();
 
     // Since we're only reading, we don't need a wallet with private key
     const contract = new ethers.Contract(contractAddress, abi, provider);

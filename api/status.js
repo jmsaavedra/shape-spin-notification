@@ -1,11 +1,13 @@
 // API endpoint to check the current schedule status without triggering a spin
 require("dotenv").config();
-const { ethers, JsonRpcProvider } = require("ethers");
+const { ethers } = require("ethers");
 const scheduleState = require("../lib/schedule-state");
 const { caches, TTL } = require("../lib/cache");
 const { batchContractCalls } = require("../lib/multicall");
 const { getRaffleStatus, getRaffleHistory } = require("../lib/black-medal-raffle");
 const { trackWalletSubmission } = require("../utils/supabase");
+const { getProvider } = require("../lib/provider");
+const { checkRateLimit } = require("../lib/rate-limit");
 
 const abi = [
   {"inputs":[{"internalType":"address","name":"collector","type":"address"}],"name":"canSpin","outputs":[{"internalType":"bool","name":"","type":"bool"}],"stateMutability":"view","type":"function"},
@@ -22,16 +24,16 @@ const contractAddress = "0x99BB9Dca4F8Ed3FB04eCBE2bA9f5f378301DBaC1";
 const STACK_NFT_CONTRACT = "0x76d6aC90A62Ca547d51D7AcAeD014167F81B9931";
 
 const alchemyApiKey = process.env.ALCHEMY_API_KEY || 'public';
-const rpcUrl = `https://shape-mainnet.g.alchemy.com/v2/${alchemyApiKey}`;
-
-const provider = new JsonRpcProvider(rpcUrl, {
-    name: 'shape-mainnet',
-    chainId: 360
-});
 
 module.exports = async (req, res) => {
+  // Rate limiting
+  if (!checkRateLimit(req, res, { windowMs: 60000, maxRequests: 20 })) {
+    return res.status(429).json({ error: "Rate limit exceeded" });
+  }
+
   // Return JSON API response
   try {
+    const provider = await getProvider();
     const publicAddress = process.env.PUBLIC_ADDRESS;
     if (!publicAddress) {
       return res.status(500).json({ error: "PUBLIC_ADDRESS not configured" });

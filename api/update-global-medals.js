@@ -2,18 +2,13 @@
 // This endpoint should be called by Vercel cron to keep medal data current
 require("dotenv").config();
 const { getGlobalMedalStats, saveGlobalMedalStats } = require("../utils/supabase");
-const { ethers, JsonRpcProvider } = require("ethers");
+const { ethers } = require("ethers");
+const { getProvider } = require("../lib/provider");
 
 const STACK_NFT_CONTRACT = "0x76d6aC90A62Ca547d51D7AcAeD014167F81B9931";
 const ACTUAL_EVENT_TOPIC = '0x5c24d76f2bf28abc7d31e1a28c9bba49bbd57578d2d3b1c670d32b5562baf61d';
 
 const alchemyApiKey = process.env.ALCHEMY_API_KEY || 'public';
-const rpcUrl = `https://shape-mainnet.g.alchemy.com/v2/${alchemyApiKey}`;
-
-const provider = new JsonRpcProvider(rpcUrl, {
-    name: 'shape-mainnet',
-    chainId: 360
-});
 
 async function extractMedalFromEvent(log) {
   try {
@@ -78,6 +73,9 @@ async function runIncrementalUpdate() {
   console.log('🔄 Starting incremental medal update...');
 
   try {
+    // Get provider with fallback support
+    const provider = await getProvider();
+
     // Get current medal stats from Supabase
     const currentStats = await getGlobalMedalStats();
 

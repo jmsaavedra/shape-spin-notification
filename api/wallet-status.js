@@ -2,10 +2,12 @@
 require("dotenv").config();
 const { ethers, JsonRpcProvider } = require("ethers");
 const scheduleState = require("../lib/schedule-state");
-const { caches, TTL } = require("../lib/cache");
+const { caches, TTL, getOrSet } = require("../lib/cache");
 const { batchContractCalls } = require("../lib/multicall");
 const { calculateConsecutiveStreak } = require("../lib/black-medal-raffle");
 const { trackWalletSubmission } = require("../utils/supabase");
+const { checkRateLimit, rateLimitResponse } = require("../lib/rate-limit");
+const { getProvider, withFallback, SHAPE_NETWORK } = require("../lib/provider");
 
 const abi = [
   {"inputs":[{"internalType":"address","name":"collector","type":"address"}],"name":"canSpin","outputs":[{"internalType":"bool","name":"","type":"bool"}],"stateMutability":"view","type":"function"},
@@ -22,12 +24,15 @@ const contractAddress = "0x99BB9Dca4F8Ed3FB04eCBE2bA9f5f378301DBaC1";
 const STACK_NFT_CONTRACT = "0x76d6aC90A62Ca547d51D7AcAeD014167F81B9931";
 
 const alchemyApiKey = process.env.ALCHEMY_API_KEY || 'public';
-const rpcUrl = `https://shape-mainnet.g.alchemy.com/v2/${alchemyApiKey}`;
 
-const provider = new JsonRpcProvider(rpcUrl, {
-    name: 'shape-mainnet',
-    chainId: 360
-});
+// Create provider lazily using fallback system
+let provider = null;
+async function getProviderInstance() {
+  if (!provider) {
+    provider = await getProvider();
+  }
+  return provider;
+}
 
 // Validate wallet address format
 function isValidAddress(address) {
@@ -45,6 +50,24 @@ function isValidAddress(address) {
 }
 
 module.exports = async (req, res) => {
+  // Rate limiting - protect against abuse
+  // Allow 10 requests per minute per IP+wallet combo
+  // Abusers get blocked for 5 minutes
+  const rateLimitResult = checkRateLimit(req, res, {
+    windowMs: 60000,      // 1 minute window
+    maxRequests: 10,      // 10 requests per minute max
+    blockDurationMs: 300000 // 5 minute block for repeat offenders
+  });
+
+  if (!rateLimitResult) {
+    return res.status(429).json({
+      error: "Rate limit exceeded. You are making too many requests.",
+      message: "Slow down! This API is not meant to be polled every few seconds. Try again in a minute.",
+      hint: "If you need real-time updates, check back once per minute maximum.",
+      retryAfter: res.getHeader('Retry-After')
+    });
+  }
+
   // Return JSON API response
   try {
     // Get wallet address from query parameter
@@ -65,11 +88,12 @@ module.exports = async (req, res) => {
     // If it's an ENS name, resolve it to an address
     if (walletAddress.endsWith('.eth')) {
       try {
+        // Use Alchemy for ENS resolution (Ethereum mainnet)
         const mainnetProvider = new JsonRpcProvider(
-          `https://eth-mainnet.g.alchemy.com/v2/${alchemyApiKey}`
+          `https://eth-mainnet.g.alchemy.com/v2/${alchemyApiKey}`,
+          { name: 'mainnet', chainId: 1 }
         );
 
-        await mainnetProvider.getNetwork();
         publicAddress = await mainnetProvider.resolveName(walletAddress);
 
         if (!publicAddress) {
@@ -88,10 +112,10 @@ module.exports = async (req, res) => {
       if (ensName === null) {
         try {
           const mainnetProvider = new JsonRpcProvider(
-            `https://eth-mainnet.g.alchemy.com/v2/${alchemyApiKey}`
+            `https://eth-mainnet.g.alchemy.com/v2/${alchemyApiKey}`,
+            { name: 'mainnet', chainId: 1 }
           );
 
-          await mainnetProvider.getNetwork();
           ensName = await mainnetProvider.lookupAddress(publicAddress);
 
           // Verify ENS reverse resolution
@@ -109,6 +133,9 @@ module.exports = async (req, res) => {
         }
       }
     }
+
+    // Get provider with fallback support
+    const provider = await getProviderInstance();
 
     // Create contracts
     const contract = new ethers.Contract(contractAddress, abi, provider);

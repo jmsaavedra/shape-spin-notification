@@ -1,19 +1,21 @@
 // API endpoint for Black Medal Raffle information
 require("dotenv").config();
-const { ethers, JsonRpcProvider } = require("ethers");
+const { ethers } = require("ethers");
 const { caches } = require("../lib/cache");
 const { getRaffleStatus, getRaffleHistory, getDrawTiming } = require("../lib/black-medal-raffle");
+const { getProvider } = require("../lib/provider");
+const { checkRateLimit } = require("../lib/rate-limit");
 
 const alchemyApiKey = process.env.ALCHEMY_API_KEY || 'public';
-const rpcUrl = `https://shape-mainnet.g.alchemy.com/v2/${alchemyApiKey}`;
-
-const provider = new JsonRpcProvider(rpcUrl, {
-    name: 'shape-mainnet',
-    chainId: 360
-});
 
 module.exports = async (req, res) => {
+  // Rate limiting
+  if (!checkRateLimit(req, res, { windowMs: 60000, maxRequests: 20 })) {
+    return res.status(429).json({ error: "Rate limit exceeded" });
+  }
+
   try {
+    const provider = await getProvider();
     const publicAddress = process.env.PUBLIC_ADDRESS;
     if (!publicAddress) {
       return res.status(500).json({ error: "PUBLIC_ADDRESS not configured" });
